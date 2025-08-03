@@ -23,5 +23,5 @@ VOLUME /tmp
 
 # Copy the JAR from the build stage
 COPY --from=build /app/target/paper-trail-bot.jar paper-trail-bot.jar
-ENTRYPOINT ["java","-jar","paper-trail-bot.jar", " --trace"]
+ENTRYPOINT ["java","-jar","paper-trail-bot.jar"]
 EXPOSE 8080
