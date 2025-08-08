@@ -1,22 +1,22 @@
 package org.papertrail.listeners.memberlisteners;
 
-import java.awt.Color;
-import java.time.Instant;
-import java.util.Objects;
-import java.util.concurrent.Executor;
-
-import org.jetbrains.annotations.NotNull;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
-import org.papertrail.utilities.DurationFormatter;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+import org.papertrail.database.DatabaseConnector;
+import org.papertrail.database.Schema;
+import org.papertrail.utilities.DurationFormatter;
+
+import java.awt.Color;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.concurrent.Executor;
 
 public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 
@@ -78,6 +78,12 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 
 			Guild guild = event.getGuild();
 			User user = event.getUser();
+            Member member = event.getMember();
+
+            String memberJoinDate = "Member Not Cached";
+            if(member!=null){
+                memberJoinDate = "<t:" +member.getTimeJoined().toEpochSecond()+ ":f>";
+            }
 
 			EmbedBuilder eb = new EmbedBuilder();
 			eb.setTitle("🛫 Member Leave Event");
@@ -87,6 +93,7 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 			eb.addField("🏷️ Member Name", "╰┈➤"+user.getName(), false);
 			eb.setThumbnail(user.getEffectiveAvatarUrl());
 			eb.addField("🆔 Member ID", "╰┈➤"+user.getId(), false);
+            eb.addField("⌛ Member Joined The Server On","╰┈➤"+memberJoinDate, false);
 
 			eb.setFooter("Member Leave Detection");
 			eb.setTimestamp(Instant.now());
