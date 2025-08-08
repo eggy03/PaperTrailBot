@@ -81,8 +81,10 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
             Member member = event.getMember();
 
             String memberJoinDate = "Member Not Cached";
+            boolean memberJoinDateTrustable = false;
             if(member!=null){
                 memberJoinDate = "<t:" +member.getTimeJoined().toEpochSecond()+ ":f>";
+                memberJoinDateTrustable = member.hasTimeJoined();
             }
 
 			EmbedBuilder eb = new EmbedBuilder();
@@ -94,8 +96,10 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 			eb.setThumbnail(user.getEffectiveAvatarUrl());
 			eb.addField("🆔 Member ID", "╰┈➤"+user.getId(), false);
             eb.addField("⌛ Member Joined The Server On","╰┈➤"+memberJoinDate, false);
+            eb.addField("⌛ Member Join Date Accurate?", memberJoinDateTrustable ? "✅" : "❌" , false);
 
-			eb.setFooter("Member Leave Detection");
+			eb.setFooter("Join timestamp may fall back to guild creation time if not provided by Discord during lazy loading of members. " +
+                    "Accuracy of the timestamp can be determined by the extra field provided.");
 			eb.setTimestamp(Instant.now());
 
 			MessageEmbed mb = eb.build();
