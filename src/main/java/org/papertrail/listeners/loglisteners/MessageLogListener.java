@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
 import com.google.common.util.concurrent.Striped;
+import org.jspecify.annotations.NonNull;
 import org.papertrail.database.AuthorAndMessageEntity;
 import org.papertrail.database.DatabaseConnector;
 import org.papertrail.database.Schema;
@@ -25,7 +26,7 @@ public class MessageLogListener extends ListenerAdapter {
 
 	private final DatabaseConnector dc;
 	private final Executor vThreadPool;
-	private final Striped<Lock> messageLocks = Striped.lock(8192);
+	private final Striped<@NonNull Lock> messageLocks = Striped.lock(8192);
 	private final AtomicLong activeLockCount = new AtomicLong(0);
 
 	public MessageLogListener(DatabaseConnector dc, Executor vThreadPool) {
