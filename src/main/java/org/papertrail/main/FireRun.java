@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.papertrail.cleanup.BotKickListener;
 import org.papertrail.database.DatabaseConnector;
-import org.papertrail.listeners.commandlisteners.AnnouncementCommandListener;
 import org.papertrail.listeners.commandlisteners.BotInfoCommandListener;
 import org.papertrail.listeners.commandlisteners.ServerStatCommandListener;
 import org.papertrail.listeners.commandlisteners.BotSetupCommandListener;
@@ -68,7 +67,6 @@ public class FireRun {
 		manager.addEventListener(new ServerStatCommandListener());
 		manager.addEventListener(new BotInfoCommandListener());
 		manager.addEventListener(new BotSetupCommandListener());
-		manager.addEventListener(new AnnouncementCommandListener(dc));
 		manager.addEventListener(new RequiredPermissionCheckCommandListener());
 		
 		/*

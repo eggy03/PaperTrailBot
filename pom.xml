@@ -73,6 +73,16 @@
 		 <artifactId>guava</artifactId>
 		 <version>33.4.8-jre</version>
 	 </dependency>
+     <dependency>
+         <groupId>com.konghq</groupId>
+         <artifactId>unirest-java-core</artifactId>
+         <version>4.5.0</version>
+     </dependency>
+     <dependency>
+         <groupId>com.konghq</groupId>
+         <artifactId>unirest-objectmapper-jackson</artifactId>
+         <version>4.2.9</version>
+     </dependency>
   </dependencies>
   
 <build>
