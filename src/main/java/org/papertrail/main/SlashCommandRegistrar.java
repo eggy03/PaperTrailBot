@@ -40,13 +40,7 @@ public class SlashCommandRegistrar extends ListenerAdapter {
 		CommandData botInfo = Commands.slash("about",
 				"Provides Bot Info");
 		CommandData setup = Commands.slash("setup", "Provides a guide on setting up the bot");
-		
-		CommandData announcement = Commands.slash("announcement", "Developer Only")
-				.addOption(OptionType.STRING, "type", "Announcement Type", true)
-				.addOption(OptionType.STRING, "description", "Announcement Description", true)
-				.addOption(OptionType.STRING, "detail", "Detailed Information", true)
-				.addOption(OptionType.STRING, "extra", "Extra Notes", false);
-		
+
 		CommandData permCheck = Commands.slash("permcheck", "Checks if the bot has the necessary permissions to operate");
 		
 		jda.updateCommands()
@@ -59,7 +53,6 @@ public class SlashCommandRegistrar extends ListenerAdapter {
 						serverStats,
 						botInfo,
 						setup,
-						announcement,
 						permCheck)			
 				.queue();
 	}
