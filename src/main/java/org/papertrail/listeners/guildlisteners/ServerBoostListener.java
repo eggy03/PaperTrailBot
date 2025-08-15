@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,14 +14,16 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.papertrail.sdk.call.AuditLogSetupCall;
+import org.papertrail.sdk.response.ApiResponse;
+import org.papertrail.sdk.response.AuditLogResponseObject;
+import org.papertrail.sdk.response.ErrorResponseObject;
 
 public class ServerBoostListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
-	private final DatabaseConnector dc;
 
-	public ServerBoostListener(DatabaseConnector dc, Executor vThreadPool) {
-		this.dc=dc;
+	public ServerBoostListener( Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 	
@@ -31,13 +31,14 @@ public class ServerBoostListener extends ListenerAdapter {
 	public void onGuildMemberUpdateBoostTime(@NotNull GuildMemberUpdateBoostTimeEvent event) {
 
 		vThreadPool.execute(()->{
-			// this will return a non-null text id if a channel was previously registered in the database
 			// server boost logs are mapped to audit log table
-			String registeredChannelId=dc.getGuildDataAccess().retrieveRegisteredChannel(event.getGuild().getId(), Schema.AUDIT_LOG_TABLE);
+            // Call the API and see if the event came from a registered Guild
+            ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildCheck = AuditLogSetupCall.getRegisteredGuild(event.getGuild().getId());
 
-			if(registeredChannelId==null ||registeredChannelId.isBlank()) {
-				return;
-			}
+            if(guildCheck.isError()){
+                return;
+            }
+			String registeredChannelId= guildCheck.success().channelId();
 
 			Member member = event.getMember();
 			Guild guild = event.getGuild();

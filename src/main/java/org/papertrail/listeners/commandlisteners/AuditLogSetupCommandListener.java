@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.papertrail.sdk.response.ApiResponse;
 import org.papertrail.sdk.response.ErrorResponseObject;
 import org.papertrail.sdk.call.AuditLogSetupCall;
-import org.papertrail.sdk.response.AuditLogSetupSuccessResponseObject;
+import org.papertrail.sdk.response.AuditLogResponseObject;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -52,7 +52,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
         // Call the API to register the guild and the channel
 		String channelIdToRegister = event.getChannel().asTextChannel().getId();
-        ApiResponse<AuditLogSetupSuccessResponseObject, ErrorResponseObject> guildRegistration = AuditLogSetupCall.registerGuild(event.getGuild().getId(), channelIdToRegister);
+        ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildRegistration = AuditLogSetupCall.registerGuild(event.getGuild().getId(), channelIdToRegister);
         if(guildRegistration.isSuccess()){
 
             EmbedBuilder eb = new EmbedBuilder();
@@ -87,7 +87,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		String guildId = Objects.requireNonNull(event.getGuild()).getId();
 
 		// Call the API to retrieve the registered channel
-        ApiResponse<AuditLogSetupSuccessResponseObject, ErrorResponseObject> guildRegistrationCheck = AuditLogSetupCall.getRegisteredGuild(guildId);
+        ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildRegistrationCheck = AuditLogSetupCall.getRegisteredGuild(guildId);
 
 		// if there is no channel_id for the given guild_id returned by the API, then inform
 		// the user of the same, else link the channel that has been registered
@@ -125,7 +125,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		
 		String guildId = Objects.requireNonNull(event.getGuild()).getId();
         // Call the API to unregister guild
-        ApiResponse<AuditLogSetupSuccessResponseObject, ErrorResponseObject> guildUnregistration = AuditLogSetupCall.deleteRegisteredGuild(guildId);
+        ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildUnregistration = AuditLogSetupCall.deleteRegisteredGuild(guildId);
         if(guildUnregistration.isSuccess()) {
 
             EmbedBuilder eb = new EmbedBuilder();

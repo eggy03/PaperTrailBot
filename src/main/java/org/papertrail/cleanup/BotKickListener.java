@@ -1,12 +1,12 @@
 package org.papertrail.cleanup;
 
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.papertrail.sdk.call.AuditLogSetupCall;
+import org.papertrail.sdk.call.MessageLogSetupCall;
 
 import java.util.concurrent.Executor;
 
@@ -16,10 +16,8 @@ import java.util.concurrent.Executor;
 public class BotKickListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
-	private final DatabaseConnector dc;
 
-	public BotKickListener(DatabaseConnector dc, Executor vThreadPool) {
-		this.dc = dc;
+	public BotKickListener(Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 
@@ -28,9 +26,8 @@ public class BotKickListener extends ListenerAdapter {
 
 		Guild leftGuild = event.getGuild();
 		vThreadPool.execute(()->{
-			dc.getGuildDataAccess().unregister(leftGuild.getId(), Schema.AUDIT_LOG_TABLE);
-			dc.getGuildDataAccess().unregister(leftGuild.getId(), Schema.MESSAGE_LOG_REGISTRATION_TABLE);
+            AuditLogSetupCall.deleteRegisteredGuild(leftGuild.getId());
+            MessageLogSetupCall.deleteRegisteredGuild(leftGuild.getId());
 		});
-
 	}
 }

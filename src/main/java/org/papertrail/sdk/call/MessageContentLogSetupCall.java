@@ -5,88 +5,60 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
 import org.papertrail.sdk.response.ApiResponse;
+import org.papertrail.sdk.response.MessageContentResponseObject;
 import org.papertrail.sdk.response.ErrorResponseObject;
-import org.papertrail.sdk.response.AuditLogResponseObject;
 import org.papertrail.utilities.EnvConfig;
 import org.tinylog.Logger;
 
 import java.time.LocalDateTime;
 
-public class AuditLogSetupCall {
+public class MessageContentLogSetupCall {
 
-    private AuditLogSetupCall(){
+    private MessageContentLogSetupCall(){
         throw  new IllegalStateException("Utility Class");
     }
 
-    private static final String BASE_URL = EnvConfig.get("API_URL");
+    private static final String BASE_URL = EnvConfig.get("API_URL")+"api/v1/content/message";
 
-    public static ApiResponse<AuditLogResponseObject, ErrorResponseObject> registerGuild(String guildId, String channelId){
+    public static ApiResponse<MessageContentResponseObject, ErrorResponseObject> logMessage(String messageId, String messageContent, String authorId){
 
-       HttpResponse<String> response = Unirest.post(BASE_URL +"api/v1/log/audit")
+        HttpResponse<String> response = Unirest.post(BASE_URL)
                 .header("Content-Type", "application/json")
-                .body(new AuditLogResponseObject(guildId, channelId))
-               .asString();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        if(response.isSuccess()) {
-            try {
-                AuditLogResponseObject successResponse = mapper.readValue(response.getBody(), AuditLogResponseObject.class);
-                return new ApiResponse<>(successResponse, null);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
-            }
-        } else {
-            try {
-                ErrorResponseObject errorResponseObject = mapper.readValue(response.getBody(), ErrorResponseObject.class);
-                return new ApiResponse<>(null, errorResponseObject);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
-            }
-        }
-
-    }
-
-    public static ApiResponse<AuditLogResponseObject, ErrorResponseObject> getRegisteredGuild(String guildId){
-
-        HttpResponse<String> response = Unirest.get(BASE_URL +"api/v1/log/audit/"+guildId)
-               .asString();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        if(response.isSuccess()) {
-            try {
-                AuditLogResponseObject successResponse = mapper.readValue(response.getBody(), AuditLogResponseObject.class);
-                return new ApiResponse<>(successResponse, null);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
-            }
-        } else {
-            try {
-                ErrorResponseObject errorResponseObject = mapper.readValue(response.getBody(), ErrorResponseObject.class);
-                return new ApiResponse<>(null, errorResponseObject);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
-            }
-        }
-    }
-
-    public static ApiResponse<AuditLogResponseObject, ErrorResponseObject> updateRegisteredGuild(String guildId, String channelId){
-
-        HttpResponse<String> response = Unirest.put(BASE_URL +"api/v1/log/audit")
-                .header("Content-Type", "application/json")
-                .body(new AuditLogResponseObject(guildId, channelId))
+                .body(new MessageContentResponseObject(messageId, messageContent, authorId))
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
 
         if(response.isSuccess()) {
             try {
-                AuditLogResponseObject successResponse = mapper.readValue(response.getBody(), AuditLogResponseObject.class);
+                MessageContentResponseObject successResponse = mapper.readValue(response.getBody(), MessageContentResponseObject.class);
+                return new ApiResponse<>(successResponse, null);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        } else {
+            try {
+                ErrorResponseObject errorResponseObject = mapper.readValue(response.getBody(), ErrorResponseObject.class);
+                return new ApiResponse<>(null, errorResponseObject);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        }
+
+    }
+
+    public static ApiResponse<MessageContentResponseObject, ErrorResponseObject> retrieveMessage(String messageId){
+
+        HttpResponse<String> response = Unirest.get(BASE_URL+"/"+messageId)
+                .asString();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        if(response.isSuccess()) {
+            try {
+                MessageContentResponseObject successResponse = mapper.readValue(response.getBody(), MessageContentResponseObject.class);
                 return new ApiResponse<>(successResponse, null);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
@@ -103,15 +75,23 @@ public class AuditLogSetupCall {
         }
     }
 
-    public static ApiResponse<AuditLogResponseObject, ErrorResponseObject> deleteRegisteredGuild(String guildId){
+    public static ApiResponse<MessageContentResponseObject, ErrorResponseObject> updateMessage(String messageId, String messageContent, String authorId){
 
-        HttpResponse<String> response = Unirest.delete(BASE_URL +"api/v1/log/audit/"+guildId)
+        HttpResponse<String> response = Unirest.put(BASE_URL)
+                .header("Content-Type", "application/json")
+                .body(new MessageContentResponseObject(messageId, messageContent, authorId))
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
 
         if(response.isSuccess()) {
-            return new ApiResponse<>(new AuditLogResponseObject("0", "0"), null);
+            try {
+                MessageContentResponseObject successResponse = mapper.readValue(response.getBody(), MessageContentResponseObject.class);
+                return new ApiResponse<>(successResponse, null);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
         } else {
             try {
                 ErrorResponseObject errorResponseObject = mapper.readValue(response.getBody(), ErrorResponseObject.class);
@@ -121,6 +101,26 @@ public class AuditLogSetupCall {
                 return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
             }
         }
+    }
 
+    public static ApiResponse<MessageContentResponseObject, ErrorResponseObject> deleteMessage(String messageId){
+
+        HttpResponse<String> response = Unirest.delete(BASE_URL+"/"+messageId)
+                .asString();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        if(response.isSuccess()) {
+            return new ApiResponse<>(new MessageContentResponseObject("0", "0", "0"), null);
+        } else {
+            try {
+                ErrorResponseObject errorResponseObject = mapper.readValue(response.getBody(), ErrorResponseObject.class);
+                return new ApiResponse<>(null, errorResponseObject);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResponse<>(null, new ErrorResponseObject(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        }
     }
 }
+

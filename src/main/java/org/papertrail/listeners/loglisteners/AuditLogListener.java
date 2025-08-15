@@ -8,8 +8,10 @@ import java.util.concurrent.Executor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
+import org.papertrail.sdk.call.AuditLogSetupCall;
+import org.papertrail.sdk.response.ApiResponse;
+import org.papertrail.sdk.response.AuditLogResponseObject;
+import org.papertrail.sdk.response.ErrorResponseObject;
 import org.papertrail.utilities.ColorFormatter;
 import org.papertrail.utilities.DurationFormatter;
 import org.papertrail.utilities.GuildSystemChannelFlagResolver;
@@ -37,10 +39,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class AuditLogListener extends ListenerAdapter{
 
 	private final Executor vThreadPool;
-	private final DatabaseConnector dc;
 
-	public AuditLogListener(DatabaseConnector dc, Executor vThreadPool) {
-		this.dc=dc;
+	public AuditLogListener(Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 
@@ -48,15 +48,15 @@ public class AuditLogListener extends ListenerAdapter{
 	public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
 
 		vThreadPool.execute(()->{
-			// this will return a non-null text id if a channel was previously registered in the database
-			String registeredChannelId=dc.getGuildDataAccess().retrieveRegisteredChannel(event.getGuild().getId(), Schema.AUDIT_LOG_TABLE);
 
-			if(registeredChannelId==null ||registeredChannelId.isBlank()) {
-				return;
-			}
+            // Call the API and see if the event came from a registered Guild
+            ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildCheck = AuditLogSetupCall.getRegisteredGuild(event.getGuild().getId());
 
-			AuditLogEntry ale = event.getEntry();
-			auditLogParser(event, ale, registeredChannelId);
+            if(guildCheck.isSuccess()){
+                AuditLogEntry ale = event.getEntry();
+                auditLogParser(event, ale, guildCheck.success().channelId());
+            }
+
 		});
 	}
 

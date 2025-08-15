@@ -9,8 +9,10 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
+import org.papertrail.sdk.call.AuditLogSetupCall;
+import org.papertrail.sdk.response.ApiResponse;
+import org.papertrail.sdk.response.AuditLogResponseObject;
+import org.papertrail.sdk.response.ErrorResponseObject;
 import org.papertrail.utilities.DurationFormatter;
 
 import java.awt.Color;
@@ -21,10 +23,9 @@ import java.util.concurrent.Executor;
 public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
-	private final DatabaseConnector dc;
 
-	public GuildMemberJoinAndLeaveListener (DatabaseConnector dc, Executor vThreadPool) {
-		this.dc=dc;
+	public GuildMemberJoinAndLeaveListener (Executor vThreadPool) {
+
 		this.vThreadPool = vThreadPool;
 	}
 	
@@ -32,14 +33,14 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 	public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
 
 		vThreadPool.execute(()->{
-			// this will return a non-null text id if a channel was previously registered in
-			// the database
 			// guild member join and leave events are mapped to audit log table
-			String registeredChannelId = dc.getGuildDataAccess().retrieveRegisteredChannel(event.getGuild().getId(), Schema.AUDIT_LOG_TABLE);
+            // Call the API and see if the event came from a registered Guild
+            ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildCheck = AuditLogSetupCall.getRegisteredGuild(event.getGuild().getId());
 
-			if (registeredChannelId == null || registeredChannelId.isBlank()) {
-				return;
-			}
+            if(guildCheck.isError()){
+                return;
+            }
+			String registeredChannelId = guildCheck.success().channelId();
 
 			Guild guild = event.getGuild();
 			User user = event.getUser();
@@ -68,13 +69,13 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 	public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
 
 		vThreadPool.execute(() -> {
-			// this will return a non-null text id if a channel was previously registered in
-			// the database
-			String registeredChannelId = dc.getGuildDataAccess().retrieveRegisteredChannel(event.getGuild().getId(), Schema.AUDIT_LOG_TABLE);
+            // Call the API and see if the event came from a registered Guild
+            ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildCheck = AuditLogSetupCall.getRegisteredGuild(event.getGuild().getId());
 
-			if (registeredChannelId == null || registeredChannelId.isBlank()) {
-				return;
-			}
+            if(guildCheck.isError()){
+                return;
+            }
+			String registeredChannelId = guildCheck.success().channelId();
 
 			Guild guild = event.getGuild();
 			User user = event.getUser();

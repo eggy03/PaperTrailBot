@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.papertrail.cleanup.BotKickListener;
-import org.papertrail.database.DatabaseConnector;
 import org.papertrail.listeners.commandlisteners.BotInfoCommandListener;
 import org.papertrail.listeners.commandlisteners.ServerStatCommandListener;
 import org.papertrail.listeners.commandlisteners.BotSetupCommandListener;
@@ -47,22 +46,20 @@ public class FireRun {
 	public static void main(String[] args) throws IOException {
 		
 		registerBouncyCastle();
-		
-		DatabaseConnector dc = new DatabaseConnector();
-		
+
 		ConnectionInitializer ci = new ConnectionInitializer();
 		ShardManager manager = ci.getManager();
 
 		manager.addEventListener(new AuditLogSetupCommandListener());
-		manager.addEventListener(new AuditLogListener(dc, vThreadPool));
+		manager.addEventListener(new AuditLogListener(vThreadPool));
 
 		manager.addEventListener(new MessageLogSetupCommandListener());
-		manager.addEventListener(new MessageLogListener(dc, vThreadPool));
+		manager.addEventListener(new MessageLogListener(vThreadPool));
 
-		manager.addEventListener(new GuildVoiceListener(dc, vThreadPool));
-		manager.addEventListener(new GuildMemberJoinAndLeaveListener(dc, vThreadPool));
-		manager.addEventListener(new ServerBoostListener(dc, vThreadPool));
-		manager.addEventListener(new BotKickListener(dc, vThreadPool));
+		manager.addEventListener(new GuildVoiceListener(vThreadPool));
+		manager.addEventListener(new GuildMemberJoinAndLeaveListener(vThreadPool));
+		manager.addEventListener(new ServerBoostListener(vThreadPool));
+		manager.addEventListener(new BotKickListener(vThreadPool));
 
 		manager.addEventListener(new ServerStatCommandListener());
 		manager.addEventListener(new BotInfoCommandListener());
