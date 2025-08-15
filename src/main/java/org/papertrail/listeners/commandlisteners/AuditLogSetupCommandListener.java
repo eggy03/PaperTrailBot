@@ -3,11 +3,12 @@ package org.papertrail.listeners.commandlisteners;
 import java.awt.Color;
 import java.util.Objects;
 
-import kong.unirest.core.HttpResponse;
 import org.papertrail.database.DatabaseConnector;
 import org.papertrail.database.Schema;
-import org.papertrail.persistencesdk.AuditLogRegistration;
-import org.papertrail.persistencesdk.AuditLogRequestDTO;
+import org.papertrail.persistencesdk.ApiResponse;
+import org.papertrail.persistencesdk.ErrorResponse;
+import org.papertrail.persistencesdk.auditlog.AuditLogRegistration;
+import org.papertrail.persistencesdk.auditlog.AuditLogSuccessResponse;
 import org.tinylog.Logger;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -60,11 +61,11 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		}
 
         // Call the API to check if the guild is already registered for audit logging.
-        HttpResponse<AuditLogRequestDTO> guildCheckResponse = AuditLogRegistration.getRegisteredGuild(Objects.requireNonNull(event.getGuild()).getId());
-        // If success, meaning a registered guild has been found
+        ApiResponse<AuditLogSuccessResponse, ErrorResponse> guildCheckResponse = AuditLogRegistration.getRegisteredGuild(Objects.requireNonNull(event.getGuild()).getId());
+        // If success, meaning the guild is already registered
         if(guildCheckResponse.isSuccess()){
 
-            String registeredChannelId = guildCheckResponse.getBody().channelId();
+            String registeredChannelId = guildCheckResponse.success().channelId();
 
             GuildChannel registeredChannel = event.getGuild().getGuildChannelById(registeredChannelId);
             EmbedBuilder eb = new EmbedBuilder();
@@ -80,7 +81,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
         // Else, Call the API to register the guild and the channel
 		String channelIdToRegister = event.getChannel().asTextChannel().getId();
-        HttpResponse<AuditLogRequestDTO> guildRegistrationResponse = AuditLogRegistration.registerGuild(event.getGuild().getId(), channelIdToRegister);
+        ApiResponse<AuditLogSuccessResponse, ErrorResponse> guildRegistrationResponse = AuditLogRegistration.registerGuild(event.getGuild().getId(), channelIdToRegister);
         if(guildRegistrationResponse.isSuccess()){
 
             EmbedBuilder eb = new EmbedBuilder();
@@ -95,6 +96,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
             eb.addField("❌ Channel Registration Failure", "╰┈➤" + "Channel could not be registered", false);
+            eb.addField("API Response", guildRegistrationResponse.error().toString(), false);
             eb.setColor(Color.BLACK);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();

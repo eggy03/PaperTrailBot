@@ -1,6 +1,4 @@
 package org.papertrail.persistencesdk;
 
-import java.time.LocalDateTime;
-
-public record ErrorResponse(int status, String message, LocalDateTime timeStamp) {
+public record ErrorResponse(int status, String message, String timeStamp) {
 }
