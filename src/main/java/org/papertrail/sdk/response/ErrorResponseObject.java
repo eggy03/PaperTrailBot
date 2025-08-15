@@ -1,4 +1,4 @@
-package org.papertrail.persistencesdk.response;
+package org.papertrail.sdk.response;
 
 public record ErrorResponseObject(int status, String message, String timeStamp) {
 }

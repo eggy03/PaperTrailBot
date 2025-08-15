@@ -1,13 +1,13 @@
-package org.papertrail.persistencesdk.call;
+package org.papertrail.sdk.call;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
-import org.papertrail.persistencesdk.response.ApiResponse;
-import org.papertrail.persistencesdk.response.ErrorResponseObject;
-import org.papertrail.persistencesdk.response.AuditLogSetupSuccessResponseObject;
-import org.papertrail.persistencesdk.response.MessageLogSetupSuccessResponseObject;
+import org.papertrail.sdk.response.ApiResponse;
+import org.papertrail.sdk.response.ErrorResponseObject;
+import org.papertrail.sdk.response.AuditLogSetupSuccessResponseObject;
+import org.papertrail.sdk.response.MessageLogSetupSuccessResponseObject;
 import org.papertrail.utilities.EnvConfig;
 import org.tinylog.Logger;
 

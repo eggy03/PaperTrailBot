@@ -1,4 +1,4 @@
-package org.papertrail.persistencesdk.response;
+package org.papertrail.sdk.response;
 
 public record MessageLogSetupSuccessResponseObject(String guildId, String channelId) {
 

@@ -3,10 +3,10 @@ package org.papertrail.listeners.commandlisteners;
 import java.awt.Color;
 import java.util.Objects;
 
-import org.papertrail.persistencesdk.response.ApiResponse;
-import org.papertrail.persistencesdk.response.ErrorResponseObject;
-import org.papertrail.persistencesdk.call.MessageLogSetupCall;
-import org.papertrail.persistencesdk.response.MessageLogSetupSuccessResponseObject;
+import org.papertrail.sdk.response.ApiResponse;
+import org.papertrail.sdk.response.ErrorResponseObject;
+import org.papertrail.sdk.call.MessageLogSetupCall;
+import org.papertrail.sdk.response.MessageLogSetupSuccessResponseObject;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
