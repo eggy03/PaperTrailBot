@@ -3,9 +3,10 @@ package org.papertrail.listeners.commandlisteners;
 import java.awt.Color;
 import java.util.Objects;
 
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
-import org.tinylog.Logger;
+import org.papertrail.persistencesdk.ApiResponse;
+import org.papertrail.persistencesdk.ErrorResponse;
+import org.papertrail.persistencesdk.messagelog.MessageLogRegistration;
+import org.papertrail.persistencesdk.messagelog.MessageLogRegistrationSuccessResponse;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -17,16 +18,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class MessageLogSetupCommandListener extends ListenerAdapter {
-	
-	private final DatabaseConnector dc;
-	private final EmbedBuilder eb = new EmbedBuilder();
 
-	public MessageLogSetupCommandListener(DatabaseConnector dc) {
-		this.dc = dc;
-		eb.setTitle("📝 Message Log Configuration");
-		eb.setColor(Color.CYAN);
-	}
-	
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 			
@@ -60,48 +52,29 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 		
 		Guild guild = event.getGuild();
 		String guildId = Objects.requireNonNull(guild).getId();
-			
-		String registeredChannelId = dc.getGuildDataAccess().retrieveRegisteredChannel(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE);
-		
-		if(registeredChannelId!=null && !registeredChannelId.isBlank()) {
-			
-			GuildChannel registeredChannel = event.getGuild().getGuildChannelById(registeredChannelId);
-			eb.addField("⚠️ Channel Already Registered", "╰┈➤"+(registeredChannel !=null ? registeredChannel.getAsMention() : registeredChannelId)+ " has already been selected as the message log channel", false);
-			eb.setColor(Color.YELLOW);
-			
-			MessageEmbed mb = eb.build();
-			event.replyEmbeds(mb).setEphemeral(false).queue();
-			
-			eb.clearFields();
-			return;
-		}
-		
-		String channelIdToRegister = event.getChannelId();
-		try {
-			// register the channel_id along with guild_id in the database
-			dc.getGuildDataAccess().registerGuildAndChannel(guildId, channelIdToRegister, Schema.MESSAGE_LOG_REGISTRATION_TABLE);
-			
-			eb.addField("✅ Channel Registration Success","╰┈➤"+"All edited and deleted messages will be logged here", false);
-			eb.setColor(Color.GREEN);
-			MessageEmbed mb = eb.build();
-			
-			event.replyEmbeds(mb).setEphemeral(false).queue();
-			
-			eb.clearFields();
-			
-		} catch (Exception e) {
-			
-			eb.addField("❌ Channel Registration Failure","╰┈➤"+"Channel could not be registered", false);
-			eb.setColor(Color.BLACK);
-			MessageEmbed mb = eb.build();
-			
-			event.replyEmbeds(mb).setEphemeral(false).queue();
-			
-			eb.clearFields();
-			
-			Logger.error(e, "Message Log Channel could not be registered");
-		}
-		
+
+        // Call the API to register guild for message logging
+        ApiResponse<MessageLogRegistrationSuccessResponse, ErrorResponse> guildRegistration = MessageLogRegistration.registerGuild(guildId, event.getChannelId());
+        if(guildRegistration.isSuccess()) {
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("Message Log Registration");
+            eb.addField("✅ Channel Registration Success","╰┈➤"+"All edited and deleted messages will be logged here", false);
+            eb.setColor(Color.GREEN);
+
+            MessageEmbed mb = eb.build();
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+        } else {
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("Message Log Registration");
+            eb.addField("❌ Channel Registration Failure","╰┈➤"+"Channel could not be registered", false);
+            eb.addField("\uD83C\uDF10 API Response", "╰┈➤"+guildRegistration.error().message(), false);
+            eb.setColor(Color.YELLOW);
+
+            MessageEmbed mb = eb.build();
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+        }
 	}
 	
 	private void retrieveMessageLoggingChannel(SlashCommandInteractionEvent event) {
@@ -115,83 +88,68 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 		
 		Guild guild = event.getGuild();
 		String guildId = Objects.requireNonNull(guild).getId();
-			
-		String registeredChannelId = dc.getGuildDataAccess().retrieveRegisteredChannel(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE);
-		// if there is no channel_id for the given guild_id in the database, then inform
-		// the user of the same, else link the channel that has been registered
-		if (registeredChannelId == null || registeredChannelId.isBlank()) {
-			eb.addField("⚠️ Channel Registration Check", "╰┈➤"+"No channel has been registered for message logging", false);
-			eb.setColor(Color.YELLOW);
-			MessageEmbed mb = eb.build();
-			event.replyEmbeds(mb).setEphemeral(false).queue();
 
-			eb.clearFields();
-		} else {
-			// check if the channelId actually exists in the guild
-			// this is particularly useful when a channel that was set for logging may have been deleted
-			GuildChannel registeredChannel =  event.getJDA().getGuildChannelById(registeredChannelId);
-			if(registeredChannel==null) {
-				eb.addField("⚠️ Channel Registration Check", "╰┈➤"+registeredChannelId+" does not exist. Please remove it using `/messagelogchannel-remove` and re-register using `/messagelogchannel-set`", false);
-				eb.setColor(Color.RED);
-			} else {
-				eb.setColor(Color.CYAN);
-				eb.addField("✅ Channel Registration Check", "╰┈➤"+registeredChannel.getAsMention()+ " is found to be registered as the message log channel", false);
-			}
+        // Call the API to check for registered guild
+        ApiResponse<MessageLogRegistrationSuccessResponse, ErrorResponse> guildRegistrationCheck = MessageLogRegistration.getRegisteredGuild(guildId);
 
-			MessageEmbed mb = eb.build();
-			event.replyEmbeds(mb).setEphemeral(false).queue();
+        if(guildRegistrationCheck.isSuccess()){
 
-			eb.clearFields();
-		}
+            String registeredChannelId = guildRegistrationCheck.success().channelId();
+            GuildChannel registeredChannel = event.getJDA().getGuildChannelById(registeredChannelId);
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("📝 Message Log Configuration");
+            eb.setColor(Color.CYAN);
+            eb.addField("✅ Channel Registration Check", "╰┈➤"+(registeredChannel!=null ? registeredChannel.getAsMention() : registeredChannelId)+ " is found to be registered as the message log channel", false);
+            MessageEmbed mb = eb.build();
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+
+        } else {
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("📝 Message Log Configuration");
+            eb.addField("⚠️ Channel Registration Check", "╰┈➤"+"No channel has been registered for message logs", false);
+            eb.setColor(Color.YELLOW);
+            MessageEmbed mb = eb.build();
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+
+        }
 	}
 	
 	private void unsetMessageLogging(SlashCommandInteractionEvent event) {
-		
-		// Only members with MANAGE_SERVER permissions should be able to use this command
-		Member member = event.getMember();
-		if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
-			event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
-			return;
-		}
-		
-		Guild guild = event.getGuild();
-		String guildId = Objects.requireNonNull(guild).getId();
-			
-		String registeredChannelId = dc.getGuildDataAccess().retrieveRegisteredChannel(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE);
-		
-		if (registeredChannelId == null || registeredChannelId.isBlank()) {
-			eb.addField("ℹ️ Channel Removal", "╰┈➤"+"No channel has been registered for message logs", false);
-			eb.setColor(Color.YELLOW);
-			MessageEmbed mb = eb.build();
-			
-			event.replyEmbeds(mb).setEphemeral(false).queue();
-			
-			eb.clearFields();
-			
-		} else {
-			try {
-				
-				dc.getGuildDataAccess().unregister(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE);
-				
-				eb.addField("✅ Channel Removal", "╰┈➤"+"Channel successfully unset", false);
-				eb.setColor(Color.GREEN);
-				MessageEmbed mb = eb.build();
-				
-				event.replyEmbeds(mb).setEphemeral(false).queue();
-				
-				eb.clearFields();
-			} catch (Exception e) {
-				eb.addField("❌ Channel Removal Failure", "╰┈➤"+"Channel could not be unset", false);
-				eb.setColor(Color.BLACK);
-				MessageEmbed mb = eb.build();
-				
-				event.replyEmbeds(mb).setEphemeral(false).queue();
-				
-				eb.clearFields();
-				Logger.error(e, "Could not un-register message log channel");
-			}
-		}
-		
-	}
 
+        // Only members with MANAGE_SERVER permissions should be able to use this command
+        Member member = event.getMember();
+        if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
+            event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
+            return;
+        }
+
+        Guild guild = event.getGuild();
+        String guildId = Objects.requireNonNull(guild).getId();
+
+        // Call the API to unregister guild
+        ApiResponse<Void, ErrorResponse> guildUnregistration = MessageLogRegistration.deleteRegisteredGuild(guildId);
+        if (!guildUnregistration.isError()) { // success is always null in this case
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("📝 Message Log Configuration");
+            eb.addField("✅ Channel Removal", "╰┈➤" + "Channel successfully unset", false);
+            eb.setColor(Color.GREEN);
+
+            MessageEmbed mb = eb.build();
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+        } else {
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("📝 Message Log Configuration");
+            eb.addField("❌ Channel Removal Failure", "╰┈➤" + "Channel could not be unset", false);
+            eb.addField("\uD83C\uDF10 API Response", "╰┈➤" + guildUnregistration.error().message(), false);
+            eb.setColor(Color.YELLOW);
+            MessageEmbed mb = eb.build();
+
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+
+        }
+    }
 }

@@ -56,7 +56,7 @@ public class FireRun {
 		manager.addEventListener(new AuditLogSetupCommandListener());
 		manager.addEventListener(new AuditLogListener(dc, vThreadPool));
 
-		manager.addEventListener(new MessageLogSetupCommandListener(dc));
+		manager.addEventListener(new MessageLogSetupCommandListener());
 		manager.addEventListener(new MessageLogListener(dc, vThreadPool));
 
 		manager.addEventListener(new GuildVoiceListener(dc, vThreadPool));

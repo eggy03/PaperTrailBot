@@ -3,11 +3,10 @@ package org.papertrail.listeners.commandlisteners;
 import java.awt.Color;
 import java.util.Objects;
 
-import org.papertrail.database.DatabaseConnector;
 import org.papertrail.persistencesdk.ApiResponse;
 import org.papertrail.persistencesdk.ErrorResponse;
 import org.papertrail.persistencesdk.auditlog.AuditLogRegistration;
-import org.papertrail.persistencesdk.auditlog.AuditLogSuccessResponse;
+import org.papertrail.persistencesdk.auditlog.AuditLogRegistrationSuccessResponse;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -53,7 +52,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
         // Call the API to register the guild and the channel
 		String channelIdToRegister = event.getChannel().asTextChannel().getId();
-        ApiResponse<AuditLogSuccessResponse, ErrorResponse> guildRegistrationResponse = AuditLogRegistration.registerGuild(event.getGuild().getId(), channelIdToRegister);
+        ApiResponse<AuditLogRegistrationSuccessResponse, ErrorResponse> guildRegistrationResponse = AuditLogRegistration.registerGuild(event.getGuild().getId(), channelIdToRegister);
         if(guildRegistrationResponse.isSuccess()){
 
             EmbedBuilder eb = new EmbedBuilder();
@@ -88,7 +87,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		String guildId = Objects.requireNonNull(event.getGuild()).getId();
 
 		// Call the API to retrieve the registered channel
-        ApiResponse<AuditLogSuccessResponse, ErrorResponse> registrationCheck = AuditLogRegistration.getRegisteredGuild(guildId);
+        ApiResponse<AuditLogRegistrationSuccessResponse, ErrorResponse> registrationCheck = AuditLogRegistration.getRegisteredGuild(guildId);
 
 		// if there is no channel_id for the given guild_id returned by the API, then inform
 		// the user of the same, else link the channel that has been registered
