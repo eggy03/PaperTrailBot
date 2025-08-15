@@ -1,4 +1,4 @@
-package org.papertrail.persistencesdk;
+package org.papertrail.persistencesdk.response;
 
 public record ApiResponse<S, E>(S success, E error) {
 
