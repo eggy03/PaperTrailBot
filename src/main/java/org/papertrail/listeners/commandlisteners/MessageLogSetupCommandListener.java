@@ -3,10 +3,10 @@ package org.papertrail.listeners.commandlisteners;
 import java.awt.Color;
 import java.util.Objects;
 
-import org.papertrail.sdk.response.ApiResponse;
-import org.papertrail.sdk.response.ErrorResponseObject;
-import org.papertrail.sdk.call.MessageLogSetupCall;
-import org.papertrail.sdk.response.MessageLogResponseObject;
+import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.model.ErrorResponse;
+import org.papertrail.sdk.client.MessageLogClient;
+import org.papertrail.sdk.model.MessageLogResponse;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -54,7 +54,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 		String guildId = Objects.requireNonNull(guild).getId();
 
         // Call the API to register guild for message logging
-        ApiResponse<MessageLogResponseObject, ErrorResponseObject> guildRegistration = MessageLogSetupCall.registerGuild(guildId, event.getChannelId());
+        ApiResult<MessageLogResponse, ErrorResponse> guildRegistration = MessageLogClient.registerGuild(guildId, event.getChannelId());
         if(guildRegistration.isSuccess()) {
 
             EmbedBuilder eb = new EmbedBuilder();
@@ -90,7 +90,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 		String guildId = Objects.requireNonNull(guild).getId();
 
         // Call the API to check for registered guild
-        ApiResponse<MessageLogResponseObject, ErrorResponseObject> guildRegistrationCheck = MessageLogSetupCall.getRegisteredGuild(guildId);
+        ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
 
         if(guildRegistrationCheck.isSuccess()){
 
@@ -129,7 +129,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
         String guildId = Objects.requireNonNull(guild).getId();
 
         // Call the API to unregister guild
-        ApiResponse<MessageLogResponseObject, ErrorResponseObject> guildUnregistration = MessageLogSetupCall.deleteRegisteredGuild(guildId);
+        ApiResult<MessageLogResponse, ErrorResponse> guildUnregistration = MessageLogClient.deleteRegisteredGuild(guildId);
         if (guildUnregistration.isSuccess()) {
 
             EmbedBuilder eb = new EmbedBuilder();

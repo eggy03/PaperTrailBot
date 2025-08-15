@@ -9,10 +9,10 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.sdk.call.AuditLogSetupCall;
-import org.papertrail.sdk.response.ApiResponse;
-import org.papertrail.sdk.response.AuditLogResponseObject;
-import org.papertrail.sdk.response.ErrorResponseObject;
+import org.papertrail.sdk.client.AuditLogClient;
+import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.model.AuditLogResponse;
+import org.papertrail.sdk.model.ErrorResponse;
 import org.papertrail.utilities.DurationFormatter;
 
 import java.awt.Color;
@@ -35,7 +35,7 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 		vThreadPool.execute(()->{
 			// guild member join and leave events are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
-            ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildCheck = AuditLogSetupCall.getRegisteredGuild(event.getGuild().getId());
+            ApiResult<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
 
             if(guildCheck.isError()){
                 return;
@@ -70,7 +70,7 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 
 		vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
-            ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildCheck = AuditLogSetupCall.getRegisteredGuild(event.getGuild().getId());
+            ApiResult<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
 
             if(guildCheck.isError()){
                 return;

@@ -14,10 +14,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.papertrail.sdk.call.AuditLogSetupCall;
-import org.papertrail.sdk.response.ApiResponse;
-import org.papertrail.sdk.response.AuditLogResponseObject;
-import org.papertrail.sdk.response.ErrorResponseObject;
+import org.papertrail.sdk.client.AuditLogClient;
+import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.model.AuditLogResponse;
+import org.papertrail.sdk.model.ErrorResponse;
 
 public class ServerBoostListener extends ListenerAdapter {
 
@@ -33,7 +33,7 @@ public class ServerBoostListener extends ListenerAdapter {
 		vThreadPool.execute(()->{
 			// server boost logs are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
-            ApiResponse<AuditLogResponseObject, ErrorResponseObject> guildCheck = AuditLogSetupCall.getRegisteredGuild(event.getGuild().getId());
+            ApiResult<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
 
             if(guildCheck.isError()){
                 return;

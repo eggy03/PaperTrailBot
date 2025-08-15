@@ -1,6 +1,6 @@
-package org.papertrail.sdk.response;
+package org.papertrail.sdk.model.result;
 
-public record ApiResponse<S, E>(S success, E error) {
+public record ApiResult<S, E>(S success, E error) {
 
     public boolean isSuccess() {
         return success != null;

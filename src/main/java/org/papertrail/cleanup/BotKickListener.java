@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.papertrail.sdk.call.AuditLogSetupCall;
-import org.papertrail.sdk.call.MessageLogSetupCall;
+import org.papertrail.sdk.client.AuditLogClient;
+import org.papertrail.sdk.client.MessageLogClient;
 
 import java.util.concurrent.Executor;
 
@@ -26,8 +26,8 @@ public class BotKickListener extends ListenerAdapter {
 
 		Guild leftGuild = event.getGuild();
 		vThreadPool.execute(()->{
-            AuditLogSetupCall.deleteRegisteredGuild(leftGuild.getId());
-            MessageLogSetupCall.deleteRegisteredGuild(leftGuild.getId());
+            AuditLogClient.deleteRegisteredGuild(leftGuild.getId());
+            MessageLogClient.deleteRegisteredGuild(leftGuild.getId());
 		});
 	}
 }

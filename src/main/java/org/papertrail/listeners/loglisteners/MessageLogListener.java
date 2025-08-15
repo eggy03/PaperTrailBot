@@ -17,12 +17,12 @@ import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.papertrail.sdk.call.MessageContentLogSetupCall;
-import org.papertrail.sdk.call.MessageLogSetupCall;
-import org.papertrail.sdk.response.ApiResponse;
-import org.papertrail.sdk.response.ErrorResponseObject;
-import org.papertrail.sdk.response.MessageContentResponseObject;
-import org.papertrail.sdk.response.MessageLogResponseObject;
+import org.papertrail.sdk.client.MessageContentLogClient;
+import org.papertrail.sdk.client.MessageLogClient;
+import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.model.ErrorResponse;
+import org.papertrail.sdk.model.MessageContentResponse;
+import org.papertrail.sdk.model.MessageLogResponse;
 import org.papertrail.utilities.MessageEncryption;
 import org.tinylog.Logger;
 
@@ -63,7 +63,7 @@ public class MessageLogListener extends ListenerAdapter {
 		// get the guild id for which the event was fired
 		String guildId = event.getGuild().getId();
 		// Call the API to see if the guild is registered for Message Logging
-        ApiResponse<MessageLogResponseObject, ErrorResponseObject> guildRegistrationCheck = MessageLogSetupCall.getRegisteredGuild(guildId);
+        ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
 
 		// if not registered, exit
 		if(guildRegistrationCheck.isError()) {
@@ -76,7 +76,7 @@ public class MessageLogListener extends ListenerAdapter {
             String encryptedMessage = MessageEncryption.encrypt(event.getMessage().getContentRaw());
             String authorId = event.getAuthor().getId();
 
-			withMessageLock(messageId, ()-> MessageContentLogSetupCall.logMessage(messageId, encryptedMessage, authorId));
+			withMessageLock(messageId, ()-> MessageContentLogClient.logMessage(messageId, encryptedMessage, authorId));
 		});
 
 
@@ -91,7 +91,7 @@ public class MessageLogListener extends ListenerAdapter {
 		
 		String guildId = event.getGuild().getId();
         // Call the API to see if the guild is registered for Message Logging
-        ApiResponse<MessageLogResponseObject, ErrorResponseObject> guildRegistrationCheck = MessageLogSetupCall.getRegisteredGuild(guildId);
+        ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
 
         // if not registered, exit
         if(guildRegistrationCheck.isError()) {
@@ -103,7 +103,7 @@ public class MessageLogListener extends ListenerAdapter {
 			String messageId = event.getMessageId();
 
 			// fetch the old message object from the API
-			ApiResponse<MessageContentResponseObject, ErrorResponseObject> loggedMessageResponse = MessageContentLogSetupCall.retrieveMessage(messageId);
+			ApiResult<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
             if(loggedMessageResponse.isError()){ // if message does not exist (it wasn't logged), then return
                 return;
             }
@@ -131,7 +131,7 @@ public class MessageLogListener extends ListenerAdapter {
 			eb.setTimestamp(Instant.now());
 			// update the database with the new message
 			withMessageLock(messageId, ()->
-                    MessageContentLogSetupCall.updateMessage(
+                    MessageContentLogClient.updateMessage(
                             messageId, MessageEncryption.encrypt(updatedMessage), event.getAuthor().getId()
                     )
             );
@@ -152,7 +152,7 @@ public class MessageLogListener extends ListenerAdapter {
 			
 		String guildId = event.getGuild().getId();
         // Call the API to see if the guild is registered for Message Logging
-        ApiResponse<MessageLogResponseObject, ErrorResponseObject> guildRegistrationCheck = MessageLogSetupCall.getRegisteredGuild(guildId);
+        ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
 
         // if not registered, exit
         if(guildRegistrationCheck.isError()) {
@@ -164,7 +164,7 @@ public class MessageLogListener extends ListenerAdapter {
 			String messageId = event.getMessageId();
 
             // fetch the old message object from the API
-            ApiResponse<MessageContentResponseObject, ErrorResponseObject> loggedMessageResponse = MessageContentLogSetupCall.retrieveMessage(messageId);
+            ApiResult<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
             if(loggedMessageResponse.isError()){ // if message does not exist (it wasn't logged), then return
                 return;
             }
@@ -190,7 +190,7 @@ public class MessageLogListener extends ListenerAdapter {
 			eb.setTimestamp(Instant.now());
 
 			// delete the message from the database
-			withMessageLock(messageId, ()->MessageContentLogSetupCall.deleteMessage(messageId));
+			withMessageLock(messageId, ()-> MessageContentLogClient.deleteMessage(messageId));
 			// the reason this is above the send queue is because in case where the user did not give sufficient permissions to
 			// the bot, (such as no send message permissions) the exceptions wouldn't block the deletion in the database.
 

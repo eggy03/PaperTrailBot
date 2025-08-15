@@ -1,0 +1,126 @@
+package org.papertrail.sdk.client;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.Unirest;
+import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.model.MessageContentResponse;
+import org.papertrail.sdk.model.ErrorResponse;
+import org.papertrail.utilities.EnvConfig;
+import org.tinylog.Logger;
+
+import java.time.LocalDateTime;
+
+public class MessageContentLogClient {
+
+    private MessageContentLogClient(){
+        throw  new IllegalStateException("Utility Class");
+    }
+
+    private static final String BASE_URL = EnvConfig.get("API_URL")+"api/v1/content/message";
+
+    public static ApiResult<MessageContentResponse, ErrorResponse> logMessage(String messageId, String messageContent, String authorId){
+
+        HttpResponse<String> response = Unirest.post(BASE_URL)
+                .header("Content-Type", "application/json")
+                .body(new MessageContentResponse(messageId, messageContent, authorId))
+                .asString();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        if(response.isSuccess()) {
+            try {
+                MessageContentResponse successResponse = mapper.readValue(response.getBody(), MessageContentResponse.class);
+                return new ApiResult<>(successResponse, null);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        } else {
+            try {
+                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
+                return new ApiResult<>(null, errorResponse);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        }
+
+    }
+
+    public static ApiResult<MessageContentResponse, ErrorResponse> retrieveMessage(String messageId){
+
+        HttpResponse<String> response = Unirest.get(BASE_URL+"/"+messageId)
+                .asString();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        if(response.isSuccess()) {
+            try {
+                MessageContentResponse successResponse = mapper.readValue(response.getBody(), MessageContentResponse.class);
+                return new ApiResult<>(successResponse, null);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        } else {
+            try {
+                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
+                return new ApiResult<>(null, errorResponse);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        }
+    }
+
+    public static ApiResult<MessageContentResponse, ErrorResponse> updateMessage(String messageId, String messageContent, String authorId){
+
+        HttpResponse<String> response = Unirest.put(BASE_URL)
+                .header("Content-Type", "application/json")
+                .body(new MessageContentResponse(messageId, messageContent, authorId))
+                .asString();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        if(response.isSuccess()) {
+            try {
+                MessageContentResponse successResponse = mapper.readValue(response.getBody(), MessageContentResponse.class);
+                return new ApiResult<>(successResponse, null);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        } else {
+            try {
+                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
+                return new ApiResult<>(null, errorResponse);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        }
+    }
+
+    public static ApiResult<MessageContentResponse, ErrorResponse> deleteMessage(String messageId){
+
+        HttpResponse<String> response = Unirest.delete(BASE_URL+"/"+messageId)
+                .asString();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        if(response.isSuccess()) {
+            return new ApiResult<>(new MessageContentResponse("0", "0", "0"), null);
+        } else {
+            try {
+                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
+                return new ApiResult<>(null, errorResponse);
+            } catch (JsonProcessingException e) {
+                Logger.error(e);
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+            }
+        }
+    }
+}
+
