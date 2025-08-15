@@ -11,26 +11,26 @@ import org.tinylog.Logger;
 
 import java.time.LocalDateTime;
 
-public class AuditLogRegistration {
+public class AuditLogSetup {
 
-    private AuditLogRegistration(){
+    private AuditLogSetup(){
         throw  new IllegalStateException("Utility Class");
     }
 
     private static final String BASE_URL = EnvConfig.get("API_URL");
 
-    public static ApiResponse<AuditLogRegistrationSuccessResponse, ErrorResponse> registerGuild(String guildId, String channelId){
+    public static ApiResponse<AuditLogSetupSuccessResponse, ErrorResponse> registerGuild(String guildId, String channelId){
 
        HttpResponse<String> response = Unirest.post(BASE_URL +"api/v1/log/audit")
                 .header("Content-Type", "application/json")
-                .body(new AuditLogRegistrationSuccessResponse(guildId, channelId))
+                .body(new AuditLogSetupSuccessResponse(guildId, channelId))
                .asString();
 
         ObjectMapper mapper = new ObjectMapper();
 
         if(response.isSuccess()) {
             try {
-                AuditLogRegistrationSuccessResponse successResponse = mapper.readValue(response.getBody(), AuditLogRegistrationSuccessResponse.class);
+                AuditLogSetupSuccessResponse successResponse = mapper.readValue(response.getBody(), AuditLogSetupSuccessResponse.class);
                 return new ApiResponse<>(successResponse, null);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
@@ -48,7 +48,7 @@ public class AuditLogRegistration {
 
     }
 
-    public static ApiResponse<AuditLogRegistrationSuccessResponse, ErrorResponse> getRegisteredGuild(String guildId){
+    public static ApiResponse<AuditLogSetupSuccessResponse, ErrorResponse> getRegisteredGuild(String guildId){
 
         HttpResponse<String> response = Unirest.get(BASE_URL +"api/v1/log/audit/"+guildId)
                .asString();
@@ -57,7 +57,7 @@ public class AuditLogRegistration {
 
         if(response.isSuccess()) {
             try {
-                AuditLogRegistrationSuccessResponse successResponse = mapper.readValue(response.getBody(), AuditLogRegistrationSuccessResponse.class);
+                AuditLogSetupSuccessResponse successResponse = mapper.readValue(response.getBody(), AuditLogSetupSuccessResponse.class);
                 return new ApiResponse<>(successResponse, null);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
@@ -74,18 +74,18 @@ public class AuditLogRegistration {
         }
     }
 
-    public static ApiResponse<AuditLogRegistrationSuccessResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
+    public static ApiResponse<AuditLogSetupSuccessResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
 
         HttpResponse<String> response = Unirest.put(BASE_URL +"api/v1/log/audit")
                 .header("Content-Type", "application/json")
-                .body(new AuditLogRegistrationSuccessResponse(guildId, channelId))
+                .body(new AuditLogSetupSuccessResponse(guildId, channelId))
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
 
         if(response.isSuccess()) {
             try {
-                AuditLogRegistrationSuccessResponse successResponse = mapper.readValue(response.getBody(), AuditLogRegistrationSuccessResponse.class);
+                AuditLogSetupSuccessResponse successResponse = mapper.readValue(response.getBody(), AuditLogSetupSuccessResponse.class);
                 return new ApiResponse<>(successResponse, null);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
@@ -102,7 +102,7 @@ public class AuditLogRegistration {
         }
     }
 
-    public static ApiResponse<Void, ErrorResponse> deleteRegisteredGuild(String guildId){
+    public static ApiResponse<AuditLogSetupSuccessResponse, ErrorResponse> deleteRegisteredGuild(String guildId){
 
         HttpResponse<String> response = Unirest.delete(BASE_URL +"api/v1/log/audit/"+guildId)
                 .asString();
@@ -110,7 +110,7 @@ public class AuditLogRegistration {
         ObjectMapper mapper = new ObjectMapper();
 
         if(response.isSuccess()) {
-            return new ApiResponse<>(null, null);
+            return new ApiResponse<>(new AuditLogSetupSuccessResponse("0", "0"), null);
         } else {
             try {
                 ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
