@@ -53,7 +53,7 @@ public class FireRun {
 		ConnectionInitializer ci = new ConnectionInitializer();
 		ShardManager manager = ci.getManager();
 
-		manager.addEventListener(new AuditLogSetupCommandListener(dc));
+		manager.addEventListener(new AuditLogSetupCommandListener());
 		manager.addEventListener(new AuditLogListener(dc, vThreadPool));
 
 		manager.addEventListener(new MessageLogSetupCommandListener(dc));

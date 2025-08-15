@@ -17,11 +17,11 @@ public class AuditLogRegistration {
         throw  new IllegalStateException("Utility Class");
     }
 
-    private static final String baseUrl = EnvConfig.get("API_URL");
+    private static final String BASE_URL = EnvConfig.get("API_URL");
 
     public static ApiResponse<AuditLogSuccessResponse, ErrorResponse> registerGuild(String guildId, String channelId){
 
-       HttpResponse<String> response = Unirest.post(baseUrl+"api/v1/log/audit")
+       HttpResponse<String> response = Unirest.post(BASE_URL +"api/v1/log/audit")
                 .header("Content-Type", "application/json")
                 .body(new AuditLogSuccessResponse(guildId, channelId))
                .asString();
@@ -50,7 +50,7 @@ public class AuditLogRegistration {
 
     public static ApiResponse<AuditLogSuccessResponse, ErrorResponse> getRegisteredGuild(String guildId){
 
-        HttpResponse<String> response = Unirest.get(baseUrl+"api/v1/log/audit/"+guildId)
+        HttpResponse<String> response = Unirest.get(BASE_URL +"api/v1/log/audit/"+guildId)
                .asString();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -76,7 +76,7 @@ public class AuditLogRegistration {
 
     public static ApiResponse<AuditLogSuccessResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
 
-        HttpResponse<String> response = Unirest.put(baseUrl+"api/v1/log/audit")
+        HttpResponse<String> response = Unirest.put(BASE_URL +"api/v1/log/audit")
                 .header("Content-Type", "application/json")
                 .body(new AuditLogSuccessResponse(guildId, channelId))
                 .asString();
@@ -104,7 +104,7 @@ public class AuditLogRegistration {
 
     public static ApiResponse<Void, ErrorResponse> deleteRegisteredGuild(String guildId){
 
-        HttpResponse<String> response = Unirest.delete(baseUrl+"api/v1/log/audit/"+guildId)
+        HttpResponse<String> response = Unirest.delete(BASE_URL +"api/v1/log/audit/"+guildId)
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
