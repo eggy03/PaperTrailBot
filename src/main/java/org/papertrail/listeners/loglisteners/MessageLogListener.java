@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
 import com.google.common.util.concurrent.Striped;
+import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -60,18 +61,19 @@ public class MessageLogListener extends ListenerAdapter {
 			return;
 		}
 
-		// get the guild id for which the event was fired
-		String guildId = event.getGuild().getId();
-		// Call the API to see if the guild is registered for Message Logging
-        ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
-
-		// if not registered, exit
-		if(guildRegistrationCheck.isError()) {
-			return;
-		}
-
-		// else log the message with its ID and author
 		vThreadPool.execute(()-> {
+
+            // get the guild id for which the event was fired
+            String guildId = event.getGuild().getId();
+            // Call the API to see if the guild is registered for Message Logging
+            ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+
+            // if not registered, exit
+            if(guildRegistrationCheck.isError()) {
+                return;
+            }
+
+            // else log the message with its ID and author
 			String messageId = event.getMessageId();
             String encryptedMessage = MessageEncryption.encrypt(event.getMessage().getContentRaw());
             String authorId = event.getAuthor().getId();
@@ -88,17 +90,18 @@ public class MessageLogListener extends ListenerAdapter {
 		if(event.getAuthor().isBot() || event.getAuthor().isSystem()) {
 			return;
 		}
-		
-		String guildId = event.getGuild().getId();
-        // Call the API to see if the guild is registered for Message Logging
-        ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
-
-        // if not registered, exit
-        if(guildRegistrationCheck.isError()) {
-            return;
-        }
 
 		vThreadPool.execute(()->{
+
+            String guildId = event.getGuild().getId();
+            // Call the API to see if the guild is registered for Message Logging
+            ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+
+            // if not registered, exit
+            if(guildRegistrationCheck.isError()) {
+                return;
+            }
+
 			// get the message id of the message which was updated
 			String messageId = event.getMessageId();
 
@@ -148,18 +151,19 @@ public class MessageLogListener extends ListenerAdapter {
 	}
 	
 	@Override
-	public void onMessageDelete(MessageDeleteEvent event) {
-			
-		String guildId = event.getGuild().getId();
-        // Call the API to see if the guild is registered for Message Logging
-        ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
-
-        // if not registered, exit
-        if(guildRegistrationCheck.isError()) {
-            return;
-        }
+	public void onMessageDelete(@NotNull MessageDeleteEvent event) {
 
 		vThreadPool.execute(()-> {
+
+            String guildId = event.getGuild().getId();
+            // Call the API to see if the guild is registered for Message Logging
+            ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+
+            // if not registered, exit
+            if(guildRegistrationCheck.isError()) {
+                return;
+            }
+
 			// get the message id of the message which was deleted
 			String messageId = event.getMessageId();
 
