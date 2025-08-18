@@ -50,8 +50,8 @@ In case of runtime errors, the bot may log basic diagnostic information such as 
 
 We take data protection seriously:
 - All sensitive data (e.g., message content) is encrypted before being saved.
-- No decryption keys are stored on our servers.
-- The database is securely hosted using Aiven PostgreSQL wiht UpCloud as it's provider.
+- Decryption keys are securely stored on servers which are used to decrypt the messages before being sent back to the intended discord server.
+- The database is securely hosted using Aiven PostgreSQL with UpCloud as it's provider.
 
 However, no method of transmission over the internet or method of electronic storage is 100% secure, and we cannot guarantee absolute security.
 

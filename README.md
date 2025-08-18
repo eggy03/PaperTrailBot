@@ -1,86 +1,24 @@
 # Overview
-PaperTrail is a free and open source, self-hostable Discord bot designed to deliver structured, reliable logging across all major audit and runtime events. It hooks into Discord's audit logs to cover for most of the audit log events and for events not covered by Audit Logs, it supplements them with real-time listeners to bridge gaps in native coverage (e.g. voice state, boosts, message edits and deletions, custom triggers).
+PaperTrail is a free and open source, privacy friendly Discord bot designed to deliver structured, reliable logging across all major audit and runtime events. It hooks into Discord's audit logs to cover for most of the audit log events and for events not covered by Audit Logs, it supplements them with real-time listeners to bridge gaps in native coverage (e.g. voice state, boosts, message edits and deletions, custom triggers).
 
 Key Features:
 
 - 🔍 Full audit log integration (supports over 50+ event types) and generic support for unknown types
-- 💬 Message logging  (edit, delete)
+- 💬 Encrypted Message logging  (edit, delete)
 - 👤 Member activity tracking (joins, leaves, kicks, bans, updates)
 - 🔊 Voice activity logging (join/leave, move)
 - 🚀 Server boost tracking
-- 🧱 Minimalist PostgreSQL schema with 30 day message deletion
+- 🧱 Auto-deletion of logged messages from our servers after 30 days
 
-> 🔐 While PaperTrail is designed to be self-hosted for maximum data ownership, a public instance is also available if preferred.
-> 
-> 📎 Discovery Link: https://discord.com/discovery/applications/1381658412550590475
+> 📎 Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
-# Self-Hosting Guide
+# Self-Hosting Guide (Coming Soon)
+The legacy version still supports self hosting. You may get the guide [here](https://github.com/Egg-03/PaperTrailBot/blob/legacy-v1.2.2/README.md).
+Since v2, the project has been split into two services:
+1) The core bot service
+2) A [Persistence API](https://github.com/Egg-03/PaperTrail-PersistenceAPI) service
 
-## Setting up the bot
-### Step 1: Get Required Secrets
-
-You will need four environment variables to run the bot:
-
-- `TOKEN` – Your Discord bot token from the [Discord Developer Portal](https://discord.com/developers/applications)
-- `DATABASEURL` – A PostgreSQL connection URL (format: `jdbc:postgresql://host:port/dbname?ssl=require&user=username&password=password`)
-- `MESSAGE_SECRET` - A randomly generated secret that will be used as a passphrase for encrypting and decrypting all the messages sent to and from the database respectively
-- `DEVELOPER_OR_HOSTER_ID` - This will be the Discord UserID of the host of this bot. This will allow the host to use the `/announcement` command to broadcast to all Audit-Logging channels registered in the database
-> 💡 You will receive the DATABASEURL from your database hosting provider once you've set up your database. This value is essential and should be kept secure.
-> 
-> 💡 You can use any passphrase generator to generate a MESSAGE_SECRET. Make sure to store it in a secure place.
-
-Create a `.env` file with the following:
-
-```env
-# .env file
-TOKEN=your-discord-application-token
-DATABASEURL=jdbc:postgresql://your-database-url
-MESSAGE_SECRET=your-secret
-DEVELOPER_OR_HOSTER_ID=your-id
-```
-
-> ⚠️ Never commit your `.env` file to version control. Add it to `.gitignore`:
-
-```gitignore
-.env
-```
-
-
-### Step 2: Deployment Options
-> Fork this repository to your GitHub account, connect it to your preferred cloud platform, and configure your environment variables in the platform. Some paltform services may also support adding secrets directly from your `.env` file.
-#### A. Cloud Platforms with GitHub + Docker Support
-
-- These can auto-deploy using the included `Dockerfile`
-
-#### B. Platforms with GitHub + Java Support (No Docker)
-
-- These can build the project using the `pom.xml` if JDK 21+ is available
-
-#### Build and Run (for local/manual deployment)
-
-If deploying manually or running locally:
-
-**Build the JAR:**
-
-```sh
-./mvnw clean package   # If using Maven Wrapper
-```
- OR
-```sh
-mvn clean package       # If Maven is installed globally
-```
-This creates a runnable JAR file in the `target/` folder, named `paper-trail-bot.jar`.
-
-**Run the JAR:**
-
-```sh
-java -jar target/paper-trail-bot.jar
-```
-
-> Ensure you have JDK 21 or later installed.
-
-> For local deployments, make sure your `.env` file containing the secrets is placed in the project's base directory
-
+The guide needs to be updated to reflect the changes
 
 # Privacy
 
@@ -91,6 +29,8 @@ PaperTrail is built with privacy-first principles. By default, it **does not log
 - Logs are automatically deleted after 30 days.
 - No personal data is used for analytics, profiling, or sold to third parties.
 - If requested, users can have their data deleted by ID.
+
+*Never post sensitive information in public channels. While PaperTrail encrypts all the data it receives, other bots may not.*
 
 [Read the full Privacy Policy](./PRIVACY.md)
 
