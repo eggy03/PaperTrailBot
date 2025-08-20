@@ -21,17 +21,25 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
-		switch(event.getName()) {
+        if(!event.getName().equals("auditlog")){
+            return;
+        }
 
-		case "auditlogchannel-set":
+        if(event.getSubcommandName()==null) {
+            return;
+        }
+
+		switch(event.getSubcommandName()) {
+
+		case "set":
 			setAuditLogging(event);
 			break;
 
-		case "auditlogchannel-view":
+		case "view":
 			retrieveAuditLoggingChannel(event);
 			break;
 
-		case "auditlogchannel-remove":
+		case "remove":
 			unsetAuditLogging(event);
 			break;
 

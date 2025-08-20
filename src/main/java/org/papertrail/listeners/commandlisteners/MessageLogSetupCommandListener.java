@@ -21,18 +21,26 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+
+        if(!event.getName().equals("messagelog")){
+            return;
+        }
+
+        if(event.getSubcommandName()==null) {
+            return;
+        }
 			
-		switch(event.getName()) {
+		switch(event.getSubcommandName()) {
 		
-		case "messagelogchannel-set":
+		case "set":
 			setMessageLogging(event);
 			break;
 			
-		case "messagelogchannel-view":
+		case "view":
 			retrieveMessageLoggingChannel(event);
 			break;
 			
-		case "messagelogchannel-remove":
+		case "remove":
 			unsetMessageLogging(event);
 			break;
 			
