@@ -17,7 +17,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Create the final Docker image using OpenJDK 21
-FROM openjdk:21-jdk
+FROM openjdk:21-jre-slim
 WORKDIR /app
 VOLUME /tmp
 
