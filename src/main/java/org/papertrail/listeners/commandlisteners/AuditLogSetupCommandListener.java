@@ -27,23 +27,31 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
-		switch(event.getName()) {
+        if(!event.getName().equals("auditlog")){
+            return;
+        }
 
-		case "auditlogchannel-set":
-			setAuditLogging(event);
-			break;
+        if(event.getSubcommandName()==null) {
+            return;
+        }
 
-		case "auditlogchannel-view":
-			retrieveAuditLoggingChannel(event);
-			break;
+        switch(event.getSubcommandName()) {
 
-		case "auditlogchannel-remove":
-			unsetAuditLogging(event);
-			break;
+            case "set":
+                setAuditLogging(event);
+                break;
 
-		default:
-			break;
-		}
+            case "view":
+                retrieveAuditLoggingChannel(event);
+                break;
+
+            case "remove":
+                unsetAuditLogging(event);
+                break;
+
+            default:
+                break;
+        }
 	}
 
 
@@ -135,20 +143,18 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 			// check if the channelId actually exists in the guild
 			// this is particularly useful when a channel that was set for logging may have been deleted
 			GuildChannel registeredChannel =  event.getJDA().getGuildChannelById(registeredChannelId);
-			if(registeredChannel==null) {
-				
-				EmbedBuilder eb = new EmbedBuilder();
-				eb.setTitle("📝 Audit Log Configuration");
-				eb.addField("⚠️ Channel Registration Check", "╰┈➤"+registeredChannelId+" does not exist. Please remove it using `/auditlogchannel-remove` and re-register using `/auditlogchannel-set`", false);
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("📝 Audit Log Configuration");
+            if(registeredChannel==null) {
+
+                eb.addField("⚠️ Channel Registration Check", "╰┈➤"+registeredChannelId+" does not exist. Please remove it using `/auditlogchannel-remove` and re-register using `/auditlogchannel-set`", false);
 				eb.setColor(Color.RED);
 				MessageEmbed mb = eb.build();
 				event.replyEmbeds(mb).setEphemeral(false).queue();
 				
 			} else {
-				
-				EmbedBuilder eb = new EmbedBuilder();
-				eb.setTitle("📝 Audit Log Configuration");
-				eb.setColor(Color.CYAN);
+
+                eb.setColor(Color.CYAN);
 				eb.addField("✅ Channel Registration Check", "╰┈➤"+registeredChannel.getAsMention()+ " is found to be registered as the audit log channel", false);
 				MessageEmbed mb = eb.build();
 				event.replyEmbeds(mb).setEphemeral(false).queue();

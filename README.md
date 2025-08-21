@@ -24,7 +24,6 @@ You will need four environment variables to run the bot:
 - `TOKEN` – Your Discord bot token from the [Discord Developer Portal](https://discord.com/developers/applications)
 - `DATABASEURL` – A PostgreSQL connection URL (format: `jdbc:postgresql://host:port/dbname?ssl=require&user=username&password=password`)
 - `MESSAGE_SECRET` - A randomly generated secret that will be used as a passphrase for encrypting and decrypting all the messages sent to and from the database respectively
-- `DEVELOPER_OR_HOSTER_ID` - This will be the Discord UserID of the host of this bot. This will allow the host to use the `/announcement` command to broadcast to all Audit-Logging channels registered in the database
 > 💡 You will receive the DATABASEURL from your database hosting provider once you've set up your database. This value is essential and should be kept secure.
 > 
 > 💡 You can use any passphrase generator to generate a MESSAGE_SECRET. Make sure to store it in a secure place.

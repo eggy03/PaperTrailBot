@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
 import com.google.common.util.concurrent.Striped;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.papertrail.database.AuthorAndMessageEntity;
 import org.papertrail.database.DatabaseConnector;
 import org.papertrail.database.Schema;
@@ -25,7 +27,7 @@ public class MessageLogListener extends ListenerAdapter {
 
 	private final DatabaseConnector dc;
 	private final Executor vThreadPool;
-	private final Striped<Lock> messageLocks = Striped.lock(8192);
+	private final Striped<@NonNull Lock> messageLocks = Striped.lock(8192);
 	private final AtomicLong activeLockCount = new AtomicLong(0);
 
 	public MessageLogListener(DatabaseConnector dc, Executor vThreadPool) {
@@ -57,22 +59,21 @@ public class MessageLogListener extends ListenerAdapter {
 			return;
 		}
 
-		// get the guild id for which the event was fired
-		String guildId = event.getGuild().getId();
-		// see if the guild id is registered in the database for logging
-
-		// if not registered, exit
-		if(!dc.getGuildDataAccess().isGuildRegistered(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE)) {
-			return;
-		}
-
 		// else if the registered guild id matches with the event fetched guild id, log the message with its ID and author
 		vThreadPool.execute(()-> {
+
+            // get the guild id for which the event was fired
+            String guildId = event.getGuild().getId();
+            // see if the guild id is registered in the database for logging
+
+            // if not registered, exit
+            if(!dc.getGuildDataAccess().isGuildRegistered(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE)) {
+                return;
+            }
+
 			String messageId = event.getMessageId();
 			withMessageLock(messageId, ()-> dc.getMessageDataAccess().logMessage(messageId, event.getMessage().getContentRaw(), event.getAuthor().getId()));
 		});
-
-
 	}
 	
 	@Override
@@ -81,13 +82,14 @@ public class MessageLogListener extends ListenerAdapter {
 		if(event.getAuthor().isBot() || event.getAuthor().isSystem()) {
 			return;
 		}
-		
-		String guildId = event.getGuild().getId();
-		if(!dc.getGuildDataAccess().isGuildRegistered(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE)) {
-			return;
-		}
 
 		vThreadPool.execute(()->{
+
+            String guildId = event.getGuild().getId();
+            if(!dc.getGuildDataAccess().isGuildRegistered(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE)) {
+                return;
+            }
+
 			// get the message id of the message which was updated
 			String messageId = event.getMessageId();
 
@@ -130,15 +132,15 @@ public class MessageLogListener extends ListenerAdapter {
 	}
 	
 	@Override
-	public void onMessageDelete(MessageDeleteEvent event) {
-			
-		String guildId = event.getGuild().getId();
-
-		if(!dc.getGuildDataAccess().isGuildRegistered(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE)) {
-			return;
-		}
+	public void onMessageDelete(@NotNull MessageDeleteEvent event) {
 
 		vThreadPool.execute(()-> {
+
+            String guildId = event.getGuild().getId();
+            if(!dc.getGuildDataAccess().isGuildRegistered(guildId, Schema.MESSAGE_LOG_REGISTRATION_TABLE)) {
+                return;
+            }
+
 			// get the message id of the message which was deleted
 			String messageId = event.getMessageId();
 

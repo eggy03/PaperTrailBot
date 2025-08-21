@@ -16,61 +16,56 @@ public class BotSetupCommandListener extends ListenerAdapter {
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
 		if (event.getName().equals("setup")) {
-			
-			EmbedBuilder eb = new EmbedBuilder();
-			eb.setTitle("🛠️ Setup Guide for " + ProjectInfo.APPNAME);
-			eb.setDescription("Welcome to **" + ProjectInfo.APPNAME + "**!\nHere's how to get started using the bot in your server.");
-			eb.setColor(Color.decode("#38e8bc"));
 
-			eb.addField("1️⃣ Register Audit Log Channel",
-					"- Use `/auditlogchannel-set` to **register the current channel** for receiving audit log updates.\n╰┈➤ User must have `Manage Server` permission.",
-					false);
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("🛠️ Setup Guide for " + ProjectInfo.APPNAME);
+            eb.setDescription("Welcome to **" + ProjectInfo.APPNAME + "**!\nHere's how to get started using the bot in your server.");
+            eb.setColor(Color.decode("#38e8bc"));
 
-			eb.addField("2️⃣ View Registered Audit Log Channel",
-					"- Use `/auditlogchannel-view` to **check which channel** is currently registered for audit logs.\nThis is helpful if you're unsure where the audit logs are going.\n╰┈➤ User must have `Manage Server` permission.",
-					false);
+            eb.addField("1️⃣ Register Audit Log Channel",
+                    "- Use `/auditlog set` to **register the current channel** for receiving audit log updates.\n╰┈➤ User must have `Manage Server` permission.",
+                    false);
 
-			eb.addField("3️⃣ Unregister Audit Log Channel",
-					"- Use `/auditlogchannel-remove` to **unset the audit log channel** if you wish to stop logging or switch to another one.\n╰┈➤ User must have `Manage Server` permission.",
-					false);
-			
-			eb.addBlankField(false);
-			
-			eb.addField("4️⃣ Register Message Log Channel",
-					"- Use `/messagelogchannel-set` to **register the current channel** for receiving message logs.\n╰┈➤ User must have the `Administrator` permission.",
-					false);
+            eb.addField("2️⃣ View Registered Audit Log Channel",
+                    "- Use `/auditlog view` to **check which channel** is currently registered for audit logs.\nThis is helpful if you're unsure where the audit logs are going.\n╰┈➤ User must have `Manage Server` permission.",
+                    false);
 
-			eb.addField("5️⃣ View Registered Message Log Channel",
-					"- Use `/messagelogchannel-view` to **check which channel** is currently registered for message logs.\nThis is helpful if you're unsure where the message logs are going.\n╰┈➤ User must have `Administrator` permission.",
-					false);
+            eb.addField("3️⃣ Unregister Audit Log Channel",
+                    "- Use `/auditlog remove` to **unset the audit log channel** if you wish to stop logging or switch to another one.\n╰┈➤ User must have `Manage Server` permission.",
+                    false);
 
-			eb.addField("6️⃣ Unregister Message Log Channel",
-					"- Use `/messagelogchannel-remove` to **unset the message log channel** if you wish to stop logging or switch to another one.\n╰┈➤ User must have `Administrator` permission.",
-					false);
-			
-			eb.addBlankField(false);
+            eb.addBlankField(false);
 
-			eb.addField("7️⃣ View Server Stats",
-					"- Use `/stats` to **get useful server information** like member count, channel count, and more.",
-					false);
+            eb.addField("4️⃣ Register Message Log Channel",
+                    "- Use `/messagelog set` to **register the current channel** for receiving message logs.\n╰┈➤ User must have the `Administrator` permission.",
+                    false);
 
-			eb.addField("8️⃣ Bot Information",
-					"- Use `/about` to **view bot details**, including author info and version.",
-					false);
-			
-			String tips = """
-					- Make sure the bot has view and message send permissions for the logging channel.
-					- Commands only work in servers (guilds), not in DMs.
-					- The bot will lose its configuration if kicked from the server.
-					- By default, all messages are encrypted and stored in the database for 30 days, after which the newer ones will replace the older ones.""";
-			
-			eb.addField("💡 Tips",tips,false);
-			eb.addField("📬 Need help?", "Create an issue on [GitHub](" + ProjectInfo.PROJECT_ISSUE_LINK+")", false);
-			eb.setFooter(ProjectInfo.APPNAME+" "+ProjectInfo.VERSION);
-			eb.setTimestamp(Instant.now());
+            eb.addField("5️⃣ View Registered Message Log Channel",
+                    "- Use `/messagelog view` to **check which channel** is currently registered for message logs.\nThis is helpful if you're unsure where the message logs are going.\n╰┈➤ User must have `Administrator` permission.",
+                    false);
 
-			MessageEmbed mb = eb.build();
-			event.replyEmbeds(mb).setEphemeral(false).queue();
+            eb.addField("6️⃣ Unregister Message Log Channel",
+                    "- Use `/messagelog remove` to **unset the message log channel** if you wish to stop logging or switch to another one.\n╰┈➤ User must have `Administrator` permission.",
+                    false);
+
+            eb.addBlankField(false);
+
+            eb.addField("7️⃣ View Server Stats",
+                    "- Use `/stats` to **get useful server information** like member count, channel count, and more.",
+                    false);
+
+            eb.addField("8️⃣ Bot Information",
+                    "- Use `/about` to **view bot details**, including author info and version.",
+                    false);
+
+            eb.addField("💡 Permission Check","- Use `/permcheck` to **see if the bot has required permissions** in the **server** and in the **current channel**.",false);
+
+            eb.addField("📬 Need help?", "Create an issue on [GitHub](" + ProjectInfo.PROJECT_ISSUE_LINK+")", false);
+            eb.setFooter(ProjectInfo.APPNAME+" "+ProjectInfo.VERSION);
+            eb.setTimestamp(Instant.now());
+
+            MessageEmbed mb = eb.build();
+            event.replyEmbeds(mb).setEphemeral(false).queue();
 		}
 	}
 }
