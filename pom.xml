@@ -69,39 +69,18 @@
          <version>4.2.9</version>
      </dependency>
   </dependencies>
-  
-<build>
+
+<build> <!-- use  mvn clean package spring-boot:repackage for building -->
+    <finalName>${project.artifactId}</finalName>
     <plugins>
         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.14.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>3.5.4</version>
+            <configuration>
+                <mainClass>org.papertrail.main.FireRun</mainClass>
+            </configuration>
         </plugin>
-        <plugin>
-  			<artifactId>maven-assembly-plugin</artifactId>
-  			<executions>
-    			<execution>
-      				<phase>package</phase>
-      				<goals>
-        				<goal>single</goal>
-      				</goals>
-    			</execution>
-  			</executions>
-  			<configuration>
-  				<!-- Set the final name for the assembly plugin's output -->
-                <finalName>${project.artifactId}</finalName>
-                <!-- Do not append the assembly ID (e.g., -jar-with-dependencies) -->
-                <appendAssemblyId>false</appendAssemblyId>
-    			<archive>
-      				<manifest>
-        				<addClasspath>true</addClasspath>
-        				<mainClass>org.papertrail.main.FireRun</mainClass>
-      				</manifest>
-    			</archive>
-    			<descriptorRefs>
-      				<descriptorRef>jar-with-dependencies</descriptorRef>
-    			</descriptorRefs>
-  			</configuration>
-		</plugin> 
     </plugins>
 </build>
 </project>
