@@ -11,6 +11,7 @@ import org.papertrail.utilities.EnvConfig;
 import org.tinylog.Logger;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 public class AuditLogClient {
 
@@ -35,7 +36,7 @@ public class AuditLogClient {
                 return new ApiResult<>(successResponse, null);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         } else {
             try {
@@ -43,7 +44,7 @@ public class AuditLogClient {
                 return new ApiResult<>(null, errorResponse);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         }
 
@@ -62,7 +63,7 @@ public class AuditLogClient {
                 return new ApiResult<>(successResponse, null);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         } else {
             try {
@@ -70,7 +71,7 @@ public class AuditLogClient {
                 return new ApiResult<>(null, errorResponse);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         }
     }
@@ -90,7 +91,7 @@ public class AuditLogClient {
                 return new ApiResult<>(successResponse, null);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         } else {
             try {
@@ -98,7 +99,7 @@ public class AuditLogClient {
                 return new ApiResult<>(null, errorResponse);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         }
     }
@@ -118,9 +119,8 @@ public class AuditLogClient {
                 return new ApiResult<>(null, errorResponse);
             } catch (JsonProcessingException e) {
                 Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getMessage(), LocalDateTime.now().toString()));
+                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         }
-
     }
 }
