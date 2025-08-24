@@ -40,12 +40,12 @@ public class MessageLogListener extends ListenerAdapter {
 	private void withMessageLock (String messageId, Runnable task) {
 		Lock lock = messageLocks.get(messageId);
 		lock.lock();
-		Logger.info("Lock acquired for message id: {} . Active lock count: {}", messageId, activeLockCount.incrementAndGet());
+		Logger.debug("Lock acquired for message id: {} . Active lock count: {}", messageId, activeLockCount.incrementAndGet());
 		try{
 			task.run();
 		} finally {
 			lock.unlock();
-			Logger.info("Lock released for message id: {} . Active lock count: {}", messageId, activeLockCount.decrementAndGet());
+			Logger.debug("Lock released for message id: {} . Active lock count: {}", messageId, activeLockCount.decrementAndGet());
 		}
 	}
 	
@@ -195,7 +195,7 @@ public class MessageLogListener extends ListenerAdapter {
 
 			// delete the message from the database
 			withMessageLock(messageId, ()-> MessageContentLogClient.deleteMessage(messageId));
-			// the reason this is above the send queue is because in case where the user did not give sufficient permissions to
+			// the reason this is above the send queue is that, in case where the user did not give sufficient permissions to
 			// the bot, (such as no send message permissions) the exceptions wouldn't block the deletion in the database.
 
 			// send the fetched deleted message to the logging channel
