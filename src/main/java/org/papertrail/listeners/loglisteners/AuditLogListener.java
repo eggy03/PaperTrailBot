@@ -1976,7 +1976,7 @@ public class AuditLogListener extends ListenerAdapter{
 		User executor = ale.getJDA().getUserById(ale.getTargetId());
 		String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 			
-		eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A message was pinned");
+		eb.setDescription("👤 **A message from **: "+mentionableExecutor+" was pinned");
 		eb.setColor(Color.PINK);
 		
 		eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -1996,7 +1996,7 @@ public class AuditLogListener extends ListenerAdapter{
 		User executor = ale.getJDA().getUserById(ale.getTargetId());
 		String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 				
-		eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A message was un-pinned");
+		eb.setDescription("👤 **A message from **: "+mentionableExecutor+" un-pinned");
 		eb.setColor(Color.MAGENTA);
 		
 		eb.addField("Action Type", String.valueOf(ale.getType()), true);
