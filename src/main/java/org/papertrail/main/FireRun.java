@@ -6,9 +6,6 @@ import java.security.Security;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kong.unirest.core.Unirest;
-import kong.unirest.jackson.JacksonObjectMapper;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.papertrail.cleanup.BotKickListener;
@@ -49,9 +46,6 @@ public class FireRun {
 	public static void main(String[] args) throws IOException {
 		
 		registerBouncyCastle();
-
-        // Use Jackson Object Mapper
-        Unirest.config().setObjectMapper(new JacksonObjectMapper(new ObjectMapper()));
 
 		ConnectionInitializer ci = new ConnectionInitializer();
 		ShardManager manager = ci.getManager();

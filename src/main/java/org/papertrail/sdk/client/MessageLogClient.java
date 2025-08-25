@@ -33,7 +33,7 @@ public class MessageLogClient {
     public static HttpServiceResponse<MessageLogResponse, ErrorResponse> getRegisteredGuild(String guildId){
 
         return HttpServiceEngine.makeRequest(
-                HttpMethod.POST,
+                HttpMethod.GET,
                 BASE_URL +"api/v1/log/message/"+guildId,
                 CONTENT_HEADER,
                 null,

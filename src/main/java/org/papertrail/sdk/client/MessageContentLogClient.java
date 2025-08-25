@@ -34,7 +34,7 @@ public class MessageContentLogClient {
     public static HttpServiceResponse<MessageContentResponse, ErrorResponse> retrieveMessage(String messageId){
 
         return HttpServiceEngine.makeRequest(
-                HttpMethod.POST,
+                HttpMethod.GET,
                 BASE_URL+"/"+messageId,
                 CONTENT_HEADER,
                 null,
@@ -58,8 +58,8 @@ public class MessageContentLogClient {
     public static HttpServiceResponse<Void, ErrorResponse> deleteMessage(String messageId) {
 
         return HttpServiceEngine.makeRequest(
-                HttpMethod.POST,
-                BASE_URL,
+                HttpMethod.DELETE,
+                BASE_URL+"/"+messageId,
                 CONTENT_HEADER,
                 null,
                 Void.class,
