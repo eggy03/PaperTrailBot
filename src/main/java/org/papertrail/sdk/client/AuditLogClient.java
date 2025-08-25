@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
+import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import org.papertrail.sdk.model.result.ApiResult;
 import org.papertrail.sdk.model.ErrorResponse;
 import org.papertrail.sdk.model.AuditLogResponse;
@@ -20,10 +21,13 @@ public class AuditLogClient {
     }
 
     private static final String BASE_URL = EnvConfig.get("API_URL");
+    private static final String API_KEY_NAME = "apikey";
+    private static final String API_KEY_VALUE = EnvConfig.get("API_KEY");
 
     public static ApiResult<AuditLogResponse, ErrorResponse> registerGuild(String guildId, String channelId){
 
        HttpResponse<String> response = Unirest.post(BASE_URL +"api/v1/log/audit")
+               .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .header("Content-Type", "application/json")
                 .body(new AuditLogResponse(guildId, channelId))
                .asString();
@@ -53,6 +57,7 @@ public class AuditLogClient {
     public static ApiResult<AuditLogResponse, ErrorResponse> getRegisteredGuild(String guildId){
 
         HttpResponse<String> response = Unirest.get(BASE_URL +"api/v1/log/audit/"+guildId)
+                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                .asString();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -79,6 +84,7 @@ public class AuditLogClient {
     public static ApiResult<AuditLogResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
 
         HttpResponse<String> response = Unirest.put(BASE_URL +"api/v1/log/audit")
+                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .header("Content-Type", "application/json")
                 .body(new AuditLogResponse(guildId, channelId))
                 .asString();
@@ -107,6 +113,7 @@ public class AuditLogClient {
     public static ApiResult<AuditLogResponse, ErrorResponse> deleteRegisteredGuild(String guildId){
 
         HttpResponse<String> response = Unirest.delete(BASE_URL +"api/v1/log/audit/"+guildId)
+                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
