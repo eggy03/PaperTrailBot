@@ -36,9 +36,6 @@ public class HttpServiceEngine {
         }
 
         if(response.isSuccess()) {
-            if (successResponseClass == Void.class || response.getBody() == null || response.getBody().isBlank()) {
-                return new HttpServiceResponse<>(null, null, true); // success, but nothing to map
-            }
             S success = gson.fromJson(response.getBody(), successResponseClass);
             return new HttpServiceResponse<>(success, null, true);
 
