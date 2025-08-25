@@ -3,7 +3,7 @@ package org.papertrail.listeners.commandlisteners;
 import java.awt.Color;
 import java.util.Objects;
 
-import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.http.HttpServiceResponse;
 import org.papertrail.sdk.model.ErrorResponse;
 import org.papertrail.sdk.client.AuditLogClient;
 import org.papertrail.sdk.model.AuditLogResponse;
@@ -60,8 +60,8 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
         // Call the API to register the guild and the channel
 		String channelIdToRegister = event.getChannel().asTextChannel().getId();
-        ApiResult<AuditLogResponse, ErrorResponse> guildRegistration = AuditLogClient.registerGuild(event.getGuild().getId(), channelIdToRegister);
-        if(guildRegistration.isSuccess()){
+        HttpServiceResponse<AuditLogResponse, ErrorResponse> guildRegistration = AuditLogClient.registerGuild(Objects.requireNonNull(event.getGuild()).getId(), channelIdToRegister);
+        if(guildRegistration.requestSuccess()){
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
@@ -95,28 +95,27 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		String guildId = Objects.requireNonNull(event.getGuild()).getId();
 
 		// Call the API to retrieve the registered channel
-        ApiResult<AuditLogResponse, ErrorResponse> guildRegistrationCheck = AuditLogClient.getRegisteredGuild(guildId);
+        HttpServiceResponse<AuditLogResponse, ErrorResponse> guildRegistrationCheck = AuditLogClient.getRegisteredGuild(guildId);
 
 		// if there is no channel_id for the given guild_id returned by the API, then inform
 		// the user of the same, else link the channel that has been registered
-		if (guildRegistrationCheck.isError()) {
-			
-			EmbedBuilder eb = new EmbedBuilder();
-			eb.setTitle("📝 Audit Log Configuration");
-			eb.addField("⚠️ Channel Registration Check", "╰┈➤"+"No channel has been registered for audit logs", false);
-			eb.setColor(Color.YELLOW);
-			MessageEmbed mb = eb.build();
-			event.replyEmbeds(mb).setEphemeral(false).queue();
-			
-		} else {
+		if (guildRegistrationCheck.requestSuccess()) {
 
             String registeredChannelId = guildRegistrationCheck.success().channelId();
-			GuildChannel registeredChannel =  event.getJDA().getGuildChannelById(registeredChannelId);
+            GuildChannel registeredChannel =  event.getJDA().getGuildChannelById(registeredChannelId);
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
             eb.setColor(Color.CYAN);
             eb.addField("✅ Channel Registration Check", "╰┈➤"+(registeredChannel!=null ? registeredChannel.getAsMention() : registeredChannelId)+ " is found to be registered as the audit log channel", false);
+            MessageEmbed mb = eb.build();
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+		} else {
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("📝 Audit Log Configuration");
+            eb.addField("⚠️ Channel Registration Check", "╰┈➤"+"No channel has been registered for audit logs", false);
+            eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
 		}
@@ -133,8 +132,8 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		
 		String guildId = Objects.requireNonNull(event.getGuild()).getId();
         // Call the API to unregister guild
-        ApiResult<AuditLogResponse, ErrorResponse> guildUnregistration = AuditLogClient.deleteRegisteredGuild(guildId);
-        if(guildUnregistration.isSuccess()) {
+        HttpServiceResponse<Void, ErrorResponse> guildUnregistration = AuditLogClient.deleteRegisteredGuild(guildId);
+        if(guildUnregistration.requestSuccess()) {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");

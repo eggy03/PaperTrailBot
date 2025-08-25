@@ -1,18 +1,13 @@
 package org.papertrail.sdk.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kong.unirest.core.HttpResponse;
-import kong.unirest.core.Unirest;
-import org.papertrail.sdk.model.result.ApiResult;
+import kong.unirest.core.HttpMethod;
+import org.papertrail.sdk.http.HttpServiceEngine;
+import org.papertrail.sdk.http.HttpServiceResponse;
 import org.papertrail.sdk.model.ErrorResponse;
-import org.papertrail.sdk.model.AuditLogResponse;
 import org.papertrail.sdk.model.MessageLogResponse;
 import org.papertrail.utilities.EnvConfig;
-import org.tinylog.Logger;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Map;
 
 public class MessageLogClient {
 
@@ -21,108 +16,54 @@ public class MessageLogClient {
     }
 
     private static final String BASE_URL = EnvConfig.get("API_URL");
+    private static final Map<String, String > CONTENT_HEADER = Map.of("Content-Type", "application/json");
 
-    public static ApiResult<MessageLogResponse, ErrorResponse> registerGuild(String guildId, String channelId){
+    public static HttpServiceResponse<MessageLogResponse, ErrorResponse> registerGuild(String guildId, String channelId){
 
-        HttpResponse<String> response = Unirest.post(BASE_URL +"api/v1/log/message")
-                .header("Content-Type", "application/json")
-                .body(new AuditLogResponse(guildId, channelId))
-                .asString();
+        return HttpServiceEngine.makeRequest(
+                HttpMethod.POST,
+                BASE_URL +"api/v1/log/message",
+                CONTENT_HEADER,
+                new MessageLogResponse(guildId, channelId),
+                MessageLogResponse.class,
+                ErrorResponse.class
+        );
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
+    public static HttpServiceResponse<MessageLogResponse, ErrorResponse> getRegisteredGuild(String guildId){
 
-        if(response.isSuccess()) {
-            try {
-                MessageLogResponse successResponse = mapper.readValue(response.getBody(), MessageLogResponse.class);
-                return new ApiResult<>(successResponse, null);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
-            }
-        } else {
-            try {
-                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
-                return new ApiResult<>(null, errorResponse);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
-            }
-        }
+        return HttpServiceEngine.makeRequest(
+                HttpMethod.POST,
+                BASE_URL +"api/v1/log/message/"+guildId,
+                CONTENT_HEADER,
+                null,
+                MessageLogResponse.class,
+                ErrorResponse.class
+        );
 
     }
 
-    public static ApiResult<MessageLogResponse, ErrorResponse> getRegisteredGuild(String guildId){
+    public static HttpServiceResponse<MessageLogResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
 
-        HttpResponse<String> response = Unirest.get(BASE_URL +"api/v1/log/message/"+guildId)
-                .asString();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        if(response.isSuccess()) {
-            try {
-                MessageLogResponse successResponse = mapper.readValue(response.getBody(), MessageLogResponse.class);
-                return new ApiResult<>(successResponse, null);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
-            }
-        } else {
-            try {
-                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
-                return new ApiResult<>(null, errorResponse);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
-            }
-        }
+        return HttpServiceEngine.makeRequest(
+                HttpMethod.PUT,
+                BASE_URL +"api/v1/log/message",
+                CONTENT_HEADER,
+                new MessageLogResponse(guildId, channelId),
+                MessageLogResponse.class,
+                ErrorResponse.class
+        );
     }
 
-    public static ApiResult<MessageLogResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
+    public static HttpServiceResponse<Void, ErrorResponse> deleteRegisteredGuild(String guildId){
 
-        HttpResponse<String> response = Unirest.put(BASE_URL +"api/v1/log/message")
-                .header("Content-Type", "application/json")
-                .body(new AuditLogResponse(guildId, channelId))
-                .asString();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        if(response.isSuccess()) {
-            try {
-                MessageLogResponse successResponse = mapper.readValue(response.getBody(), MessageLogResponse.class);
-                return new ApiResult<>(successResponse, null);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
-            }
-        } else {
-            try {
-                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
-                return new ApiResult<>(null, errorResponse);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
-            }
-        }
-    }
-
-    public static ApiResult<MessageLogResponse, ErrorResponse> deleteRegisteredGuild(String guildId){
-
-        HttpResponse<String> response = Unirest.delete(BASE_URL +"api/v1/log/message/"+guildId)
-                .asString();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        if(response.isSuccess()) {
-            return new ApiResult<>(new MessageLogResponse("0", "0"), null);
-        } else {
-            try {
-                ErrorResponse errorResponse = mapper.readValue(response.getBody(), ErrorResponse.class);
-                return new ApiResult<>(null, errorResponse);
-            } catch (JsonProcessingException e) {
-                Logger.error(e);
-                return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
-            }
-        }
-
+        return HttpServiceEngine.makeRequest(
+                HttpMethod.DELETE,
+                BASE_URL +"api/v1/log/message/"+guildId,
+                CONTENT_HEADER,
+                null,
+                Void.class,
+                ErrorResponse.class
+        );
     }
 }
