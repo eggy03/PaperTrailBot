@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.papertrail.sdk.client.MessageContentLogClient;
 import org.papertrail.sdk.client.MessageLogClient;
-import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.http.HttpServiceResponse;
 import org.papertrail.sdk.model.ErrorResponse;
 import org.papertrail.sdk.model.MessageContentResponse;
 import org.papertrail.sdk.model.MessageLogResponse;
@@ -66,10 +66,10 @@ public class MessageLogListener extends ListenerAdapter {
             // get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
             // Call the API to see if the guild is registered for Message Logging
-            ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+            HttpServiceResponse<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
 
             // if not registered, exit
-            if(guildRegistrationCheck.isError()) {
+            if(!guildRegistrationCheck.requestSuccess()) {
                 return;
             }
 
@@ -95,10 +95,10 @@ public class MessageLogListener extends ListenerAdapter {
 
             String guildId = event.getGuild().getId();
             // Call the API to see if the guild is registered for Message Logging
-            ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+            HttpServiceResponse<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
 
             // if not registered, exit
-            if(guildRegistrationCheck.isError()) {
+            if(!guildRegistrationCheck.requestSuccess()) {
                 return;
             }
 
@@ -106,8 +106,8 @@ public class MessageLogListener extends ListenerAdapter {
 			String messageId = event.getMessageId();
 
 			// fetch the old message object from the API
-			ApiResult<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
-            if(loggedMessageResponse.isError()){ // if message does not exist (it wasn't logged), then return
+			HttpServiceResponse<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
+            if(!loggedMessageResponse.requestSuccess()){ // if message does not exist (it wasn't logged), then return
                 return;
             }
             // Decrypt the fetched message
@@ -157,10 +157,10 @@ public class MessageLogListener extends ListenerAdapter {
 
             String guildId = event.getGuild().getId();
             // Call the API to see if the guild is registered for Message Logging
-            ApiResult<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+            HttpServiceResponse<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
 
             // if not registered, exit
-            if(guildRegistrationCheck.isError()) {
+            if(!guildRegistrationCheck.requestSuccess()) {
                 return;
             }
 
@@ -168,8 +168,8 @@ public class MessageLogListener extends ListenerAdapter {
 			String messageId = event.getMessageId();
 
             // fetch the old message object from the API
-            ApiResult<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
-            if(loggedMessageResponse.isError()){ // if message does not exist (it wasn't logged), then return
+            HttpServiceResponse<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
+            if(!loggedMessageResponse.requestSuccess()){ // if message does not exist (it wasn't logged), then return
                 return;
             }
 

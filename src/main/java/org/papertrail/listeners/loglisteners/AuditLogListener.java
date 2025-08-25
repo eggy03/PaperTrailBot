@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.papertrail.sdk.client.AuditLogClient;
-import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.http.HttpServiceResponse;
 import org.papertrail.sdk.model.AuditLogResponse;
 import org.papertrail.sdk.model.ErrorResponse;
 import org.papertrail.utilities.ColorFormatter;
@@ -50,9 +50,9 @@ public class AuditLogListener extends ListenerAdapter{
 		vThreadPool.execute(()->{
 
             // Call the API and see if the event came from a registered Guild
-            ApiResult<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
+            HttpServiceResponse<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
 
-            if(guildCheck.isSuccess()){
+            if(guildCheck.requestSuccess()){
                 AuditLogEntry ale = event.getEntry();
                 auditLogParser(event, ale, guildCheck.success().channelId());
             }

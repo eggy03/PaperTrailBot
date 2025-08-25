@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.papertrail.sdk.client.AuditLogClient;
-import org.papertrail.sdk.model.result.ApiResult;
+import org.papertrail.sdk.http.HttpServiceResponse;
 import org.papertrail.sdk.model.AuditLogResponse;
 import org.papertrail.sdk.model.ErrorResponse;
 import org.papertrail.utilities.DurationFormatter;
@@ -35,9 +35,9 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 		vThreadPool.execute(()->{
 			// guild member join and leave events are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
-            ApiResult<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
+            HttpServiceResponse<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
 
-            if(guildCheck.isError()){
+            if(!guildCheck.requestSuccess()){
                 return;
             }
 			String registeredChannelId = guildCheck.success().channelId();
@@ -70,9 +70,9 @@ public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 
 		vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
-            ApiResult<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
+            HttpServiceResponse<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
 
-            if(guildCheck.isError()){
+            if(!guildCheck.requestSuccess()){
                 return;
             }
 			String registeredChannelId = guildCheck.success().channelId();
