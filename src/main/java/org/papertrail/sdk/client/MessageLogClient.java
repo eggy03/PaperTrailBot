@@ -21,13 +21,10 @@ public class MessageLogClient {
     }
 
     private static final String BASE_URL = EnvConfig.get("API_URL");
-    private static final String API_KEY_NAME = "apikey";
-    private static final String API_KEY_VALUE = EnvConfig.get("API_KEY");
 
     public static ApiResult<MessageLogResponse, ErrorResponse> registerGuild(String guildId, String channelId){
 
         HttpResponse<String> response = Unirest.post(BASE_URL +"api/v1/log/message")
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .header("Content-Type", "application/json")
                 .body(new AuditLogResponse(guildId, channelId))
                 .asString();
@@ -57,7 +54,6 @@ public class MessageLogClient {
     public static ApiResult<MessageLogResponse, ErrorResponse> getRegisteredGuild(String guildId){
 
         HttpResponse<String> response = Unirest.get(BASE_URL +"api/v1/log/message/"+guildId)
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -84,7 +80,6 @@ public class MessageLogClient {
     public static ApiResult<MessageLogResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
 
         HttpResponse<String> response = Unirest.put(BASE_URL +"api/v1/log/message")
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .header("Content-Type", "application/json")
                 .body(new AuditLogResponse(guildId, channelId))
                 .asString();
@@ -113,7 +108,6 @@ public class MessageLogClient {
     public static ApiResult<MessageLogResponse, ErrorResponse> deleteRegisteredGuild(String guildId){
 
         HttpResponse<String> response = Unirest.delete(BASE_URL +"api/v1/log/message/"+guildId)
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -129,5 +123,6 @@ public class MessageLogClient {
                 return new ApiResult<>(null, new ErrorResponse(-1, e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now().toString(), Arrays.toString(e.getStackTrace())));
             }
         }
+
     }
 }

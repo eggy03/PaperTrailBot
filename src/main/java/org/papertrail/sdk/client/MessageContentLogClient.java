@@ -20,13 +20,10 @@ public class MessageContentLogClient {
     }
 
     private static final String BASE_URL = EnvConfig.get("API_URL")+"api/v1/content/message";
-    private static final String API_KEY_NAME = "apikey";
-    private static final String API_KEY_VALUE = EnvConfig.get("API_KEY");
 
     public static ApiResult<MessageContentResponse, ErrorResponse> logMessage(String messageId, String messageContent, String authorId){
 
         HttpResponse<String> response = Unirest.post(BASE_URL)
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .header("Content-Type", "application/json")
                 .body(new MessageContentResponse(messageId, messageContent, authorId))
                 .asString();
@@ -56,7 +53,6 @@ public class MessageContentLogClient {
     public static ApiResult<MessageContentResponse, ErrorResponse> retrieveMessage(String messageId){
 
         HttpResponse<String> response = Unirest.get(BASE_URL+"/"+messageId)
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -83,7 +79,6 @@ public class MessageContentLogClient {
     public static ApiResult<MessageContentResponse, ErrorResponse> updateMessage(String messageId, String messageContent, String authorId){
 
         HttpResponse<String> response = Unirest.put(BASE_URL)
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .header("Content-Type", "application/json")
                 .body(new MessageContentResponse(messageId, messageContent, authorId))
                 .asString();
@@ -112,7 +107,6 @@ public class MessageContentLogClient {
     public static ApiResult<MessageContentResponse, ErrorResponse> deleteMessage(String messageId){
 
         HttpResponse<String> response = Unirest.delete(BASE_URL+"/"+messageId)
-                .basicAuth(API_KEY_NAME, API_KEY_VALUE)
                 .asString();
 
         ObjectMapper mapper = new ObjectMapper();
