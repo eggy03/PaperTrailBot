@@ -16,8 +16,8 @@ COPY src ./src
 
 RUN ./mvnw clean package spring-boot:repackage
 
-# Stage 2: Create the final Docker image using OpenJDK 21
-FROM openjdk:21-jdk-slim
+# Stage 2: Create the final Docker image using IBM Semeru Runtime
+FROM ibm-semeru-runtimes:open-21-jre-focal AS runtime
 WORKDIR /app
 VOLUME /tmp
 
