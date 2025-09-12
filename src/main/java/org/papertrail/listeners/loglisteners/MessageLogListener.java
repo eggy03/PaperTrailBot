@@ -2,11 +2,13 @@ package org.papertrail.listeners.loglisteners;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
+import com.google.common.base.Splitter;
 import com.google.common.util.concurrent.Striped;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
@@ -111,6 +113,7 @@ public class MessageLogListener extends ListenerAdapter {
                 return;
             }
             // Decrypt the fetched message
+            assert loggedMessageResponse.success() != null;
             String decryptedMessage = MessageEncryption.decrypt(loggedMessageResponse.success().messageContent());
 			// fetch the updated message and its author from the event
 			String updatedMessage = event.getMessage().getContentRaw();
@@ -121,14 +124,18 @@ public class MessageLogListener extends ListenerAdapter {
 				return;
 			}
 
+            // Splitting is required because each field in an embed can display only up-to 1024 characters
+            assert decryptedMessage != null;
+            List<String> decryptedMessageSplits = Splitter.fixedLength(1024).splitToList(decryptedMessage);
+            List<String> updatedMessageSplits = Splitter.fixedLength(1024).splitToList(updatedMessage);
+
 			EmbedBuilder eb = new EmbedBuilder();
 			eb.setTitle("📝 Message Edit Event");
 			eb.setDescription("A message sent by "+event.getAuthor().getAsMention()+" has been edited in: "+event.getJumpUrl());
 			eb.setColor(Color.YELLOW);
 
-            assert decryptedMessage != null;
-            eb.addField("Old Message", decryptedMessage, false); // get only the message and not the author
-			eb.addField("New Message", updatedMessage, false);
+            decryptedMessageSplits.forEach(split -> eb.addField("Old Message", split, false)); // get only the message and not the author
+			updatedMessageSplits.forEach(split -> eb.addField("New Message", split, false));
 
 			eb.setFooter(event.getGuild().getName());
 			eb.setTimestamp(Instant.now());
@@ -145,7 +152,8 @@ public class MessageLogListener extends ListenerAdapter {
 			// this channel is where the logs will be sent to
 			// wrap the embed and send
 			MessageEmbed mb = eb.build();
-			String channelIdToSendTo = guildRegistrationCheck.success().channelId();
+            assert guildRegistrationCheck.success() != null;
+            String channelIdToSendTo = guildRegistrationCheck.success().channelId();
 			Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
 		});
 	}
@@ -174,21 +182,27 @@ public class MessageLogListener extends ListenerAdapter {
             }
 
 			// retrieve the channel id where the logs must be sent
-			String channelIdToSendTo = guildRegistrationCheck.success().channelId();
+            assert guildRegistrationCheck.success() != null;
+            String channelIdToSendTo = guildRegistrationCheck.success().channelId();
 
 			// retrieve the stored message and author in the database which was deleted
-			String deletedMessage = MessageEncryption.decrypt(loggedMessageResponse.success().messageContent());
+            assert loggedMessageResponse.success() != null;
+            String deletedMessage = MessageEncryption.decrypt(loggedMessageResponse.success().messageContent());
             String deletedMessageAuthorId = loggedMessageResponse.success().authorId();
 
 			User author = event.getJDA().getUserById(deletedMessageAuthorId);
 			String mentionableAuthor = (author !=null ? author.getAsMention() : deletedMessageAuthorId);
 
+            // Splitting is required because each field in an embed can display only up-to 1024 characters
+            assert deletedMessage != null;
+            List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(deletedMessage);
+
 			EmbedBuilder eb = new EmbedBuilder();
 			eb.setTitle("🗑️ Message Delete Event");
 			eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted");
 			eb.setColor(Color.RED);
-            assert deletedMessage != null;
-            eb.addField("Deleted Message", deletedMessage, false);
+
+            deletedMessageSplits.forEach(split-> eb.addField("Deleted Message", split, false));
 
 			eb.setFooter(event.getGuild().getName());
 			eb.setTimestamp(Instant.now());
