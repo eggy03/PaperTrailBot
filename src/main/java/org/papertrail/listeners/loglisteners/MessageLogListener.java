@@ -2,11 +2,13 @@ package org.papertrail.listeners.loglisteners;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
+import com.google.common.base.Splitter;
 import com.google.common.util.concurrent.Striped;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
@@ -107,13 +109,17 @@ public class MessageLogListener extends ListenerAdapter {
 				return;
 			}
 
+            // Splitting is required because each field in an embed can display only up-to 1024 characters
+            List<String> oldMessageSplits = Splitter.fixedLength(1024).splitToList(ame.messageContent());
+            List<String> updatedMessageSplits = Splitter.fixedLength(1024).splitToList(updatedMessage);
+
 			EmbedBuilder eb = new EmbedBuilder();
 			eb.setTitle("📝 Message Edit Event");
 			eb.setDescription("A message sent by "+event.getAuthor().getAsMention()+" has been edited in: "+event.getJumpUrl());
 			eb.setColor(Color.YELLOW);
 
-			eb.addField("Old Message", ame.messageContent(), false); // get only the message and not the author
-			eb.addField("New Message", updatedMessage, false);
+			oldMessageSplits.forEach(split -> eb.addField("Old Message", split, false)); // get only the message and not the author
+			updatedMessageSplits.forEach(split -> eb.addField("New Message", split, false));
 
 			eb.setFooter(event.getGuild().getName());
 			eb.setTimestamp(Instant.now());
@@ -157,11 +163,14 @@ public class MessageLogListener extends ListenerAdapter {
 			User author = event.getJDA().getUserById(ame.authorId());
 			String mentionableAuthor = (author !=null ? author.getAsMention() : ame.authorId());
 
+            // Splitting is required because each field in an embed can display only up-to 1024 characters
+            List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(ame.messageContent());
+
 			EmbedBuilder eb = new EmbedBuilder();
 			eb.setTitle("🗑️ Message Delete Event");
 			eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted");
 			eb.setColor(Color.RED);
-			eb.addField("Deleted Message", ame.messageContent(), false);
+			deletedMessageSplits.forEach(split-> eb.addField("Deleted Message", split, false));
 
 			eb.setFooter(event.getGuild().getName());
 			eb.setTimestamp(Instant.now());
