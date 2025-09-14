@@ -6,12 +6,12 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import io.vavr.control.Either;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.papertrail.sdk.client.AuditLogClient;
-import org.papertrail.sdk.http.HttpServiceResponse;
-import org.papertrail.sdk.model.AuditLogResponse;
-import org.papertrail.sdk.model.ErrorResponse;
+import org.papertrail.sdk.model.AuditLogObject;
+import org.papertrail.sdk.model.ErrorObject;
 import org.papertrail.utilities.ColorFormatter;
 import org.papertrail.utilities.DurationFormatter;
 import org.papertrail.utilities.GuildSystemChannelFlagResolver;
@@ -50,12 +50,11 @@ public class AuditLogListener extends ListenerAdapter{
 		vThreadPool.execute(()->{
 
             // Call the API and see if the event came from a registered Guild
-            HttpServiceResponse<AuditLogResponse, ErrorResponse> guildCheck = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
-
-            if(guildCheck.requestSuccess()){
+            Either<ErrorObject, AuditLogObject> response  = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
+            response.peek(success -> {
                 AuditLogEntry ale = event.getEntry();
-                auditLogParser(event, ale, guildCheck.success().channelId());
-            }
+                auditLogParser(event, ale, success.channelId());
+            });
 
 		});
 	}

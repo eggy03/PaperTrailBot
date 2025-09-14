@@ -58,10 +58,17 @@
 		 <artifactId>guava</artifactId>
 		 <version>33.4.8-jre</version>
 	 </dependency>
+     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-restclient -->
      <dependency>
-         <groupId>com.konghq</groupId>
-         <artifactId>unirest-java-core</artifactId>
-         <version>4.5.0</version>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-restclient</artifactId>
+         <version>4.0.0-M2</version>
+     </dependency>
+     <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
+     <dependency>
+         <groupId>io.vavr</groupId>
+         <artifactId>vavr</artifactId>
+         <version>0.10.7</version>
      </dependency>
      <dependency>
          <groupId>com.google.code.gson</groupId>

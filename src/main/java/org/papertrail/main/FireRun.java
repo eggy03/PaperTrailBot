@@ -65,11 +65,8 @@ public class FireRun {
 		manager.addEventListener(new BotInfoCommandListener());
 		manager.addEventListener(new BotSetupCommandListener());
 		manager.addEventListener(new RequiredPermissionCheckCommandListener());
-		
-		/*
-		 * This is required only to set up a cron-job to periodically ping this end-point so that
-		 * hosting services that spin down after inactivity don't do that anymore
-		 */
+
+        // Custom health check endpoint
 		HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/ping", new PingHandler());
         server.setExecutor(null); // creates a default executor

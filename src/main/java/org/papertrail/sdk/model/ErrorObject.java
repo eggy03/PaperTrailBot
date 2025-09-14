@@ -1,6 +1,6 @@
 package org.papertrail.sdk.model;
 
-public record ErrorResponse(
+public record ErrorObject(
         int status,
         String error,
         String message,

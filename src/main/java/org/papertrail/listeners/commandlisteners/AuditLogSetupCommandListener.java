@@ -3,10 +3,10 @@ package org.papertrail.listeners.commandlisteners;
 import java.awt.Color;
 import java.util.Objects;
 
-import org.papertrail.sdk.http.HttpServiceResponse;
-import org.papertrail.sdk.model.ErrorResponse;
+import io.vavr.control.Either;
+import org.papertrail.sdk.model.ErrorObject;
 import org.papertrail.sdk.client.AuditLogClient;
-import org.papertrail.sdk.model.AuditLogResponse;
+import org.papertrail.sdk.model.AuditLogObject;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -50,38 +50,41 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
 
 	private void setAuditLogging(SlashCommandInteractionEvent event) {
-		
-		// Only members with MANAGE_SERVER permissions should be able to use this command
-		Member member = event.getMember();
-		if (member == null || !member.hasPermission(Permission.MANAGE_SERVER)) {
-			event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
-			return;
-		}
+
+        // Only members with MANAGE_SERVER permissions should be able to use this command
+        Member member = event.getMember();
+        if (member == null || !member.hasPermission(Permission.MANAGE_SERVER)) {
+            event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
+            return;
+        }
 
         // Call the API to register the guild and the channel
-		String channelIdToRegister = event.getChannel().asTextChannel().getId();
-        HttpServiceResponse<AuditLogResponse, ErrorResponse> guildRegistration = AuditLogClient.registerGuild(Objects.requireNonNull(event.getGuild()).getId(), channelIdToRegister);
-        if(guildRegistration.requestSuccess()){
+        String guildId = Objects.requireNonNull(event.getGuild()).getId();
+        String channelId = event.getChannel().asTextChannel().getId();
+
+        Either<ErrorObject, AuditLogObject> response = AuditLogClient.registerGuild(guildId, channelId);
+        response.peek(success -> {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
-            eb.addField("✅ Channel Registration Success","╰┈➤"+"All audit log info will be logged here", false);
+            eb.addField("✅ Channel Registration Success", "╰┈➤" + "All audit log info will be logged here", false);
             eb.setColor(Color.GREEN);
             MessageEmbed mb = eb.build();
 
             event.replyEmbeds(mb).setEphemeral(false).queue();
-        } else {
+
+        }).peekLeft(failure -> {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
             eb.addField("❌ Channel Registration Failure", "╰┈➤" + "Channel could not be registered", false);
-            eb.addField("\uD83C\uDF10 API Response", "╰┈➤"+guildRegistration.error().message(), false);
+            eb.addField("\uD83C\uDF10 API Response", "╰┈➤" + failure.message(), false);
             eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
-            event.replyEmbeds(mb).setEphemeral(false).queue();
 
-        }
-	}
+            event.replyEmbeds(mb).setEphemeral(false).queue();
+        });
+    }
 
 	private void retrieveAuditLoggingChannel(SlashCommandInteractionEvent event) {
 		
@@ -95,13 +98,13 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		String guildId = Objects.requireNonNull(event.getGuild()).getId();
 
 		// Call the API to retrieve the registered channel
-        HttpServiceResponse<AuditLogResponse, ErrorResponse> guildRegistrationCheck = AuditLogClient.getRegisteredGuild(guildId);
+        Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(guildId);
 
 		// if there is no channel_id for the given guild_id returned by the API, then inform
 		// the user of the same, else link the channel that has been registered
-		if (guildRegistrationCheck.requestSuccess()) {
+        response.peek(success -> {
 
-            String registeredChannelId = guildRegistrationCheck.success().channelId();
+            String registeredChannelId = success.channelId();
             GuildChannel registeredChannel =  event.getJDA().getGuildChannelById(registeredChannelId);
 
             EmbedBuilder eb = new EmbedBuilder();
@@ -110,7 +113,8 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             eb.addField("✅ Channel Registration Check", "╰┈➤"+(registeredChannel!=null ? registeredChannel.getAsMention() : registeredChannelId)+ " is found to be registered as the audit log channel", false);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
-		} else {
+
+        }).peekLeft(failure -> {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
@@ -118,7 +122,8 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
-		}
+
+        });
 	}
 
 	private void unsetAuditLogging(SlashCommandInteractionEvent event) {
@@ -132,8 +137,8 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 		
 		String guildId = Objects.requireNonNull(event.getGuild()).getId();
         // Call the API to unregister guild
-        HttpServiceResponse<Void, ErrorResponse> guildUnregistration = AuditLogClient.deleteRegisteredGuild(guildId);
-        if(guildUnregistration.requestSuccess()) {
+        Either<ErrorObject, Void> response = AuditLogClient.deleteRegisteredGuild(guildId);
+        response.peek(success -> {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
@@ -143,17 +148,18 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
             event.replyEmbeds(mb).setEphemeral(false).queue();
 
-        } else {
+        }).peekLeft(failure -> {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
             eb.addField("❌ Channel Removal Failure", "╰┈➤"+"Channel could not be unset", false);
-            eb.addField("\uD83C\uDF10 API Response", "╰┈➤"+guildUnregistration.error().message(), false);
+            eb.addField("\uD83C\uDF10 API Response", "╰┈➤"+failure.message(), false);
             eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
 
             event.replyEmbeds(mb).setEphemeral(false).queue();
 
-        }
+        });
+
 	}
 }
