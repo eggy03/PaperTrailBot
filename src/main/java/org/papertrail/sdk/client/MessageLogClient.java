@@ -1,69 +1,72 @@
 package org.papertrail.sdk.client;
 
-import kong.unirest.core.HttpMethod;
+import io.vavr.control.Either;
+import org.jetbrains.annotations.NotNull;
 import org.papertrail.sdk.http.HttpServiceEngine;
-import org.papertrail.sdk.http.HttpServiceResponse;
-import org.papertrail.sdk.model.ErrorResponse;
-import org.papertrail.sdk.model.MessageLogResponse;
+import org.papertrail.sdk.model.ErrorObject;
+import org.papertrail.sdk.model.MessageLogObject;
 import org.papertrail.utilities.EnvConfig;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 
-import java.util.Map;
+import java.util.List;
+
 
 public class MessageLogClient {
 
-    private MessageLogClient(){
-        throw  new IllegalStateException("Utility Class");
+    private static final String BASE_URL = EnvConfig.get("API_URL");
+    private static final HttpHeaders httpHeaders = new HttpHeaders();
+    private static final HttpServiceEngine engine = HttpServiceEngine.getInstance();
+
+    static {
+        httpHeaders.put("Content-Type", List.of("application/json"));
     }
 
-    private static final String BASE_URL = EnvConfig.get("API_URL");
-    private static final Map<String, String > CONTENT_HEADER = Map.of("Content-Type", "application/json");
+    private MessageLogClient(){
+        throw new IllegalStateException("Client class");
+    }
 
-    public static HttpServiceResponse<MessageLogResponse, ErrorResponse> registerGuild(String guildId, String channelId){
+    @NotNull
+    public static Either<ErrorObject, MessageLogObject> registerGuild(String guildId, String channelId){
 
-        return HttpServiceEngine.makeRequest(
+        return engine.makeRequestWithBody(
                 HttpMethod.POST,
                 BASE_URL +"api/v1/log/message",
-                CONTENT_HEADER,
-                new MessageLogResponse(guildId, channelId),
-                MessageLogResponse.class,
-                ErrorResponse.class
+                httpHeaders,
+                new MessageLogObject(guildId, channelId),
+                MessageLogObject.class
         );
     }
 
-    public static HttpServiceResponse<MessageLogResponse, ErrorResponse> getRegisteredGuild(String guildId){
+    public static Either<ErrorObject, MessageLogObject> getRegisteredGuild(String guildId){
 
-        return HttpServiceEngine.makeRequest(
+        return engine.makeRequest(
                 HttpMethod.GET,
                 BASE_URL +"api/v1/log/message/"+guildId,
-                CONTENT_HEADER,
-                null,
-                MessageLogResponse.class,
-                ErrorResponse.class
+                httpHeaders,
+                MessageLogObject.class
         );
 
     }
 
-    public static HttpServiceResponse<MessageLogResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
+    public static Either<ErrorObject, MessageLogObject> updateRegisteredGuild(String guildId, String channelId){
 
-        return HttpServiceEngine.makeRequest(
+        return HttpServiceEngine.getInstance().makeRequestWithBody(
                 HttpMethod.PUT,
-                BASE_URL +"api/v1/log/message",
-                CONTENT_HEADER,
-                new MessageLogResponse(guildId, channelId),
-                MessageLogResponse.class,
-                ErrorResponse.class
+                BASE_URL + "api/v1/log/message",
+                httpHeaders,
+                new MessageLogObject(guildId, channelId),
+                MessageLogObject.class
         );
     }
 
-    public static HttpServiceResponse<Void, ErrorResponse> deleteRegisteredGuild(String guildId){
+    public static Either<ErrorObject, Void> deleteRegisteredGuild(String guildId){
 
-        return HttpServiceEngine.makeRequest(
+        return engine.makeRequest(
                 HttpMethod.DELETE,
                 BASE_URL +"api/v1/log/message/"+guildId,
-                CONTENT_HEADER,
-                null,
-                Void.class,
-                ErrorResponse.class
+                httpHeaders,
+                Void.class
         );
     }
 }

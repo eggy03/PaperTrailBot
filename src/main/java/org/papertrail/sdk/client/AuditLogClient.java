@@ -1,67 +1,72 @@
 package org.papertrail.sdk.client;
 
-import kong.unirest.core.HttpMethod;
+import io.vavr.control.Either;
+import org.jetbrains.annotations.NotNull;
 import org.papertrail.sdk.http.HttpServiceEngine;
-import org.papertrail.sdk.http.HttpServiceResponse;
-import org.papertrail.sdk.model.ErrorResponse;
-import org.papertrail.sdk.model.AuditLogResponse;
+import org.papertrail.sdk.model.AuditLogObject;
+import org.papertrail.sdk.model.ErrorObject;
 import org.papertrail.utilities.EnvConfig;
-import java.util.Map;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+
+import java.util.List;
 
 public class AuditLogClient {
 
-    private AuditLogClient(){
-        throw  new IllegalStateException("Utility Class");
+    private static final String BASE_URL = EnvConfig.get("API_URL");
+    private static final HttpHeaders httpHeaders = new HttpHeaders();
+    private static final HttpServiceEngine engine = HttpServiceEngine.getInstance();
+
+    static {
+        httpHeaders.put("Content-Type", List.of("application/json"));
     }
 
-    private static final String BASE_URL = EnvConfig.get("API_URL");
-    private static final Map<String, String > CONTENT_HEADER = Map.of("Content-Type", "application/json");
+    private AuditLogClient() {
+        throw new IllegalStateException("Client class");
+    }
 
-    public static HttpServiceResponse<AuditLogResponse, ErrorResponse> registerGuild(String guildId, String channelId){
+    @NotNull
+    public static Either<ErrorObject, AuditLogObject> registerGuild(String guildId, String channelId){
 
-        return HttpServiceEngine.makeRequest(
+        return engine.makeRequestWithBody(
                 HttpMethod.POST,
                 BASE_URL +"api/v1/log/audit",
-                CONTENT_HEADER,
-                new AuditLogResponse(guildId, channelId),
-                AuditLogResponse.class,
-                ErrorResponse.class
+                httpHeaders,
+                new AuditLogObject(guildId, channelId),
+                AuditLogObject.class
         );
     }
 
-    public static HttpServiceResponse<AuditLogResponse, ErrorResponse> getRegisteredGuild(String guildId){
+    @NotNull
+    public static Either<ErrorObject, AuditLogObject> getRegisteredGuild(String guildId){
 
-        return HttpServiceEngine.makeRequest(
+        return engine.makeRequest(
                 HttpMethod.GET,
                 BASE_URL +"api/v1/log/audit/"+guildId,
-                CONTENT_HEADER,
-                null,
-                AuditLogResponse.class,
-                ErrorResponse.class
+                httpHeaders,
+                AuditLogObject.class
         );
     }
 
-    public static HttpServiceResponse<AuditLogResponse, ErrorResponse> updateRegisteredGuild(String guildId, String channelId){
+    @NotNull
+    public static Either<ErrorObject, AuditLogObject> updateRegisteredGuild(String guildId, String channelId){
 
-        return HttpServiceEngine.makeRequest(
+        return engine.makeRequestWithBody(
                 HttpMethod.PUT,
                 BASE_URL +"api/v1/log/audit",
-                CONTENT_HEADER,
-                new AuditLogResponse(guildId, channelId),
-                AuditLogResponse.class,
-                ErrorResponse.class
+                httpHeaders,
+                new AuditLogObject(guildId, channelId),
+                AuditLogObject.class
         );
     }
 
-    public static HttpServiceResponse<Void, ErrorResponse> deleteRegisteredGuild(String guildId){
+    public static Either<ErrorObject, Void> deleteRegisteredGuild(String guildId){
 
-        return HttpServiceEngine.makeRequest(
+        return engine.makeRequest(
                 HttpMethod.DELETE,
                 BASE_URL +"api/v1/log/audit/"+guildId,
-                CONTENT_HEADER,
-                null,
-                Void.class,
-                ErrorResponse.class
+                httpHeaders,
+                Void.class
         );
     }
 }

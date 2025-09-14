@@ -1,47 +1,92 @@
 package org.papertrail.sdk.http;
 
-import com.google.gson.Gson;
-import kong.unirest.core.HttpMethod;
-import kong.unirest.core.HttpRequestWithBody;
-import kong.unirest.core.HttpResponse;
-import kong.unirest.core.Unirest;
+import io.vavr.control.Either;
 import org.jetbrains.annotations.NotNull;
+import org.papertrail.sdk.model.ErrorObject;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClient;
+import org.tinylog.Logger;
 
-import java.util.Map;
+import java.net.URI;
+import java.time.Instant;
 
 public class HttpServiceEngine {
 
+    private final RestClient client;
+    private static final HttpServiceEngine INSTANCE = new HttpServiceEngine();
+
     private HttpServiceEngine() {
-        throw new IllegalStateException("Utility Class");
+        client = RestClient.builder().build();
     }
 
-    public static <S, E> HttpServiceResponse<S, E> makeRequest (
+    public static HttpServiceEngine getInstance() {
+        return INSTANCE;
+    }
+
+    public  <S> Either<ErrorObject, S> makeRequest (
             @NotNull HttpMethod httpMethod,
-            @NotNull String url, Map<String, String> headerMap,
-            Object requestBody,
-            @NotNull Class<S> successResponseClass,
-            @NotNull Class<E> errorResponseClass) {
+            @NotNull String url,
+            @NotNull HttpHeaders headers,
+            @NotNull Class<S> successResponseClass) {
 
-        HttpRequestWithBody request = Unirest
-                .request(httpMethod.toString(), url)
-                .headers(headerMap);
+        try {
+            S body = client.method(httpMethod)
+                    .uri(URI.create(url))
+                    .headers(h-> h.addAll(headers))
+                    .retrieve()
+                    .toEntity(successResponseClass)
+                    .getBody();
 
-        Gson gson = new Gson();
-        HttpResponse<String> response;
-        if (requestBody != null) {
-            String jsonBody = gson.toJson(requestBody);
-            response = request.body(jsonBody).asString();
-        } else {
-            response = request.asString();
+            return Either.right(body);
+        } catch (HttpClientErrorException e) {
+            Logger.trace("Client error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
+            return Either.left(error);
+        } catch (HttpServerErrorException e) {
+            Logger.error("Server error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
+            return Either.left(error);
+        } catch (ResourceAccessException e) {
+            Logger.error("Resource access error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            ErrorObject error =  new ErrorObject(503, "API Unreachable", e.getMessage(), Instant.now().toString(), url);
+            return Either.left(error);
         }
+    }
 
-        if(response.isSuccess()) {
-            S success = gson.fromJson(response.getBody(), successResponseClass);
-            return new HttpServiceResponse<>(success, null, true);
+    public  <S> Either<ErrorObject, S> makeRequestWithBody (
+            @NotNull HttpMethod httpMethod,
+            @NotNull String url,
+            @NotNull HttpHeaders headers,
+            @NotNull Object requestBody,
+            @NotNull Class<S> successResponseClass) {
 
-        } else {
-            E error = gson.fromJson(response.getBody(), errorResponseClass);
-            return new HttpServiceResponse<>(null, error, false);
+        try {
+            S body = client.method(httpMethod)
+                    .uri(URI.create(url))
+                    .headers(h-> h.addAll(headers))
+                    .body(requestBody)
+                    .retrieve()
+                    .toEntity(successResponseClass)
+                    .getBody();
+
+            return Either.right(body);
+
+        } catch (HttpClientErrorException e) {
+            Logger.trace("Client error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
+            return Either.left(error);
+        } catch (HttpServerErrorException e) {
+            Logger.error("Server error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
+            return Either.left(error);
+        } catch (ResourceAccessException e) {
+            Logger.error("Resource access error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            ErrorObject error =  new ErrorObject(503, "API Unreachable", e.getMessage(), Instant.now().toString(), url);
+            return Either.left(error);
         }
     }
 }

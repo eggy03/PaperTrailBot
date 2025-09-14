@@ -10,6 +10,7 @@ import java.util.concurrent.locks.Lock;
 
 import com.google.common.base.Splitter;
 import com.google.common.util.concurrent.Striped;
+import io.vavr.control.Either;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
@@ -22,10 +23,9 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.papertrail.sdk.client.MessageContentLogClient;
 import org.papertrail.sdk.client.MessageLogClient;
-import org.papertrail.sdk.http.HttpServiceResponse;
-import org.papertrail.sdk.model.ErrorResponse;
-import org.papertrail.sdk.model.MessageContentResponse;
-import org.papertrail.sdk.model.MessageLogResponse;
+import org.papertrail.sdk.model.ErrorObject;
+import org.papertrail.sdk.model.MessageContentObject;
+import org.papertrail.sdk.model.MessageLogObject;
 import org.papertrail.utilities.MessageEncryption;
 import org.tinylog.Logger;
 
@@ -68,22 +68,15 @@ public class MessageLogListener extends ListenerAdapter {
             // get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
             // Call the API to see if the guild is registered for Message Logging
-            HttpServiceResponse<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+            Either<ErrorObject, MessageLogObject> response = MessageLogClient.getRegisteredGuild(guildId);
+            response.peek(success -> {
+                String messageId = event.getMessageId();
+                String encryptedMessage = MessageEncryption.encrypt(event.getMessage().getContentRaw());
+                String authorId = event.getAuthor().getId();
 
-            // if not registered, exit
-            if(!guildRegistrationCheck.requestSuccess()) {
-                return;
-            }
-
-            // else log the message with its ID and author
-			String messageId = event.getMessageId();
-            String encryptedMessage = MessageEncryption.encrypt(event.getMessage().getContentRaw());
-            String authorId = event.getAuthor().getId();
-
-			withMessageLock(messageId, ()-> MessageContentLogClient.logMessage(messageId, encryptedMessage, authorId));
+                withMessageLock(messageId, ()-> MessageContentLogClient.logMessage(messageId, encryptedMessage, authorId));
+            });
 		});
-
-
 	}
 	
 	@Override
@@ -95,66 +88,62 @@ public class MessageLogListener extends ListenerAdapter {
 
 		vThreadPool.execute(()->{
 
+            // Get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
+            // get the message id of the message which was updated
+            String messageId = event.getMessageId();
             // Call the API to see if the guild is registered for Message Logging
-            HttpServiceResponse<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+            Either<ErrorObject, MessageLogObject> response = MessageLogClient.getRegisteredGuild(guildId);
+            response.peek(success -> {
 
-            // if not registered, exit
-            if(!guildRegistrationCheck.requestSuccess()) {
-                return;
-            }
+                // retrieve the channel id where the logs must be sent
+                String channelIdToSendTo = success.channelId();
 
-			// get the message id of the message which was updated
-			String messageId = event.getMessageId();
+                // fetch the old message object from the API
+                Either<ErrorObject, MessageContentObject>  updatedMessageObject = MessageContentLogClient.retrieveMessage(messageId);
+                updatedMessageObject.peek(content -> {
+                    // Decrypt the fetched message
+                    String decryptedMessage = MessageEncryption.decrypt(content.messageContent());
+                    // fetch the updated message and its author from the event
+                    String updatedMessage = event.getMessage().getContentRaw();
 
-			// fetch the old message object from the API
-			HttpServiceResponse<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
-            if(!loggedMessageResponse.requestSuccess()){ // if message does not exist (it wasn't logged), then return
-                return;
-            }
-            // Decrypt the fetched message
-            assert loggedMessageResponse.success() != null;
-            String decryptedMessage = MessageEncryption.decrypt(loggedMessageResponse.success().messageContent());
-			// fetch the updated message and its author from the event
-			String updatedMessage = event.getMessage().getContentRaw();
+                    // Ignore events where the message content wasn't edited (e.g., pin, embed resolve, thread creates and updates)
+                    // This is required since MessageUpdateEvent is triggered in case of pins and embed resolves with no change to content
+                    if(updatedMessage.equals(decryptedMessage)) {
+                        return;
+                    }
 
-			// Ignore events where the message content wasn't edited (e.g., pin, embed resolve, thread creates and updates)
-			// This is required since MessageUpdateEvent is triggered in case of pins and embed resolves with no change to content
-			if(updatedMessage.equals(decryptedMessage)) {
-				return;
-			}
+                    // Splitting is required because each field in an embed can display only up-to 1024 characters
+                    assert decryptedMessage != null;
+                    List<String> decryptedMessageSplits = Splitter.fixedLength(1024).splitToList(decryptedMessage);
+                    List<String> updatedMessageSplits = Splitter.fixedLength(1024).splitToList(updatedMessage);
 
-            // Splitting is required because each field in an embed can display only up-to 1024 characters
-            assert decryptedMessage != null;
-            List<String> decryptedMessageSplits = Splitter.fixedLength(1024).splitToList(decryptedMessage);
-            List<String> updatedMessageSplits = Splitter.fixedLength(1024).splitToList(updatedMessage);
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setTitle("📝 Message Edit Event");
+                    eb.setDescription("A message sent by "+event.getAuthor().getAsMention()+" has been edited in: "+event.getJumpUrl());
+                    eb.setColor(Color.YELLOW);
 
-			EmbedBuilder eb = new EmbedBuilder();
-			eb.setTitle("📝 Message Edit Event");
-			eb.setDescription("A message sent by "+event.getAuthor().getAsMention()+" has been edited in: "+event.getJumpUrl());
-			eb.setColor(Color.YELLOW);
+                    decryptedMessageSplits.forEach(split -> eb.addField("Old Message", split, false)); // get only the message and not the author
+                    updatedMessageSplits.forEach(split -> eb.addField("New Message", split, false));
 
-            decryptedMessageSplits.forEach(split -> eb.addField("Old Message", split, false)); // get only the message and not the author
-			updatedMessageSplits.forEach(split -> eb.addField("New Message", split, false));
+                    eb.setFooter(event.getGuild().getName());
+                    eb.setTimestamp(Instant.now());
+                    // update the database with the new message
+                    withMessageLock(messageId, ()->
+                            MessageContentLogClient.updateMessage(
+                                    messageId, MessageEncryption.encrypt(updatedMessage), event.getAuthor().getId()
+                            )
+                    );
+                    // the reason this is above the send queue is that in case where the user did not give sufficient permissions to
+                    // the bot, the error responses wouldn't block the update of the message in the database.
 
-			eb.setFooter(event.getGuild().getName());
-			eb.setTimestamp(Instant.now());
-			// update the database with the new message
-			withMessageLock(messageId, ()->
-                    MessageContentLogClient.updateMessage(
-                            messageId, MessageEncryption.encrypt(updatedMessage), event.getAuthor().getId()
-                    )
-            );
-			// the reason this is above the send queue is that in case where the user did not give sufficient permissions to
-			// the bot, the error responses wouldn't block the update of the message in the database.
-
-			// fetch the channel id from the database
-			// this channel is where the logs will be sent to
-			// wrap the embed and send
-			MessageEmbed mb = eb.build();
-            assert guildRegistrationCheck.success() != null;
-            String channelIdToSendTo = guildRegistrationCheck.success().channelId();
-			Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+                    // fetch the channel id from the database
+                    // this channel is where the logs will be sent to
+                    // wrap the embed and send
+                    MessageEmbed mb = eb.build();
+                    Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+                });
+            });
 		});
 	}
 	
@@ -163,58 +152,53 @@ public class MessageLogListener extends ListenerAdapter {
 
 		vThreadPool.execute(()-> {
 
+            // Get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
+            // get the message id of the message which was deleted
+            String messageId = event.getMessageId();
+
             // Call the API to see if the guild is registered for Message Logging
-            HttpServiceResponse<MessageLogResponse, ErrorResponse> guildRegistrationCheck = MessageLogClient.getRegisteredGuild(guildId);
+            Either<ErrorObject, MessageLogObject> response = MessageLogClient.getRegisteredGuild(guildId);
+            response.peek(success -> {
 
-            // if not registered, exit
-            if(!guildRegistrationCheck.requestSuccess()) {
-                return;
-            }
+                // retrieve the channel id where the logs must be sent
+                String channelIdToSendTo = success.channelId();
 
-			// get the message id of the message which was deleted
-			String messageId = event.getMessageId();
+                // fetch the old message object from the API
+                Either<ErrorObject, MessageContentObject> deletedMessageObject = MessageContentLogClient.retrieveMessage(messageId);
+                deletedMessageObject.peek(content -> {
 
-            // fetch the old message object from the API
-            HttpServiceResponse<MessageContentResponse, ErrorResponse> loggedMessageResponse = MessageContentLogClient.retrieveMessage(messageId);
-            if(!loggedMessageResponse.requestSuccess()){ // if message does not exist (it wasn't logged), then return
-                return;
-            }
+                    // retrieve the stored message and author in the database which was deleted
+                    String deletedMessage = MessageEncryption.decrypt(content.messageContent());
+                    String deletedMessageAuthorId = content.authorId();
 
-			// retrieve the channel id where the logs must be sent
-            assert guildRegistrationCheck.success() != null;
-            String channelIdToSendTo = guildRegistrationCheck.success().channelId();
+                    User author = event.getJDA().getUserById(deletedMessageAuthorId);
+                    String mentionableAuthor = (author !=null ? author.getAsMention() : deletedMessageAuthorId);
 
-			// retrieve the stored message and author in the database which was deleted
-            assert loggedMessageResponse.success() != null;
-            String deletedMessage = MessageEncryption.decrypt(loggedMessageResponse.success().messageContent());
-            String deletedMessageAuthorId = loggedMessageResponse.success().authorId();
+                    // Splitting is required because each field in an embed can display only up-to 1024 characters
+                    assert deletedMessage != null;
+                    List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(deletedMessage);
 
-			User author = event.getJDA().getUserById(deletedMessageAuthorId);
-			String mentionableAuthor = (author !=null ? author.getAsMention() : deletedMessageAuthorId);
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setTitle("🗑️ Message Delete Event");
+                    eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted");
+                    eb.setColor(Color.RED);
 
-            // Splitting is required because each field in an embed can display only up-to 1024 characters
-            assert deletedMessage != null;
-            List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(deletedMessage);
+                    deletedMessageSplits.forEach(split-> eb.addField("Deleted Message", split, false));
 
-			EmbedBuilder eb = new EmbedBuilder();
-			eb.setTitle("🗑️ Message Delete Event");
-			eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted");
-			eb.setColor(Color.RED);
+                    eb.setFooter(event.getGuild().getName());
+                    eb.setTimestamp(Instant.now());
 
-            deletedMessageSplits.forEach(split-> eb.addField("Deleted Message", split, false));
+                    // delete the message from the database
+                    withMessageLock(messageId, ()-> MessageContentLogClient.deleteMessage(messageId));
+                    // the reason this is above the send queue is that, in case where the user did not give sufficient permissions to
+                    // the bot, (such as no send message permissions) the exceptions wouldn't block the deletion in the database.
 
-			eb.setFooter(event.getGuild().getName());
-			eb.setTimestamp(Instant.now());
-
-			// delete the message from the database
-			withMessageLock(messageId, ()-> MessageContentLogClient.deleteMessage(messageId));
-			// the reason this is above the send queue is that, in case where the user did not give sufficient permissions to
-			// the bot, (such as no send message permissions) the exceptions wouldn't block the deletion in the database.
-
-			// send the fetched deleted message to the logging channel
-			MessageEmbed mb = eb.build();
-			Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+                    // send the fetched deleted message to the logging channel
+                    MessageEmbed mb = eb.build();
+                    Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+                });
+            });
 		});
 	}
 }
