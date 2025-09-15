@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.egg.papertrail</groupId>
   <artifactId>paper-trail-bot</artifactId>
-  <version>1.2.2</version>
+  <version>2.0.0</version>
   <name>PaperTrail</name>
   <description>A simple bot for logging all user actions</description>
   <properties>
@@ -38,21 +38,6 @@
     	<artifactId>dotenv-java</artifactId>
     	<version>3.2.0</version>
  	</dependency>
- 	<dependency>
-  		<groupId>com.zaxxer</groupId>
-  		<artifactId>HikariCP</artifactId>
- 	 	<version>6.3.0</version>
-	</dependency>
-    <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>42.7.7</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.jooq</groupId>
-    	<artifactId>jooq</artifactId>
-    	<version>3.20.5</version>
-	</dependency>
     <dependency>
     	<groupId>org.apache.commons</groupId>
     	<artifactId>commons-lang3</artifactId>
@@ -73,40 +58,36 @@
 		 <artifactId>guava</artifactId>
 		 <version>33.4.8-jre</version>
 	 </dependency>
+     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-restclient -->
+     <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-restclient</artifactId>
+         <version>4.0.0-M2</version>
+     </dependency>
+     <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
+     <dependency>
+         <groupId>io.vavr</groupId>
+         <artifactId>vavr</artifactId>
+         <version>0.10.7</version>
+     </dependency>
+     <dependency>
+         <groupId>com.google.code.gson</groupId>
+         <artifactId>gson</artifactId>
+         <version>2.13.1</version>
+     </dependency>
   </dependencies>
-  
-<build>
+
+<build> <!-- use  mvn clean package spring-boot:repackage for building -->
+    <finalName>${project.artifactId}</finalName>
     <plugins>
         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.14.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>3.5.4</version>
+            <configuration>
+                <mainClass>org.papertrail.main.FireRun</mainClass>
+            </configuration>
         </plugin>
-        <plugin>
-  			<artifactId>maven-assembly-plugin</artifactId>
-  			<executions>
-    			<execution>
-      				<phase>package</phase>
-      				<goals>
-        				<goal>single</goal>
-      				</goals>
-    			</execution>
-  			</executions>
-  			<configuration>
-  				<!-- Set the final name for the assembly plugin's output -->
-                <finalName>${project.artifactId}</finalName>
-                <!-- Do not append the assembly ID (e.g., -jar-with-dependencies) -->
-                <appendAssemblyId>false</appendAssemblyId>
-    			<archive>
-      				<manifest>
-        				<addClasspath>true</addClasspath>
-        				<mainClass>org.papertrail.main.FireRun</mainClass>
-      				</manifest>
-    			</archive>
-    			<descriptorRefs>
-      				<descriptorRef>jar-with-dependencies</descriptorRef>
-    			</descriptorRefs>
-  			</configuration>
-		</plugin> 
     </plugins>
 </build>
 </project>

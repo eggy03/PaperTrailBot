@@ -9,8 +9,6 @@ import java.util.concurrent.Executors;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.papertrail.cleanup.BotKickListener;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.listeners.commandlisteners.AnnouncementCommandListener;
 import org.papertrail.listeners.commandlisteners.BotInfoCommandListener;
 import org.papertrail.listeners.commandlisteners.ServerStatCommandListener;
 import org.papertrail.listeners.commandlisteners.BotSetupCommandListener;
@@ -48,33 +46,27 @@ public class FireRun {
 	public static void main(String[] args) throws IOException {
 		
 		registerBouncyCastle();
-		
-		DatabaseConnector dc = new DatabaseConnector();
-		
+
 		ConnectionInitializer ci = new ConnectionInitializer();
 		ShardManager manager = ci.getManager();
 
-		manager.addEventListener(new AuditLogSetupCommandListener(dc));
-		manager.addEventListener(new AuditLogListener(dc, vThreadPool));
+		manager.addEventListener(new AuditLogSetupCommandListener());
+		manager.addEventListener(new AuditLogListener(vThreadPool));
 
-		manager.addEventListener(new MessageLogSetupCommandListener(dc));
-		manager.addEventListener(new MessageLogListener(dc, vThreadPool));
+		manager.addEventListener(new MessageLogSetupCommandListener());
+		manager.addEventListener(new MessageLogListener(vThreadPool));
 
-		manager.addEventListener(new GuildVoiceListener(dc, vThreadPool));
-		manager.addEventListener(new GuildMemberJoinAndLeaveListener(dc, vThreadPool));
-		manager.addEventListener(new ServerBoostListener(dc, vThreadPool));
-		manager.addEventListener(new BotKickListener(dc, vThreadPool));
+		manager.addEventListener(new GuildVoiceListener(vThreadPool));
+		manager.addEventListener(new GuildMemberJoinAndLeaveListener(vThreadPool));
+		manager.addEventListener(new ServerBoostListener(vThreadPool));
+		manager.addEventListener(new BotKickListener(vThreadPool));
 
 		manager.addEventListener(new ServerStatCommandListener());
 		manager.addEventListener(new BotInfoCommandListener());
 		manager.addEventListener(new BotSetupCommandListener());
-		manager.addEventListener(new AnnouncementCommandListener(dc));
 		manager.addEventListener(new RequiredPermissionCheckCommandListener());
-		
-		/*
-		 * This is required only to set up a cron-job to periodically ping this end-point so that
-		 * hosting services that spin down after inactivity don't do that anymore
-		 */
+
+        // Custom health check endpoint
 		HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/ping", new PingHandler());
         server.setExecutor(null); // creates a default executor

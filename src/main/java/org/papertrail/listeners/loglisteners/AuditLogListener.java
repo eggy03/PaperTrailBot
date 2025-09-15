@@ -6,10 +6,12 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import io.vavr.control.Either;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
+import org.papertrail.sdk.client.AuditLogClient;
+import org.papertrail.sdk.model.AuditLogObject;
+import org.papertrail.sdk.model.ErrorObject;
 import org.papertrail.utilities.ColorFormatter;
 import org.papertrail.utilities.DurationFormatter;
 import org.papertrail.utilities.GuildSystemChannelFlagResolver;
@@ -37,10 +39,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class AuditLogListener extends ListenerAdapter{
 
 	private final Executor vThreadPool;
-	private final DatabaseConnector dc;
 
-	public AuditLogListener(DatabaseConnector dc, Executor vThreadPool) {
-		this.dc=dc;
+	public AuditLogListener(Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 
@@ -48,15 +48,14 @@ public class AuditLogListener extends ListenerAdapter{
 	public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
 
 		vThreadPool.execute(()->{
-			// this will return a non-null text id if a channel was previously registered in the database
-			String registeredChannelId=dc.getGuildDataAccess().retrieveRegisteredChannel(event.getGuild().getId(), Schema.AUDIT_LOG_TABLE);
 
-			if(registeredChannelId==null ||registeredChannelId.isBlank()) {
-				return;
-			}
+            // Call the API and see if the event came from a registered Guild
+            Either<ErrorObject, AuditLogObject> response  = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
+            response.peek(success -> {
+                AuditLogEntry ale = event.getEntry();
+                auditLogParser(event, ale, success.channelId());
+            });
 
-			AuditLogEntry ale = event.getEntry();
-			auditLogParser(event, ale, registeredChannelId);
 		});
 	}
 
@@ -1976,7 +1975,7 @@ public class AuditLogListener extends ListenerAdapter{
 		User executor = ale.getJDA().getUserById(ale.getTargetId());
 		String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 			
-		eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A message was pinned");
+		eb.setDescription("👤 **A message from **: "+mentionableExecutor+" was pinned");
 		eb.setColor(Color.PINK);
 		
 		eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -1996,7 +1995,7 @@ public class AuditLogListener extends ListenerAdapter{
 		User executor = ale.getJDA().getUserById(ale.getTargetId());
 		String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 				
-		eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A message was un-pinned");
+		eb.setDescription("👤 **A message from **: "+mentionableExecutor+" un-pinned");
 		eb.setColor(Color.MAGENTA);
 		
 		eb.addField("Action Type", String.valueOf(ale.getType()), true);

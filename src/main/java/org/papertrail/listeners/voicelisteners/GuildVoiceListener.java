@@ -5,24 +5,23 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import io.vavr.control.Either;
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.database.DatabaseConnector;
-import org.papertrail.database.Schema;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.papertrail.sdk.client.AuditLogClient;
+import org.papertrail.sdk.model.AuditLogObject;
+import org.papertrail.sdk.model.ErrorObject;
 
 public class GuildVoiceListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
-	private final DatabaseConnector dc;
 
-	public GuildVoiceListener(DatabaseConnector dc, Executor vThreadPool) {
-		this.dc=dc;
+	public GuildVoiceListener(Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 	
@@ -30,49 +29,51 @@ public class GuildVoiceListener extends ListenerAdapter {
 	public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
 
 		vThreadPool.execute(()->{
-			// this will return a non-null text id if a channel was previously registered in
-			// the database
+
 			// guild voice events are mapped to audit log table
-			String registeredChannelId = dc.getGuildDataAccess().retrieveRegisteredChannel(event.getGuild().getId(), Schema.AUDIT_LOG_TABLE);
+            // Call the API and see if the event came from a registered Guild
+            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
 
-			if (registeredChannelId == null || registeredChannelId.isBlank()) {
-				return;
-			}
+            response.peek(success -> {
 
-			EmbedBuilder eb = new EmbedBuilder();
-			eb.setTitle("🔊 Voice Activity Log");
+                String registeredChannelId = success.channelId();
 
-			Member member = event.getMember();
-			AudioChannel left = event.getOldValue(); // can be null if user joined for first time
-			AudioChannel joined = event.getNewValue(); // can be null if user left
+                EmbedBuilder eb = new EmbedBuilder();
+                eb.setTitle("🔊 Voice Activity Log");
 
-			if(left==null && joined!=null) {
-				// User has joined a vc
-				eb.setDescription("A Member has joined a voice channel");
-				eb.setColor(Color.GREEN);
-				eb.addField("✅ Member Joined", "╰┈➤"+member.getAsMention()+" joined the voice channel "+joined.getAsMention(), false);
-			}
+                Member member = event.getMember();
+                AudioChannel left = event.getOldValue(); // can be null if user joined for first time
+                AudioChannel joined = event.getNewValue(); // can be null if user left
 
-			if (left != null && joined != null) {
-				// Moved from one channel to another
-				eb.setDescription("A Member has switched voice channels");
-				eb.setColor(Color.YELLOW);
-				eb.addField("🔄 Member Switched Channels", "╰┈➤"+member.getAsMention()+" joined the switched from channel "+left.getAsMention()+ " to "+joined.getAsMention(), false);
-			}
+                if(left==null && joined!=null) {
+                    // User has joined a vc
+                    eb.setDescription("A Member has joined a voice channel");
+                    eb.setColor(Color.GREEN);
+                    eb.addField("✅ Member Joined", "╰┈➤"+member.getAsMention()+" joined the voice channel "+joined.getAsMention(), false);
+                }
 
-			if (left!=null && joined==null) {
-				// User disconnected voluntarily (or was disconnected by a moderator)
-				eb.setDescription("A Member has left a voice channel");
-				eb.setColor(Color.RED);
-				eb.addField("❌ Member Left A Voice Channel", "╰┈➤"+member.getAsMention()+" left the voice channel "+left.getAsMention(), false);
-			}
+                if (left != null && joined != null) {
+                    // Moved from one channel to another
+                    eb.setDescription("A Member has switched voice channels");
+                    eb.setColor(Color.YELLOW);
+                    eb.addField("🔄 Member Switched Channels", "╰┈➤"+member.getAsMention()+" joined the switched from channel "+left.getAsMention()+ " to "+joined.getAsMention(), false);
+                }
 
-			eb.setFooter("Voice Activity Detection");
-			eb.setTimestamp(Instant.now());
+                if (left!=null && joined==null) {
+                    // User disconnected voluntarily (or was disconnected by a moderator)
+                    eb.setDescription("A Member has left a voice channel");
+                    eb.setColor(Color.RED);
+                    eb.addField("❌ Member Left A Voice Channel", "╰┈➤"+member.getAsMention()+" left the voice channel "+left.getAsMention(), false);
+                }
 
-			MessageEmbed mb = eb.build();
+                eb.setFooter("Voice Activity Detection");
+                eb.setTimestamp(Instant.now());
 
-			Objects.requireNonNull(event.getGuild().getTextChannelById(registeredChannelId)).sendMessageEmbeds(mb).queue();
+                MessageEmbed mb = eb.build();
+
+                Objects.requireNonNull(event.getGuild().getTextChannelById(registeredChannelId)).sendMessageEmbeds(mb).queue();
+            });
+
 		});
 	}
 }
