@@ -80,7 +80,7 @@ To request access or deletion, please contact us using the method below.
 
 For privacy-related questions or GDPR requests:
 - GitHub: [Submit an issue or discussion](https://github.com/Egg-03/PaperTrailBot/issues)
-- Email: `eggzerothree@proton.me`
+- Email: `egg03@duck.com`
 
 ---
 
