@@ -1,5 +1,7 @@
 # Privacy Policy
 
+**Data Controller:** This project is maintained by [@Egg-03](https://github.com/Egg-03).  
+
 This Discord bot was built as an open source project with a privacy-first mindset. The Service is provided at no cost and is intended for use as-is.
 
 This page is used to inform users regarding our policies with the collection, use, and disclosure of information for anyone choosing to use the bot.
@@ -8,19 +10,28 @@ If you choose to use this bot in your Discord server, you agree to the collectio
 
 ---
 
+## Scope of This Policy
+
+This Privacy Policy applies **only** to the official hosted instance of this bot that is managed by [@Egg-03](https://github.com/Egg-03).  
+The official instance can be identified by its **Discord Application ID: `1381658412550590475`**.  
+
+If you or someone else self-hosts the bot, that instance is operated independently and is **not covered by this Privacy Policy**. In those cases, data handling is the sole responsibility of the self-host.
+
+---
+
 ## Information Collection and Use
 
 The bot only stores data when specific features are explicitly enabled by server administrators:
 
 ### If **Message Logging** is enabled:
-- Encrypted message content (not readable by us)
+- Message Content (encrypted at rest, only decrypted when sending logs back to your Discord server)
 - Message ID
 - Author ID (Discord user ID)
 - Channel ID
 - Guild ID
-- Timestamp (created_at)
+- Timestamp
 
-Message content is encrypted before storage and cannot be decrypted by the bot operator.
+Message content is never stored in plain text and is not used for analytics or shared outside of your server.
 
 ### If **only Audit Logging** is enabled:
 - Guild ID
@@ -34,9 +45,10 @@ The stored data is used solely for server moderation purposes.
 
 ## Data Retention
 
-- All stored message data is automatically deleted after **30 days**.
+- All stored message data is automatically deleted after **30 days**. When message data is deleted, both the encrypted content and associated metadata are permanently removed from the database.
 - No data is permanently retained or used for analytics.
 - Configuration data (e.g., log channel IDs) is kept until the server administrator removes it or disables the feature.
+- Server administrators can also request immediate deletion of all stored data for their guild by contacting us.
 
 ---
 
@@ -50,8 +62,7 @@ In case of runtime errors, the bot may log basic diagnostic information such as 
 
 We take data protection seriously:
 - All sensitive data (e.g., message content) is encrypted before being saved.
-- Decryption keys are securely stored on servers which are used to decrypt the messages before being sent back to the intended discord server.
-- The database is securely hosted using Aiven PostgreSQL with UpCloud as it's provider.
+- Decryption keys are securely managed and are only used to deliver logs back to your Discord server. They are never used for analytics or operator access.
 
 However, no method of transmission over the internet or method of electronic storage is 100% secure, and we cannot guarantee absolute security.
 
