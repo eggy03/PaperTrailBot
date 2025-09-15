@@ -17,6 +17,8 @@ Key Features:
 > Please note that this is only for advanced users who want to self host this bot
 > 
 > A pre-hosted instance is already available: https://discord.com/discovery/applications/1381658412550590475
+>
+> It is recommended that you deploy the [Persistence API](https://github.com/Egg-03/PaperTrail-PersistenceAPI?tab=readme-ov-file#papertrail-persistenceapi) service before deploying the bot itself since the bot relies on the URL of the service to communicate
 
 ## v1.2.2 Legacy
 Checkout the guide for hosting the legacy version [here](https://github.com/Egg-03/PaperTrailBot/blob/legacy-v1.2.2/README.md).
@@ -46,15 +48,16 @@ Fork this repository to your GitHub account, connect it to your preferred cloud 
 
 #### Cloud Platforms with GitHub + Docker Support
 - These can auto-deploy using the included `Dockerfile`
+- Optional: The bot exposes a `/ping` endpoint which can be used by platforms to periodically check for it's health
 
 #### Locally
 - You can also test it locally by building and running using the `Dockerfile`
 - Navigate your terminal to the repository and execute the following commands
   
-  ``
+  ```
   docker build -t papertrail-bot .
   docker run --env-file .env papertrail-bot
-  ``
+  ```
 
 # Privacy
 
