@@ -32,7 +32,7 @@ To read the guide on deploying the Persistence API Service, click [here](https:/
 
 ### Step 1: Get Required Secrets
 
-You will need four environment variables to run the bot:
+You will need the following environment variables to run the bot:
 
 | Variable         | Description                                                                                              |
 | ---------------- | -------------------------------------------------------------------------------------------------------- |
