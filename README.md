@@ -58,6 +58,12 @@ Fork this repository to your GitHub account, connect it to your preferred cloud 
   docker build -t papertrail-bot .
   docker run --env-file .env papertrail-bot
   ```
+  
+#### Healthcheck Endpoint
+The bot exposes a `/ping` endpoint on port **8080**.  
+This endpoint simply returns `200 OK` and is intended for platforms or uptime monitors to check if the bot is alive.
+
+> Note: This is **not a public API** and serves no other function beyond health monitoring.
 
 # Privacy
 
