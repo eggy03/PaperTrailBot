@@ -1,5 +1,5 @@
 # Overview
-PaperTrail is a free and open source, privacy friendly Discord bot designed to deliver structured, reliable logging across all major audit and runtime events. It hooks into Discord's audit logs to cover for most of the audit log events and for events not covered by Audit Logs, it supplements them with real-time listeners to bridge gaps in native coverage (e.g. voice state, boosts, message edits and deletions, custom triggers).
+PaperTrail is a free and open source, self-hostable and privacy friendly Discord bot designed to deliver structured, reliable logging across all major audit and runtime events. It hooks into Discord's audit logs to cover for most of the audit log events and for events not covered by Audit Logs, it supplements them with real-time listeners to bridge gaps in native coverage (e.g. voice state, boosts, message edits and deletions, custom triggers).
 
 Key Features:
 
@@ -8,17 +8,53 @@ Key Features:
 - 👤 Member activity tracking (joins, leaves, kicks, bans, updates)
 - 🔊 Voice activity logging (join/leave, move)
 - 🚀 Server boost tracking
-- 🧱 Auto-deletion of logged messages from our servers after 30 days
+- 🧱 Auto-deletion of logged messages after 30 days
 
 > 📎 Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
-# Self-Hosting Guide (Coming Soon)
-The legacy version still supports self hosting. You may get the guide [here](https://github.com/Egg-03/PaperTrailBot/blob/legacy-v1.2.2/README.md).
+# Self-Hosting Guide
+> [!IMPORTANT]
+> Please note that this is only for advanced users who want to self host this bot
+> 
+> A pre-hosted instance is already available: https://discord.com/discovery/applications/1381658412550590475
+
+## v1.2.2 Legacy
+Checkout the guide for hosting the legacy version [here](https://github.com/Egg-03/PaperTrailBot/blob/legacy-v1.2.2/README.md).
+
+## V2 and above
 Since v2, the project has been split into two services:
 1) The core bot service
 2) A [Persistence API](https://github.com/Egg-03/PaperTrail-PersistenceAPI) service
 
-The guide needs to be updated to reflect the changes
+The following guide shows how to set up the bot service
+
+To read the guide on deploying the Persistence API Service, click [here](https://github.com/Egg-03/PaperTrail-PersistenceAPI?tab=readme-ov-file#papertrail-persistenceapi)
+
+### Step 1: Get Required Secrets
+
+You will need four environment variables to run the bot:
+
+| Variable         | Description                                                                                              |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| `TOKEN`          | Discord application bot token (from the [Developer Portal](https://discord.com/developers/applications)) |
+| `MESSAGE_SECRET` | Random secret string for encrypting/decrypting messages (generate yourself)                              |
+| `API_URL`        | Internal URL of the Persistence API (e.g., `http://persistence:8080`)                                    |
+
+### Step 2: Deployment Options
+
+Fork this repository to your GitHub account, connect it to your preferred cloud platform, and configure your environment variables in the platform. Some paltform services may also support adding secrets directly from your `.env` file.
+
+#### Cloud Platforms with GitHub + Docker Support
+- These can auto-deploy using the included `Dockerfile`
+
+#### Locally
+- You can also test it locally by building and running using the `Dockerfile`
+- Navigate your terminal to the repository and execute the following commands
+  
+  ``
+  docker build -t papertrail-bot .
+  docker run --env-file .env papertrail-bot
+  ``
 
 # Privacy
 
