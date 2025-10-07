@@ -112,7 +112,7 @@ public class AuditLogListener extends ListenerAdapter{
 		case MEMBER_VOICE_KICK -> formatMemberVoiceKick(event, ale, channelIdToSendTo);
 		case MEMBER_VOICE_MOVE -> formatMemberVoiceMove(event, ale, channelIdToSendTo);
 		
-		// this seemingly don't trigger properly, or are unreliable
+		// these seemingly don't trigger properly, or are unreliable
 		case MESSAGE_BULK_DELETE -> formatGeneric(event, ale, channelIdToSendTo);
 		case MESSAGE_CREATE -> formatGeneric(event, ale, channelIdToSendTo);
 		case MESSAGE_DELETE -> formatGeneric(event, ale, channelIdToSendTo);
@@ -1980,7 +1980,7 @@ public class AuditLogListener extends ListenerAdapter{
 		
 		eb.addField("Action Type", String.valueOf(ale.getType()), true);
 		eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-		
+
 		eb.setFooter("Audit Log Entry ID: "+ale.getId());
 		eb.setTimestamp(ale.getTimeCreated());
 
