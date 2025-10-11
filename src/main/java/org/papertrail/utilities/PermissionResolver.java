@@ -2,6 +2,9 @@ package org.papertrail.utilities;
 
 import java.util.Map;
 
+/**
+ @see <a href="https://discord.com/developers/docs/topics/permissions">Discord Permissions</a>
+ */
 public class PermissionResolver {
 	
 	private static final Map<Long, String> PERMISSION_MAP = Map.ofEntries(
@@ -30,7 +33,7 @@ public class PermissionResolver {
 	        Map.entry(1L << 22, "MUTE_MEMBERS"),
 	        Map.entry(1L << 23, "DEAFEN_MEMBERS"),
 	        Map.entry(1L << 24, "MOVE_MEMBERS"),
-	        Map.entry(1L << 25, "USE_VOICE_ACTIVITY_DETECTION"),
+	        Map.entry(1L << 25, "USE_VAD"),
 	        Map.entry(1L << 26, "CHANGE_NICKNAME"),
 	        Map.entry(1L << 27, "MANAGE_NICKNAMES"),
 	        Map.entry(1L << 28, "MANAGE_ROLES"),
@@ -54,7 +57,8 @@ public class PermissionResolver {
 	        Map.entry(1L << 46, "SEND_VOICE_MESSAGES"),
 	        
 	        Map.entry(1L << 49, "SEND_POLLS"),
-	        Map.entry(1L << 50, "USE_EXTERNAL_APPS")
+	        Map.entry(1L << 50, "USE_EXTERNAL_APPS"),
+            Map.entry(1L << 51, "PIN_MESSAGES")
 			);
 	
 	private PermissionResolver() {

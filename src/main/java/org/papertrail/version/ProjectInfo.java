@@ -7,9 +7,9 @@ public class ProjectInfo {
 	}
 	
 	public static final String APPNAME = "PaperTrail";
-	public static final String VERSION = "v2.0.0";
-	public static final String PROJECT_LINK = "https://github.com/Egg-03/PaperTrailBot";
-	public static final String PROJECT_ISSUE_LINK="https://github.com/Egg-03/PaperTrailBot/issues";
+	public static final String VERSION = "v2.0.1";
+	public static final String PROJECT_LINK = "https://github.com/eggy03/PaperTrailBot";
+	public static final String PROJECT_ISSUE_LINK="https://github.com/eggy03/PaperTrailBot/issues";
 	
 	public static final String PRIVACY = "https://github.com/Egg-03/PaperTrailBot/blob/main/PRIVACY.md";
 	public static final String TERMS = "https://github.com/Egg-03/PaperTrailBot/blob/main/TERMS.md";
