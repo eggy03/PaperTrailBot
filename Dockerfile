@@ -1,5 +1,5 @@
 # Importing JDK and copying required files
-FROM openjdk:21-jdk AS build
+FROM eclipse-temurin:21 AS build
 WORKDIR /app
 
 # Copy Maven wrapper
