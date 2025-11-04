@@ -261,7 +261,7 @@ public class AuditLogListener extends ListenerAdapter{
 
 			case "inviter_id":
 				User inviter = ale.getJDA().getUserById(String.valueOf(oldValue));
-				eb.addField("👤 Invite Deleted By", "╰┈➤"+(inviter != null ? inviter.getAsMention() : "`Unknown`"), false);
+				eb.addField("👤 Invite Originally Created By", "╰┈➤"+(inviter != null ? inviter.getAsMention() : "`Unknown`"), false);
 				break;
 
 			case "temporary":
