@@ -7,7 +7,7 @@ public class ProjectInfo {
 	}
 	
 	public static final String APPNAME = "PaperTrail";
-	public static final String VERSION = "v2.0.1";
+	public static final String VERSION = "v2.0.2";
 	public static final String PROJECT_LINK = "https://github.com/eggy03/PaperTrailBot";
 	public static final String PROJECT_ISSUE_LINK="https://github.com/eggy03/PaperTrailBot/issues";
 	
