@@ -20,14 +20,22 @@ public class DurationFormatter {
 			long secondsLong = Long.parseLong(seconds.toString());
 			if (secondsLong == 0L) return "No Limits";
 			Duration d = Duration.ofSeconds(secondsLong);
-			long days = d.toDays();
-			long hours = d.toHoursPart();
-			long minutes = d.toMinutesPart();
+			long durationDays = d.toDays();
+			long durationHours = d.toHoursPart();
+			long durationMinutes = d.toMinutesPart();
+            long durationSeconds = d.toSecondsPart();
 
 			StringBuilder sb = new StringBuilder();
-			if (days > 0) sb.append(days).append("d ");
-			if (hours > 0) sb.append(hours).append("h ");
-			if (minutes > 0) sb.append(minutes).append("m");
+
+			if (durationDays > 0)
+                sb.append(durationDays).append("d ");
+			if (durationHours > 0)
+                sb.append(durationHours).append("h ");
+			if (durationMinutes > 0)
+                sb.append(durationMinutes).append("m ");
+            if(durationSeconds > 0)
+                sb.append(durationSeconds).append("s");
+
 			return sb.toString().trim();
 		} catch (NumberFormatException e) {
 			return "Duration Cannot Be Parsed";
