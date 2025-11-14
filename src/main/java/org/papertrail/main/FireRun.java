@@ -1,27 +1,26 @@
 package org.papertrail.main;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.papertrail.listeners.audit.event.AuditLogListener;
+import org.papertrail.listeners.audit.event.GuildMemberJoinAndLeaveListener;
+import org.papertrail.listeners.audit.event.GuildVoiceListener;
+import org.papertrail.listeners.audit.setup.AuditLogSetupCommandListener;
+import org.papertrail.listeners.message.event.MessageLogListener;
+import org.papertrail.listeners.message.setup.MessageLogSetupCommandListener;
+import org.papertrail.listeners.misc.BotSetupInstructionCommandListener;
+import org.papertrail.listeners.misc.SelfKickListener;
+import org.papertrail.listeners.misc.ServerStatCommandListener;
+import org.tinylog.Logger;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.security.Security;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import net.dv8tion.jda.api.sharding.ShardManager;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.papertrail.listeners.misc.SelfKickListener;
-import org.papertrail.listeners.misc.ServerStatCommandListener;
-import org.papertrail.listeners.misc.BotSetupInstructionCommandListener;
-import org.papertrail.listeners.audit.event.AuditLogListener;
-import org.papertrail.listeners.audit.setup.AuditLogSetupCommandListener;
-import org.papertrail.listeners.audit.event.GuildMemberJoinAndLeaveListener;
-import org.papertrail.listeners.message.setup.MessageLogSetupCommandListener;
-import org.papertrail.listeners.message.event.MessageLogListener;
-import org.papertrail.listeners.audit.event.GuildVoiceListener;
-import org.tinylog.Logger;
-
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 /*
  * The main class of the bot
  */

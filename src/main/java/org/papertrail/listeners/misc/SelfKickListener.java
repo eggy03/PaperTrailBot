@@ -1,10 +1,9 @@
 package org.papertrail.listeners.misc;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.papertrail.commons.sdk.client.AuditLogClient;
 import org.papertrail.commons.sdk.client.MessageLogClient;
 

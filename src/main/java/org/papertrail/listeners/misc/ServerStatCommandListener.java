@@ -1,12 +1,5 @@
 package org.papertrail.listeners.misc;
 
-import java.awt.Color;
-import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-
-import org.papertrail.commons.utilities.DurationFormatter;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,6 +7,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.papertrail.commons.utilities.DurationFormatter;
+
+import java.awt.Color;
+import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 
 public class ServerStatCommandListener extends ListenerAdapter{
 	

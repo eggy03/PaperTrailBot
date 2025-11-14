@@ -1,21 +1,21 @@
 package org.papertrail.listeners.audit.event;
 
-import java.awt.Color;
-import java.time.Instant;
-import java.util.Objects;
-import java.util.concurrent.Executor;
-
 import io.vavr.control.Either;
-import org.jetbrains.annotations.NotNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.papertrail.commons.sdk.client.AuditLogClient;
 import org.papertrail.commons.sdk.model.AuditLogObject;
 import org.papertrail.commons.sdk.model.ErrorObject;
+
+import java.awt.Color;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.concurrent.Executor;
 
 // this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
 // this event is logged in the same channel where the audit log events are logged

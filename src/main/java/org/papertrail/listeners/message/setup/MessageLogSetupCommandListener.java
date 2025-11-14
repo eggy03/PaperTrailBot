@@ -1,13 +1,6 @@
 package org.papertrail.listeners.message.setup;
 
-import java.awt.Color;
-import java.util.Objects;
-
 import io.vavr.control.Either;
-import org.papertrail.commons.sdk.model.ErrorObject;
-import org.papertrail.commons.sdk.client.MessageLogClient;
-import org.papertrail.commons.sdk.model.MessageLogObject;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,6 +8,12 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.papertrail.commons.sdk.client.MessageLogClient;
+import org.papertrail.commons.sdk.model.ErrorObject;
+import org.papertrail.commons.sdk.model.MessageLogObject;
+
+import java.awt.Color;
+import java.util.Objects;
 
 public class MessageLogSetupCommandListener extends ListenerAdapter {
 
