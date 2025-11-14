@@ -1,6 +1,7 @@
 package org.papertrail.commons.sdk.http;
 
 import io.vavr.control.Either;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.papertrail.commons.sdk.model.ErrorObject;
 import org.springframework.http.HttpHeaders;
@@ -9,11 +10,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
-import org.tinylog.Logger;
 
 import java.net.URI;
 import java.time.Instant;
 
+@Slf4j
 public class HttpServiceEngine {
 
     private final RestClient client;
@@ -43,15 +44,15 @@ public class HttpServiceEngine {
 
             return Either.right(body);
         } catch (HttpClientErrorException e) {
-            Logger.trace("Client error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            log.trace("Client error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
             ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
             return Either.left(error);
         } catch (HttpServerErrorException e) {
-            Logger.error("Server error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            log.error("Server error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
             ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
             return Either.left(error);
         } catch (ResourceAccessException e) {
-            Logger.error("Resource access error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            log.error("Resource access error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
             ErrorObject error =  new ErrorObject(503, "API Unreachable", e.getMessage(), Instant.now().toString(), url);
             return Either.left(error);
         }
@@ -76,15 +77,15 @@ public class HttpServiceEngine {
             return Either.right(body);
 
         } catch (HttpClientErrorException e) {
-            Logger.trace("Client error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            log.trace("Client error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
             ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
             return Either.left(error);
         } catch (HttpServerErrorException e) {
-            Logger.error("Server error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            log.error("Server error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
             ErrorObject error = e.getResponseBodyAs(ErrorObject.class);
             return Either.left(error);
         } catch (ResourceAccessException e) {
-            Logger.error("Resource access error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
+            log.error("Resource access error when calling {} {}: {}", httpMethod, url, e.getMessage(), e);
             ErrorObject error =  new ErrorObject(503, "API Unreachable", e.getMessage(), Instant.now().toString(), url);
             return Either.left(error);
         }
