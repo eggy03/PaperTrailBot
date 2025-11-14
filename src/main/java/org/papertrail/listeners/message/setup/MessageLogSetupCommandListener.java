@@ -1,4 +1,4 @@
-package org.papertrail.listeners.messagelog.setup;
+package org.papertrail.listeners.message.setup;
 
 import java.awt.Color;
 import java.util.Objects;

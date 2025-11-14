@@ -1,4 +1,4 @@
-package org.papertrail.listeners.auditlog.setup;
+package org.papertrail.listeners.audit.setup;
 
 import java.awt.Color;
 import java.util.Objects;

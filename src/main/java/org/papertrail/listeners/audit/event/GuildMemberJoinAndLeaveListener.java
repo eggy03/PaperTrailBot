@@ -1,4 +1,4 @@
-package org.papertrail.listeners.auditlog.helper;
+package org.papertrail.listeners.audit.event;
 
 import io.vavr.control.Either;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -20,6 +20,8 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+// this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
+// this event is logged in the same channel where the audit log events are logged
 public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;

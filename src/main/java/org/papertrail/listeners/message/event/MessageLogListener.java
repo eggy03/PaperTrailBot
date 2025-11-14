@@ -1,4 +1,4 @@
-package org.papertrail.listeners.messagelog.event;
+package org.papertrail.listeners.message.event;
 
 import java.awt.Color;
 import java.time.Instant;

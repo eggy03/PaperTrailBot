@@ -1,4 +1,4 @@
-package org.papertrail.listeners.auditlog.helper;
+package org.papertrail.listeners.audit.event;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -17,6 +17,8 @@ import org.papertrail.commons.sdk.client.AuditLogClient;
 import org.papertrail.commons.sdk.model.AuditLogObject;
 import org.papertrail.commons.sdk.model.ErrorObject;
 
+// this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
+// this event is logged in the same channel where the audit log events are logged
 public class GuildVoiceListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;

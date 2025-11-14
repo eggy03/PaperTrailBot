@@ -11,12 +11,12 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.papertrail.listeners.misc.BotKickListener;
 import org.papertrail.listeners.misc.ServerStatCommandListener;
 import org.papertrail.listeners.misc.BotSetupInstructionCommandListener;
-import org.papertrail.listeners.auditlog.event.AuditLogListener;
-import org.papertrail.listeners.auditlog.setup.AuditLogSetupCommandListener;
-import org.papertrail.listeners.auditlog.helper.GuildMemberJoinAndLeaveListener;
-import org.papertrail.listeners.messagelog.setup.MessageLogSetupCommandListener;
-import org.papertrail.listeners.messagelog.event.MessageLogListener;
-import org.papertrail.listeners.auditlog.helper.GuildVoiceListener;
+import org.papertrail.listeners.audit.event.AuditLogListener;
+import org.papertrail.listeners.audit.setup.AuditLogSetupCommandListener;
+import org.papertrail.listeners.audit.event.GuildMemberJoinAndLeaveListener;
+import org.papertrail.listeners.message.setup.MessageLogSetupCommandListener;
+import org.papertrail.listeners.message.event.MessageLogListener;
+import org.papertrail.listeners.audit.event.GuildVoiceListener;
 import org.tinylog.Logger;
 
 import com.sun.net.httpserver.HttpExchange;

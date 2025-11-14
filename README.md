@@ -3,18 +3,17 @@ PaperTrail is a free and open source, self-hostable and privacy friendly Discord
 
 Key Features:
 
-- 🔍 Full audit log integration (supports over 50+ event types) and generic support for unknown types
-- 💬 Encrypted Message logging  (edit, delete)
-- 👤 Member activity tracking (joins, leaves, kicks, bans, updates)
-- 🔊 Voice activity logging (join/leave, move)
-- 🚀 Server boost tracking
-- 🧱 Auto-deletion of logged messages after 30 days
+- Full audit log integration (supports over 50+ event types) and generic support for unknown types
+- Encrypted Message logging  (edit, delete)
+- Member activity tracking (joins, leaves, kicks, bans, updates)
+- Voice activity logging (join/leave, move)
+- Auto-deletion of logged messages after 30 days
 
 > 📎 Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
 # Self-Hosting Guide
 > [!IMPORTANT]
-> Please note that this is only for advanced users who want to self host this bot
+> Please note that this is only for advanced users who want to self-host this bot
 > 
 > A pre-hosted instance is already available: https://discord.com/discovery/applications/1381658412550590475
 >
