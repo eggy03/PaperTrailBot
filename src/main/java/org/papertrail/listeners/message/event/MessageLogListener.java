@@ -1,5 +1,25 @@
 package org.papertrail.listeners.message.event;
 
+import com.google.common.base.Splitter;
+import com.google.common.util.concurrent.Striped;
+import io.vavr.control.Either;
+import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.papertrail.commons.sdk.client.MessageContentLogClient;
+import org.papertrail.commons.sdk.client.MessageLogClient;
+import org.papertrail.commons.sdk.model.ErrorObject;
+import org.papertrail.commons.sdk.model.MessageContentObject;
+import org.papertrail.commons.sdk.model.MessageLogObject;
+import org.papertrail.commons.utilities.MessageEncryption;
+
 import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
@@ -8,27 +28,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
-import com.google.common.base.Splitter;
-import com.google.common.util.concurrent.Striped;
-import io.vavr.control.Either;
-import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
-
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.papertrail.commons.sdk.client.MessageContentLogClient;
-import org.papertrail.commons.sdk.client.MessageLogClient;
-import org.papertrail.commons.sdk.model.ErrorObject;
-import org.papertrail.commons.sdk.model.MessageContentObject;
-import org.papertrail.commons.sdk.model.MessageLogObject;
-import org.papertrail.commons.utilities.MessageEncryption;
-import org.tinylog.Logger;
-
+@Slf4j
 public class MessageLogListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
@@ -42,12 +42,12 @@ public class MessageLogListener extends ListenerAdapter {
 	private void withMessageLock (String messageId, Runnable task) {
 		Lock lock = messageLocks.get(messageId);
 		lock.lock();
-		Logger.debug("Lock acquired for message id: {} . Active lock count: {}", messageId, activeLockCount.incrementAndGet());
+		log.debug("Lock acquired for message id: {} . Active lock count: {}", messageId, activeLockCount.incrementAndGet());
 		try{
 			task.run();
 		} finally {
 			lock.unlock();
-			Logger.debug("Lock released for message id: {} . Active lock count: {}", messageId, activeLockCount.decrementAndGet());
+			log.debug("Lock released for message id: {} . Active lock count: {}", messageId, activeLockCount.decrementAndGet());
 		}
 	}
 	

@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.papertrail.listeners.misc.BotKickListener;
+import org.papertrail.listeners.misc.SelfKickListener;
 import org.papertrail.listeners.misc.ServerStatCommandListener;
 import org.papertrail.listeners.misc.BotSetupInstructionCommandListener;
 import org.papertrail.listeners.audit.event.AuditLogListener;
@@ -55,7 +55,7 @@ public class FireRun {
 
 		manager.addEventListener(new GuildVoiceListener(vThreadPool));
 		manager.addEventListener(new GuildMemberJoinAndLeaveListener(vThreadPool));
-		manager.addEventListener(new BotKickListener(vThreadPool));
+		manager.addEventListener(new SelfKickListener(vThreadPool));
 
 		manager.addEventListener(new ServerStatCommandListener());
 		manager.addEventListener(new BotSetupInstructionCommandListener());

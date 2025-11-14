@@ -13,11 +13,11 @@ import java.util.concurrent.Executor;
 /*
  * This class will have methods that unregister the log channels from the database after the bot has been kicked
  */
-public class BotKickListener extends ListenerAdapter {
+public class SelfKickListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
 
-	public BotKickListener(Executor vThreadPool) {
+	public SelfKickListener(Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 
