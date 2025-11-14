@@ -1,16 +1,15 @@
 package org.papertrail.commons.utilities;
 
+import lombok.experimental.UtilityClass;
+
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+@UtilityClass
 public class DurationFormatter {
-	
-	private DurationFormatter() {
-		throw new IllegalStateException("Utility Class");
-	}
-	
+
 	public static String formatSeconds(Object seconds) {
 		if (seconds == null) {
 			return "ERROR: Value Returned Null";

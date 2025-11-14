@@ -1,14 +1,12 @@
 package org.papertrail.commons.utilities;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class EnvConfig {
 
 	private static final Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
-	
-	private EnvConfig() {
-		throw new IllegalStateException("Utility Class");
-	}
 
 	public static String get(String key) {
 		

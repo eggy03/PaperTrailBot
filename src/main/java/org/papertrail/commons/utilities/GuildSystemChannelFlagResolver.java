@@ -1,7 +1,10 @@
 package org.papertrail.commons.utilities;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.Map;
 
+@UtilityClass
 public class GuildSystemChannelFlagResolver {
 	
 	private static final Map<Long, String> SYSTEM_CHANNEL_FLAG_MAP = Map.ofEntries(
@@ -12,11 +15,7 @@ public class GuildSystemChannelFlagResolver {
 	        Map.entry(1L << 4, "Suppress role subscription purchase and renewal notifications"),
 	        Map.entry(1L << 5, "Hide role subscription sticker reply buttons")
 			);
-	
-	private GuildSystemChannelFlagResolver() {
-		throw new IllegalStateException("Utility Class");
-	}
-	
+
 	private static String parseFlags(long bitfield){
 		StringBuilder flags = new StringBuilder();
 		for(Map.Entry<Long, String> entry: SYSTEM_CHANNEL_FLAG_MAP.entrySet()) {

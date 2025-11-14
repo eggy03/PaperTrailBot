@@ -1,14 +1,13 @@
 package org.papertrail.commons.utilities;
 
+import lombok.experimental.UtilityClass;
+
 /*
- * Resolves Object sub-types from their given IDs
+ * Resolves Object subtypes from their given IDs
  * @see <a href="https://discord.com/developers/docs/resources/channel#channel-object-channel-types"> Discord Channel Types </a>
  */
+@UtilityClass
 public class TypeResolver {
-
-	private TypeResolver() {
-		throw new IllegalStateException("Utility Class");
-	}
 
 	public static String channelTypeResolver(Object channelTypeId) {
 		if (channelTypeId == null) {

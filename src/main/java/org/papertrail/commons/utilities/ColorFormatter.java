@@ -5,14 +5,12 @@ import java.util.IllegalFormatException;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
+@UtilityClass
 public class ColorFormatter {
-	
-	private ColorFormatter() {
-		throw new IllegalStateException("Utility Class");
-	}
-	
+
 	public static String formatToHex(Object colorValue) {
 		
 		if(String.valueOf(colorValue).equals("null")) {

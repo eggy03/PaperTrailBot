@@ -1,17 +1,15 @@
 package org.papertrail.commons.utilities;
 
+import lombok.experimental.UtilityClass;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.tinylog.Logger;
 
+@UtilityClass
 public class MessageEncryption {
 	
 	private static final String SECRET = EnvConfig.get("MESSAGE_SECRET");
     private static final String ALGORITHM = "PBEWITHSHA256AND256BITAES-CBC-BC";
-	
-	private MessageEncryption() {
-		throw new IllegalStateException("UtilityClass");
-	}
-	
+
 	private static StandardPBEStringEncryptor getEncryptor() {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(SECRET); 

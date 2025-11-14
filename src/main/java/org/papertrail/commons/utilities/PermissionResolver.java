@@ -1,10 +1,13 @@
 package org.papertrail.commons.utilities;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.Map;
 
 /**
  @see <a href="https://discord.com/developers/docs/topics/permissions">Discord Permissions</a>
  */
+@UtilityClass
 public class PermissionResolver {
 	
 	private static final Map<Long, String> PERMISSION_MAP = Map.ofEntries(
@@ -60,11 +63,7 @@ public class PermissionResolver {
 	        Map.entry(1L << 50, "USE_EXTERNAL_APPS"),
             Map.entry(1L << 51, "PIN_MESSAGES")
 			);
-	
-	private PermissionResolver() {
-		throw new IllegalStateException("Utility Class");
-	}
-	
+
 	private static String parsePermissions(long bitfield, String emoji){
 		StringBuilder permissions = new StringBuilder();
 		for(Map.Entry<Long, String> entry: PERMISSION_MAP.entrySet()) {

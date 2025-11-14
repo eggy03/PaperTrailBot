@@ -4,13 +4,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
+@UtilityClass
 public class MemberRoleUpdateParser {
-	
-	private MemberRoleUpdateParser() {
-		throw new IllegalStateException("Utility Class");
-	}
+
 	// parses Strings of type  shown in this example [{name=2, id=1383465849507151922}] role_name, role_id into a map
 	public static Map<String, String> parseRoleUpdate(Object roleUpdateValue) {
 		
