@@ -33,19 +33,14 @@ public class SlashCommandRegistrar extends ListenerAdapter {
 		
 		CommandData serverStats = Commands.slash("stats",
 				"Provides Server Statistics");
-		CommandData botInfo = Commands.slash("about",
-				"Provides Bot Info");
+
 		CommandData setup = Commands.slash("setup", "Provides a guide on setting up the bot");
 
-		CommandData permCheck = Commands.slash("permcheck", "Checks if the bot has the necessary permissions to operate");
-		
 		jda.updateCommands()
 				.addCommands(auditLog,
                         messageLog,
 						serverStats,
-						botInfo,
-						setup,
-						permCheck)			
+						setup)
 				.queue();
 	}
 }

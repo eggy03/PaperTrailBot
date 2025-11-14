@@ -1,6 +1,7 @@
 package org.papertrail.main;
 
-import org.papertrail.utilities.EnvConfig;
+import lombok.Getter;
+import org.papertrail.commons.utilities.EnvConfig;
 
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -9,12 +10,16 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.papertrail.listeners.misc.ActivityUpdateListener;
+
 /*
  * This class initializes the connection to discord and configures all the necessary intents
  */
+@Getter
 public class ConnectionInitializer {
-	
-	// Manages multiple shards (instances) of the bot
+
+    // returns the manager that manages multiple shards (instances) of the bot
+    // Manages multiple shards (instances) of the bot
 	private final ShardManager manager;
 		
 	public ConnectionInitializer() {
@@ -48,13 +53,8 @@ public class ConnectionInitializer {
 		
 		manager = builder.build();
 		manager.addEventListener(new ActivityUpdateListener(manager));
-	    // manager.addEventListener(new SlashCommandRegistrar());
+	    manager.addEventListener(new SlashCommandRegistrar());
 	    // re-enable it only when adding/updating/deleting commands
 	}
-	
-	// returns the manager that manages multiple shards (instances) of the bot
-	public ShardManager getManager() {
-		return manager;
-	}
-	
+
 }

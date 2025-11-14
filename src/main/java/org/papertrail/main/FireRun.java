@@ -8,18 +8,15 @@ import java.util.concurrent.Executors;
 
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.papertrail.cleanup.BotKickListener;
-import org.papertrail.listeners.commandlisteners.BotInfoCommandListener;
-import org.papertrail.listeners.commandlisteners.ServerStatCommandListener;
-import org.papertrail.listeners.commandlisteners.BotSetupCommandListener;
-import org.papertrail.listeners.commandlisteners.RequiredPermissionCheckCommandListener;
-import org.papertrail.listeners.guildlisteners.ServerBoostListener;
-import org.papertrail.listeners.loglisteners.AuditLogListener;
-import org.papertrail.listeners.commandlisteners.AuditLogSetupCommandListener;
-import org.papertrail.listeners.memberlisteners.GuildMemberJoinAndLeaveListener;
-import org.papertrail.listeners.commandlisteners.MessageLogSetupCommandListener;
-import org.papertrail.listeners.loglisteners.MessageLogListener;
-import org.papertrail.listeners.voicelisteners.GuildVoiceListener;
+import org.papertrail.listeners.misc.SelfKickListener;
+import org.papertrail.listeners.misc.ServerStatCommandListener;
+import org.papertrail.listeners.misc.BotSetupInstructionCommandListener;
+import org.papertrail.listeners.audit.event.AuditLogListener;
+import org.papertrail.listeners.audit.setup.AuditLogSetupCommandListener;
+import org.papertrail.listeners.audit.event.GuildMemberJoinAndLeaveListener;
+import org.papertrail.listeners.message.setup.MessageLogSetupCommandListener;
+import org.papertrail.listeners.message.event.MessageLogListener;
+import org.papertrail.listeners.audit.event.GuildVoiceListener;
 import org.tinylog.Logger;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -58,13 +55,10 @@ public class FireRun {
 
 		manager.addEventListener(new GuildVoiceListener(vThreadPool));
 		manager.addEventListener(new GuildMemberJoinAndLeaveListener(vThreadPool));
-		manager.addEventListener(new ServerBoostListener(vThreadPool));
-		manager.addEventListener(new BotKickListener(vThreadPool));
+		manager.addEventListener(new SelfKickListener(vThreadPool));
 
 		manager.addEventListener(new ServerStatCommandListener());
-		manager.addEventListener(new BotInfoCommandListener());
-		manager.addEventListener(new BotSetupCommandListener());
-		manager.addEventListener(new RequiredPermissionCheckCommandListener());
+		manager.addEventListener(new BotSetupInstructionCommandListener());
 
         // Custom health check endpoint
 		HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);

@@ -1,20 +1,24 @@
 # Overview
-PaperTrail is a free and open source, self-hostable and privacy friendly Discord bot designed to deliver structured, reliable logging across all major audit and runtime events. It hooks into Discord's audit logs to cover for most of the audit log events and for events not covered by Audit Logs, it supplements them with real-time listeners to bridge gaps in native coverage (e.g. voice state, boosts, message edits and deletions, custom triggers).
+PaperTrail is a free and open source, self-hostable and privacy-friendly Discord bot designed to deliver structured, reliable logging across all major audit and runtime events. It hooks into Discord's audit logs to cover for most of the audit log events and for events not covered by Audit Logs, it supplements them with real-time listeners to bridge gaps in native coverage (e.g. voice state, boosts, message edits and deletions, custom triggers).
 
 Key Features:
 
-- 🔍 Full audit log integration (supports over 50+ event types) and generic support for unknown types
-- 💬 Encrypted Message logging  (edit, delete)
-- 👤 Member activity tracking (joins, leaves, kicks, bans, updates)
-- 🔊 Voice activity logging (join/leave, move)
-- 🚀 Server boost tracking
-- 🧱 Auto-deletion of logged messages after 30 days
+- Full audit log integration (supports over 50+ event types) and generic support for unknown types
+- Encrypted Message logging  (edit, delete)
+- Member activity tracking (joins, leaves, kicks, bans, updates)
+- Voice activity logging (join/leave, move)
+- Auto-deletion of logged messages after 30 days
 
 > 📎 Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
+
+> [!IMPORTANT]
+> PaperTrail is currently in maintenance mode. Existing bugs will be fixed, dependency updates will be provided
+> but large new features will likely not be added.
+
 # Self-Hosting Guide
 > [!IMPORTANT]
-> Please note that this is only for advanced users who want to self host this bot
+> Please note that this is only for advanced users who want to self-host this bot
 > 
 > A pre-hosted instance is already available: https://discord.com/discovery/applications/1381658412550590475
 >
@@ -22,6 +26,7 @@ Key Features:
 
 ## v1.2.2 Legacy
 Checkout the guide for hosting the legacy version [here](https://github.com/Egg-03/PaperTrailBot/blob/legacy-v1.2.2/README.md).
+v1.2.2 has unresolved bugs and runs on JDA 5. It is recommended to not use that version anymore.
 
 ## V2 and above
 Since v2, the project has been split into two services:
