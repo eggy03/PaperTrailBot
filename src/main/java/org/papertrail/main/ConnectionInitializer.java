@@ -1,5 +1,6 @@
 package org.papertrail.main;
 
+import lombok.Getter;
 import org.papertrail.commons.utilities.EnvConfig;
 
 import net.dv8tion.jda.api.OnlineStatus;
@@ -14,9 +15,11 @@ import org.papertrail.listeners.misc.ActivityUpdateListener;
 /*
  * This class initializes the connection to discord and configures all the necessary intents
  */
+@Getter
 public class ConnectionInitializer {
-	
-	// Manages multiple shards (instances) of the bot
+
+    // returns the manager that manages multiple shards (instances) of the bot
+    // Manages multiple shards (instances) of the bot
 	private final ShardManager manager;
 		
 	public ConnectionInitializer() {
@@ -53,10 +56,5 @@ public class ConnectionInitializer {
 	    manager.addEventListener(new SlashCommandRegistrar());
 	    // re-enable it only when adding/updating/deleting commands
 	}
-	
-	// returns the manager that manages multiple shards (instances) of the bot
-	public ShardManager getManager() {
-		return manager;
-	}
-	
+
 }

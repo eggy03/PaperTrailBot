@@ -1,12 +1,9 @@
 package org.papertrail.commons.utilities;
 
-import java.util.HashMap;
+import lombok.experimental.UtilityClass;
+
 import java.util.IllegalFormatException;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.StringUtils;
 
 @UtilityClass
 public class ColorFormatter {
@@ -26,32 +23,21 @@ public class ColorFormatter {
 			return "Cannot parse color to hex";
 		}
 	}
-	
+
+    // gradient is returned as a hash map in the following structure
+    // {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
 	public static String formatGradientColorSystemToHex(Object gradientValue) {
-		
-		if(String.valueOf(gradientValue).equals("null")) {
-			return  "N/A";
-		}
-		
-		// Example gradient: "{tertiary_color=null, secondary_color=null, primary_color=3066993}"		
-		String cleanedroleValueString = StringUtils.strip(String.valueOf(gradientValue), "{}");
-		// the string should now be "tertiary_color=null, secondary_color=null, primary_color=3066993"
-		String[] splitValues = cleanedroleValueString.trim().split(",");
-		// this should fill the array with three items
-		// [tertiary_color=null, secondary_color=null, primary_color=3066993]
-		Map<String, String>colorKeyAndValues = new HashMap<>();
-		for(String splitValue: splitValues) {
-			String[] keyValueSplit = StringUtils.split(splitValue, "="); // further split into 3 arrays [tertiary_color, null] [secondary_color, null] [primary_color, 3066993]
-			if(keyValueSplit.length==2) {
-				colorKeyAndValues.put(keyValueSplit[0].trim(), formatToHex(keyValueSplit[1].trim())); // put them into the map after converting the int color to hex
-			}
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		for(Entry<String, String> colorKeyValue: colorKeyAndValues.entrySet()) {
-			sb.append(colorKeyValue.getKey()).append(": ").append(colorKeyValue.getValue()).append(System.lineSeparator());
-		}
-		
-		return sb.toString();
+
+        if(gradientValue instanceof Map<?, ?> colorMap){
+
+            String primaryColor = "Primary Color: "+ formatToHex(colorMap.get("primary_color"));
+            String secondaryColor = "Secondary Color: "+ formatToHex(colorMap.get("secondary_color"));
+            String tertiaryColor = "Tertiary Color: "+ formatToHex(colorMap.get("tertiary_color"));
+
+            return primaryColor+System.lineSeparator()+secondaryColor+System.lineSeparator()+tertiaryColor;
+        }
+
+		return "N/A";
+
 	}
 }
