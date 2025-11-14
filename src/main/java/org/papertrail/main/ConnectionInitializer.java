@@ -1,6 +1,6 @@
 package org.papertrail.main;
 
-import org.papertrail.utilities.EnvConfig;
+import org.papertrail.commons.utilities.EnvConfig;
 
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.papertrail.listeners.misc.ActivityUpdateListener;
+
 /*
  * This class initializes the connection to discord and configures all the necessary intents
  */
@@ -48,7 +50,7 @@ public class ConnectionInitializer {
 		
 		manager = builder.build();
 		manager.addEventListener(new ActivityUpdateListener(manager));
-	    // manager.addEventListener(new SlashCommandRegistrar());
+	    manager.addEventListener(new SlashCommandRegistrar());
 	    // re-enable it only when adding/updating/deleting commands
 	}
 	

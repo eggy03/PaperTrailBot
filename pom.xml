@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.egg.papertrail</groupId>
   <artifactId>paper-trail-bot</artifactId>
-  <version>2.0.3</version>
+  <version>3.0.0</version>
   <name>PaperTrail</name>
   <description>A simple bot for logging all user actions</description>
   <properties>
@@ -10,6 +10,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>21</maven.compiler.source>
   	<maven.compiler.target>21</maven.compiler.target>
+      <lombok.version>1.18.42</lombok.version>
   </properties>
   
  <dependencies>
@@ -41,7 +42,7 @@
     <dependency>
     	<groupId>org.apache.commons</groupId>
     	<artifactId>commons-lang3</artifactId>
-    	<version>3.18.0</version>
+    	<version>3.19.0</version>
 	</dependency> 
 	<dependency>
     	<groupId>org.jasypt</groupId>
@@ -75,17 +76,36 @@
          <artifactId>gson</artifactId>
          <version>2.13.1</version>
      </dependency>
+     <dependency>
+         <groupId>org.projectlombok</groupId>
+         <artifactId>lombok</artifactId>
+         <version>${lombok.version}</version>
+     </dependency>
   </dependencies>
 
-<build> <!-- use  mvn clean package spring-boot:repackage for building -->
+<build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
-        <plugin>
+        <plugin> <!-- use  mvn clean package spring-boot:repackage for building -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>3.5.4</version>
+            <version>3.5.7</version>
             <configuration>
                 <mainClass>org.papertrail.main.FireRun</mainClass>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.14.1</version>
+            <configuration>
+                <annotationProcessorPaths>
+                    <path>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
+                    </path>
+                </annotationProcessorPaths>
             </configuration>
         </plugin>
     </plugins>
