@@ -42,13 +42,13 @@ public class MemberRoleUpdateEventHelper {
             switch(change) {
 
                 case "$add":
-                    eb.addField("Target Member", "╰┈➤"+mentionableTarget, false);
-                    eb.addField("Role(s) Added", "╰┈➤"+RoleObjectParser.parseRole(newValue), false);
+                    eb.addField("🏷️Target Member", "╰┈➤"+mentionableTarget, false);
+                    eb.addField("✅Role(s) Added", "╰┈➤"+RoleObjectParser.parseRole(event, newValue), false);
                     break;
 
                 case "$remove":
-                    eb.addField("Target Member", "╰┈➤"+mentionableTarget, false);
-                    eb.addField("Role(s) Removed", "╰┈➤"+RoleObjectParser.parseRole(newValue), false);
+                    eb.addField("🏷️Target Member", "╰┈➤"+mentionableTarget, false);
+                    eb.addField("❌Role(s) Removed", "╰┈➤"+RoleObjectParser.parseRole(event, newValue), false);
                     break;
 
                 default:
