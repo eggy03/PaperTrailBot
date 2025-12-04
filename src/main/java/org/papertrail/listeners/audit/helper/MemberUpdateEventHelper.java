@@ -28,7 +28,7 @@ public class MemberUpdateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
         String mentionableTarget = (target !=null ? target.getAsMention() : ale.getTargetId());
 
-        Member targetMember = ale.getGuild().getMemberById(ale.getUserId());
+        Member targetMember = ale.getGuild().getMemberById(ale.getTargetId());
         String mentionableTargetEffectiveName = targetMember!=null ? targetMember.getEffectiveName() : "Name could not be fetched";
 
         eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following member was updated");
@@ -60,12 +60,15 @@ public class MemberUpdateEventHelper {
 
                 case "nick":
                     if(oldValue!=null && newValue==null) { // resetting to default nickname
+                        eb.addField("🏷️ Target", "╰┈➤"+mentionableTarget, false);
                         eb.addField("🏷️ Old Nickname", "╰┈➤"+oldValue, false);
                         eb.addField("🏷️ Reset Name To", "╰┈➤"+mentionableTargetEffectiveName, false);
                     } else if(oldValue != null) { // changing from one nickname to another
+                        eb.addField("🏷️ Target", "╰┈➤"+mentionableTarget, false);
                         eb.addField("🏷️ Old Nickname", "╰┈➤"+oldValue, false);
                         eb.addField("🏷️ New Nickname", "╰┈➤"+newValue, false);
                     } else if(newValue != null) { // changing from default nickname to a new nickname
+                        eb.addField("🏷️ Target", "╰┈➤"+mentionableTarget, false);
                         eb.addField("🏷️ Nickname Added", "╰┈➤"+ newValue, false);
                     }
                     break;

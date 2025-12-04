@@ -61,7 +61,8 @@ public class PermissionResolver {
 	        
 	        Map.entry(1L << 49, "SEND_POLLS"),
 	        Map.entry(1L << 50, "USE_EXTERNAL_APPS"),
-            Map.entry(1L << 51, "PIN_MESSAGES")
+            Map.entry(1L << 51, "PIN_MESSAGES"),
+            Map.entry(1L << 52, "BYPASS_SLOWMODE")
 			);
 
 	private static String parsePermissions(long bitfield, String emoji){
