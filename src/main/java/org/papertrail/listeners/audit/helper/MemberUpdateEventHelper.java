@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -26,6 +27,9 @@ public class MemberUpdateEventHelper {
 
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
         String mentionableTarget = (target !=null ? target.getAsMention() : ale.getTargetId());
+
+        Member targetMember = ale.getGuild().getMemberById(ale.getUserId());
+        String mentionableTargetEffectiveName = targetMember!=null ? targetMember.getEffectiveName() : "Name could not be fetched";
 
         eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following member was updated");
         eb.setThumbnail(Objects.requireNonNull(event.getGuild().getMemberById(ale.getTargetId())).getEffectiveAvatarUrl());
@@ -56,11 +60,13 @@ public class MemberUpdateEventHelper {
 
                 case "nick":
                     if(oldValue!=null && newValue==null) { // resetting to default nickname
-                        eb.addField("🏷️ Nickname Update", "╰┈➤"+"Reset "+mentionableTarget+"'s name", false);
+                        eb.addField("🏷️ Old Nickname", "╰┈➤"+oldValue, false);
+                        eb.addField("🏷️ Reset Name To", "╰┈➤"+mentionableTargetEffectiveName, false);
                     } else if(oldValue != null) { // changing from one nickname to another
-                        eb.addField("🏷️ Nickname Update", "╰┈➤"+"Updated "+mentionableTarget+"'s name from "+oldValue+ " to "+ newValue, false);
+                        eb.addField("🏷️ Old Nickname", "╰┈➤"+oldValue, false);
+                        eb.addField("🏷️ New Nickname", "╰┈➤"+newValue, false);
                     } else if(newValue != null) { // changing from default nickname to a new nickname
-                        eb.addField("🏷️ Nickname Update", "╰┈➤"+"Set "+mentionableTarget+"'s name as "+ newValue, false);
+                        eb.addField("🏷️ Nickname Added", "╰┈➤"+ newValue, false);
                     }
                     break;
 
