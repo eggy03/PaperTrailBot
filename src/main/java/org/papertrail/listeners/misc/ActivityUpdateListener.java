@@ -35,7 +35,7 @@ public class ActivityUpdateListener extends ListenerAdapter {
 	}
 
 	private void updateActivity() {
-		manager.setActivity(Activity.listening(manager.getGuildCache().size() + " Servers"));
+		manager.setActivity(Activity.customStatus("Monitoring In: "+manager.getGuildCache().size() + " Servers"));
 	}
 
 }
