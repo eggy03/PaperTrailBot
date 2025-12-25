@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Data Controller:** This project is maintained by [@Egg-03](https://github.com/Egg-03).  
+**Data Controller:** This project is maintained by [@Egg-03](https://github.com/eggy03).  
 
 This Discord bot was built as an open source project with a privacy-first mindset. The Service is provided at no cost and is intended for use as-is.
 
@@ -12,7 +12,7 @@ If you choose to use this bot in your Discord server, you agree to the collectio
 
 ## Scope of This Policy
 
-This Privacy Policy applies **only** to the official hosted instance of this bot that is managed by [@Egg-03](https://github.com/Egg-03).  
+This Privacy Policy applies **only** to the official hosted instance of this bot that is managed by [@Egg-03](https://github.com/eggy03).  
 The official instance can be identified by its **Discord Application ID: `1381658412550590475`**.  
 
 If you or someone else self-hosts the bot, that instance is operated independently and is **not covered by this Privacy Policy**. In those cases, data handling is the sole responsibility of the self-host.
@@ -90,7 +90,7 @@ To request access or deletion, please contact us using the method below.
 ## Contact
 
 For privacy-related questions or GDPR requests:
-- GitHub: [Submit an issue or discussion](https://github.com/Egg-03/PaperTrailBot/issues)
+- GitHub: [Submit an issue or discussion](https://github.com/eggy03/PaperTrailBot/issues)
 - Email: `egg03@duck.com`
 
 ---
