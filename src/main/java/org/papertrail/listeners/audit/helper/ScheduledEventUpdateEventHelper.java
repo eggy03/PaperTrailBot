@@ -47,6 +47,11 @@ public class ScheduledEventUpdateEventHelper {
                 case "privacy_level", "image_hash":
                     break;
 
+                case "name":
+                    eb.addField("🏷️ Old Event Name", "╰┈➤"+oldValue, false);
+                    eb.addField("🏷️ New Event Name","╰┈➤"+newValue, false);
+                    break;
+
                 case "description":
                     eb.addField("📝 Old Event Description", "╰┈➤"+oldValue, false);
                     eb.addField("📝 New Event Description", "╰┈➤"+newValue, false);
@@ -60,11 +65,6 @@ public class ScheduledEventUpdateEventHelper {
                 case "location":
                     eb.addField("📍 Event Location", "╰┈➤"+oldValue, false);
                     eb.addField("📍 Event Location", "╰┈➤"+newValue, false);
-                    break;
-
-                case "name":
-                    eb.addField("🏷️ Old Event Name", "╰┈➤"+oldValue, false);
-                    eb.addField("🏷️ New Event Name","╰┈➤"+newValue, false);
                     break;
 
                 case "channel_id":

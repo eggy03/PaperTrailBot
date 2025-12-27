@@ -44,6 +44,10 @@ public class ScheduledEventDeleteEventHelper {
                 case "privacy_level", "image_hash":
                     break;
 
+                case "name":
+                    eb.addField("🏷️ Event Name", "╰┈➤"+oldValue, false);
+                    break;
+
                 case "description":
                     eb.addField("📝 Event Description", "╰┈➤"+newValue, false);
                     break;
@@ -54,10 +58,6 @@ public class ScheduledEventDeleteEventHelper {
 
                 case "location":
                     eb.addField("📍 Event Location", "╰┈➤"+oldValue, false);
-                    break;
-
-                case "name":
-                    eb.addField("🏷️ Event Name", "╰┈➤"+oldValue, false);
                     break;
 
                 case "channel_id":
