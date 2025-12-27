@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.GuildScheduledEventRecurrenceRuleStructureParser;
 import org.papertrail.commons.utilities.TypeResolver;
 
 import java.awt.Color;
@@ -62,6 +63,10 @@ public class ScheduledEventDeleteEventHelper {
                 case "channel_id":
                     GuildChannel eventChannel = event.getGuild().getGuildChannelById(String.valueOf(oldValue));
                     eb.addField("💬 Event Channel", "╰┈➤"+(eventChannel!=null ? eventChannel.getAsMention() : String.valueOf(oldValue)), false);
+                    break;
+
+                case "recurrence_rule":
+                    eb.addField("📊 Recurrence Rule", GuildScheduledEventRecurrenceRuleStructureParser.parse(oldValue), false);
                     break;
 
                 default:
