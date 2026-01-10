@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpServer;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.papertrail.listeners.audit.event.AuditLogListener;
+import org.papertrail.listeners.audit.event.GuildBoostEventListener;
 import org.papertrail.listeners.audit.event.GuildMemberJoinAndLeaveListener;
 import org.papertrail.listeners.audit.event.GuildPollListener;
 import org.papertrail.listeners.audit.event.GuildVoiceListener;
@@ -56,6 +57,7 @@ public class FireRun {
 		manager.addEventListener(new GuildVoiceListener(vThreadPool));
 		manager.addEventListener(new GuildMemberJoinAndLeaveListener(vThreadPool));
 		manager.addEventListener(new GuildPollListener(vThreadPool));
+		manager.addEventListener(new GuildBoostEventListener(vThreadPool));
 		manager.addEventListener(new SelfKickListener(vThreadPool));
 
 		manager.addEventListener(new ServerStatCommandListener());
