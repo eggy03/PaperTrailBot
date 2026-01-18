@@ -128,7 +128,7 @@ public class GuildBoostEventListener extends ListenerAdapter {
                 if (newBoostTime != null) {
                     eb.setDescription("**" + guild.getName() + "** has been boosted!");
                     eb.setColor(Color.PINK);
-                    eb.addField("Booster Gained", "╰┈➤" + mentionableMember + " has applied their first boost your server", false);
+                    eb.addField("Booster Gained", "╰┈➤" + mentionableMember + " has applied their first boost to your server", false);
                 } else {
                     eb.setDescription("**" + guild.getName() + "** has lost a boost.");
                     eb.setColor(Color.GRAY);
