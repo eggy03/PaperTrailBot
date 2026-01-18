@@ -62,7 +62,6 @@ import org.papertrail.listeners.audit.helper.WebhookCreateEventHelper;
 import org.papertrail.listeners.audit.helper.WebhookRemoveEventHelper;
 import org.papertrail.listeners.audit.helper.WebhookUpdateEventHelper;
 
-import java.util.Objects;
 import java.util.concurrent.Executor;
 
 @Slf4j
@@ -182,7 +181,7 @@ public class AuditLogListener extends ListenerAdapter {
 
             default -> {
                 GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
-                log.warn("The following event has no enum value defined in JDA and is not covered by the UNKNOWN type {}", Objects.requireNonNull(event.getRawData()).toPrettyString());
+                log.warn("The following event has no enum value defined in JDA and is not covered by the UNKNOWN type {}", ale.getType().name());
             }
         }
     }
