@@ -65,11 +65,11 @@ import org.papertrail.listeners.audit.helper.WebhookUpdateEventHelper;
 import java.util.concurrent.Executor;
 
 @Slf4j
-public class AuditLogListener extends ListenerAdapter {
+public class AuditLogEventListener extends ListenerAdapter {
 
     private final Executor vThreadPool;
 
-    public AuditLogListener(Executor vThreadPool) {
+    public AuditLogEventListener(Executor vThreadPool) {
         this.vThreadPool = vThreadPool;
     }
 

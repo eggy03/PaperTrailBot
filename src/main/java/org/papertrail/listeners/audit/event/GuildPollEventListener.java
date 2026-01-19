@@ -15,14 +15,13 @@ import org.papertrail.commons.sdk.model.ErrorObject;
 import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 
-public class GuildPollListener extends ListenerAdapter {
+public class GuildPollEventListener extends ListenerAdapter {
 
     private final Executor vThreadPool;
 
-    public GuildPollListener(Executor vThreadPool) {
+    public GuildPollEventListener(Executor vThreadPool) {
         this.vThreadPool = vThreadPool;
     }
 

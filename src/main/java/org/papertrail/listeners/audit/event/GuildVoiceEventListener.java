@@ -15,16 +15,15 @@ import org.papertrail.commons.sdk.model.ErrorObject;
 
 import java.awt.Color;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 
 // this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
 // this event is logged in the same channel where the audit log events are logged
-public class GuildVoiceListener extends ListenerAdapter {
+public class GuildVoiceEventListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
 
-	public GuildVoiceListener(Executor vThreadPool) {
+	public GuildVoiceEventListener(Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 	

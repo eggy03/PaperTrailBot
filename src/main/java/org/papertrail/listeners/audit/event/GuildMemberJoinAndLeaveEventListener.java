@@ -18,16 +18,15 @@ import org.papertrail.commons.utilities.DurationFormatter;
 
 import java.awt.Color;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 
 // this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
 // this event is logged in the same channel where the audit log events are logged
-public class GuildMemberJoinAndLeaveListener extends ListenerAdapter {
+public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
 	private final Executor vThreadPool;
 
-	public GuildMemberJoinAndLeaveListener (Executor vThreadPool) {
+	public GuildMemberJoinAndLeaveEventListener(Executor vThreadPool) {
 
 		this.vThreadPool = vThreadPool;
 	}
