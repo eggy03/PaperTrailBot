@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Objects;
 
 @UtilityClass
 public class MemberVoiceKickEventHelper {

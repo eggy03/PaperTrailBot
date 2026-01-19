@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
 import java.util.Map;
-import java.util.Objects;
 
 @UtilityClass
 public class WebhookRemoveEventHelper {

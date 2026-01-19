@@ -24,7 +24,6 @@ import org.papertrail.commons.utilities.MessageEncryption;
 import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;

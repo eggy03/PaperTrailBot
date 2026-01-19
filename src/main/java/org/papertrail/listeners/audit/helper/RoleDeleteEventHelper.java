@@ -14,7 +14,6 @@ import org.papertrail.commons.utilities.PermissionResolver;
 
 import java.awt.Color;
 import java.util.Map;
-import java.util.Objects;
 
 @UtilityClass
 public class RoleDeleteEventHelper {

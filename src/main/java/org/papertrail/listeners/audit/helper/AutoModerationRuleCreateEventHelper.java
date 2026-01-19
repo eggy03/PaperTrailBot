@@ -15,7 +15,6 @@ import org.papertrail.commons.utilities.TypeResolver;
 
 import java.awt.Color;
 import java.util.Map;
-import java.util.Objects;
 
 @UtilityClass
 public class AutoModerationRuleCreateEventHelper {
