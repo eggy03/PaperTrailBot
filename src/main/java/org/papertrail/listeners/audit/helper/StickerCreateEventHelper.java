@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
@@ -68,6 +69,9 @@ public class StickerCreateEventHelper {
 
         MessageEmbed mb = eb.build();
 
-        Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if(sendingChannel!=null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(mb).queue();
+        }
     }
 }

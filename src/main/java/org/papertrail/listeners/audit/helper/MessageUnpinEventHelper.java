@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
@@ -31,6 +32,10 @@ public class MessageUnpinEventHelper {
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if(sendingChannel!=null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(mb).queue();
+        }
     }
 }

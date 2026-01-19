@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
@@ -141,7 +142,11 @@ public class MessageLogListener extends ListenerAdapter {
                     // this channel is where the logs will be sent to
                     // wrap the embed and send
                     MessageEmbed mb = eb.build();
-                    Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+
+                    TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+                    if(sendingChannel!=null && sendingChannel.canTalk()) {
+                        sendingChannel.sendMessageEmbeds(mb).queue();
+                    }
                 });
             });
 		});
@@ -196,7 +201,11 @@ public class MessageLogListener extends ListenerAdapter {
 
                     // send the fetched deleted message to the logging channel
                     MessageEmbed mb = eb.build();
-                    Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+
+                    TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+                    if(sendingChannel!=null && sendingChannel.canTalk()) {
+                        sendingChannel.sendMessageEmbeds(mb).queue();
+                    }
                 });
             });
 		});

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -99,6 +100,9 @@ public class AutoModerationRuleCreateEventHelper {
 
         MessageEmbed mb = eb.build();
 
-        Objects.requireNonNull(event.getGuild().getTextChannelById(channelIdToSendTo)).sendMessageEmbeds(mb).queue();
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if(sendingChannel!=null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(mb).queue();
+        }
     }
 }

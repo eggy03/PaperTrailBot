@@ -3,6 +3,7 @@ package org.papertrail.listeners.audit.event;
 import io.vavr.control.Either;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -76,7 +77,10 @@ public class GuildPollListener extends ListenerAdapter {
 
                 MessageEmbed mb = eb.build();
 
-                Objects.requireNonNull(event.getGuild().getTextChannelById(registeredChannelId)).sendMessageEmbeds(mb).queue();
+                TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
+                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                    sendingChannel.sendMessageEmbeds(mb).queue();
+                }
 
             });
         });
