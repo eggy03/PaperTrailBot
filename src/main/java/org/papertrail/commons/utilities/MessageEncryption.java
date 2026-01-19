@@ -1,10 +1,11 @@
 package org.papertrail.commons.utilities;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.tinylog.Logger;
 
 @UtilityClass
+@Slf4j
 public class MessageEncryption {
 	
 	private static final String SECRET = EnvConfig.get("MESSAGE_SECRET");
@@ -24,7 +25,7 @@ public class MessageEncryption {
 	
 	public static String encrypt(String plainText) {
 		if(isSecretEmpty()) {
-			Logger.error("MESSAGE_SECRET is empty! No message will be encrypted and a null will be returned instead");
+			log.error("MESSAGE_SECRET is empty! No message will be encrypted and a null will be returned instead");
 			return null;
 		}
 		StandardPBEStringEncryptor enc = getEncryptor();
@@ -33,7 +34,7 @@ public class MessageEncryption {
 	
 	public static String decrypt(String encryptedText) {
 		if(isSecretEmpty()) {
-			Logger.error("MESSAGE_SECRET is empty! No message will be decrypted and a null will be returned instead");
+			log.error("MESSAGE_SECRET is empty! No message will be decrypted and a null will be returned instead");
 			return null;
 		}
 		StandardPBEStringEncryptor enc = getEncryptor();
