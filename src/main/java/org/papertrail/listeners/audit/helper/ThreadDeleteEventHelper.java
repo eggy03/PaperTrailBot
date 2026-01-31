@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
 import org.papertrail.commons.utilities.TypeResolver;
 
@@ -37,7 +38,7 @@ public class ThreadDeleteEventHelper {
 
             switch(change) {
                 case "🔒 locked":
-                    eb.addField("Locked", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), false);
+                    eb.addField("Locked", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), false);
                     break;
 
                 case "🕒 auto_archive_duration":
@@ -53,7 +54,7 @@ public class ThreadDeleteEventHelper {
                     break;
 
                 case "archived":
-                    eb.addField("🗄️ Archived", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), false);
+                    eb.addField("🗄️ Archived", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), false);
                     break;
 
                 case "flags":

@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
 
 import java.awt.Color;
@@ -48,23 +49,26 @@ public class InviteCreateEventHelper {
                     break;
 
                 case "temporary":
-                    eb.addField("🕒 Temporary Invite", "╰┈➤"+((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), false);
+                    eb.addField("🕒 Temporary Invite", "╰┈➤"+ BooleanFormatter.formatToEmoji(newValue), false);
                     break;
 
                 case "max_uses":
                     int maxUses = Integer.parseInt(String.valueOf(newValue));
                     eb.addField("🔢 Max Uses", "╰┈➤"+(maxUses == 0 ? "Unlimited" : String.valueOf(maxUses)), false);
                     break;
+
                 case "uses", "flags":
                     break;
 
                 case "max_age":
                     eb.addField("⏳ Expires After", "╰┈➤"+ DurationFormatter.formatSeconds(newValue), false);
                     break;
+
                 case "channel_id":
                     GuildChannel channel = ale.getGuild().getGuildChannelById(String.valueOf(newValue));
                     eb.addField("💬 Invite Channel", "╰┈➤"+(channel != null ? channel.getAsMention() : "`"+newValue+"`"), false);
                     break;
+
                 default:
                     eb.addField(change, "from "+oldValue+" to "+newValue, false);
             }

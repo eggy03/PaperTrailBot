@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
 
 import java.awt.Color;
@@ -75,15 +76,15 @@ public class MemberUpdateEventHelper {
                     break;
 
                 case "mute":
-                    eb.addField("🎙️ Is Muted", "╰┈➤Set "+mentionableTarget+"'s Mute Status as "+ ((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), false);
+                    eb.addField("🎙️ Is Muted", "╰┈➤Set "+mentionableTarget+"'s Mute Status as "+ BooleanFormatter.formatToEmoji(newValue), false);
                     break;
 
                 case "deaf":
-                    eb.addField("🔇 Is Deafened", "╰┈➤Set "+mentionableTarget+"'s Deafened Status as "+ ((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), false);
+                    eb.addField("🔇 Is Deafened", "╰┈➤Set "+mentionableTarget+"'s Deafened Status as "+ BooleanFormatter.formatToEmoji(newValue), false);
                     break;
 
                 case "bypasses_verification":
-                    eb.addField("🛡️ Bypass Verification", "╰┈➤Set "+mentionableTarget+"'s verification bypass status as "+ ((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), false);
+                    eb.addField("🛡️ Bypass Verification", "╰┈➤Set "+mentionableTarget+"'s verification bypass status as "+ BooleanFormatter.formatToEmoji(newValue), false);
                     break;
 
                 default:

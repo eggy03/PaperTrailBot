@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.ColorFormatter;
 import org.papertrail.commons.utilities.PermissionResolver;
 
@@ -47,7 +48,7 @@ public class RoleDeleteEventHelper {
                     break;
 
                 case "hoist":
-                    eb.addField("📂 Display Seperately", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), false);
+                    eb.addField("📂 Display Seperately", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), false);
                     break;
 
                 case "color":
@@ -59,7 +60,7 @@ public class RoleDeleteEventHelper {
                     break;
 
                 case "mentionable":
-                    eb.addField("🔗 Mentionable", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), false);
+                    eb.addField("🔗 Mentionable", "╰┈➤"+BooleanFormatter.formatToEmoji(oldValue), false);
                     break;
 
                 case "colors":

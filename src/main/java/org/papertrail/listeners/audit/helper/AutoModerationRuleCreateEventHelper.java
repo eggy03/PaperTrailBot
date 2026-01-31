@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.TypeResolver;
 
 import java.awt.Color;
@@ -54,7 +55,7 @@ public class AutoModerationRuleCreateEventHelper {
                     break;
 
                 case "enabled":
-                    eb.addField("❔ Enabled", "╰┈➤"+((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), false);
+                    eb.addField("❔ Enabled", "╰┈➤"+ BooleanFormatter.formatToEmoji(newValue), false);
                     break;
 
                 case "trigger_type":

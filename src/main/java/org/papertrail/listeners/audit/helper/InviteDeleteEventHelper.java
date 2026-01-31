@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 
 import java.awt.Color;
 import java.util.Map;
@@ -47,18 +48,21 @@ public class InviteDeleteEventHelper {
                     break;
 
                 case "temporary":
-                    eb.addField("🕒 Temporary Invite", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), false);
+                    eb.addField("🕒 Temporary Invite", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), false);
                     break;
 
                 case "max_uses", "flags", "max_age":
                     break;
+
                 case "uses":
                     eb.addField("🔢 Number of times the invite was used", "╰┈➤"+oldValue, false);
                     break;
+
                 case "channel_id":
                     Channel channel = ale.getGuild().getGuildChannelById(String.valueOf(oldValue));
                     eb.addField("💬 Invite Channel", "╰┈➤"+(channel != null ? channel.getAsMention() : "`"+oldValue+"`"), false);
                     break;
+
                 default:
                     eb.addField(change, "from "+oldValue+" to "+newValue, false);
             }

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.papertrail.commons.sdk.client.AuditLogClient;
 import org.papertrail.commons.sdk.model.AuditLogObject;
 import org.papertrail.commons.sdk.model.ErrorObject;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
 
 import java.awt.Color;
@@ -55,7 +56,7 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
                 eb.addField("ℹ️ Member Mention", "╰┈➤"+user.getAsMention(), false);
                 eb.addField("🆔 Member ID", "╰┈➤"+user.getId(), false);
                 eb.addField("📅 Account Created", "╰┈➤"+DurationFormatter.isoToLocalTimeCounter(user.getTimeCreated()), false);
-                eb.addField("🤖 Is Application ?", "╰┈➤"+((user.isBot()) ? "✅" : "❌"), false);
+                eb.addField("🤖 Is Application ?", "╰┈➤"+ BooleanFormatter.formatToEmoji(user.isBot()), false);
                 eb.setFooter("Member Join Detection");
                 eb.setTimestamp(Instant.now());
 

@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.ColorFormatter;
 import org.papertrail.commons.utilities.PermissionResolver;
 
@@ -51,8 +52,8 @@ public class RoleUpdateEventHelper {
                     break;
 
                 case "hoist":
-                    eb.addField("📂 Old Display Seperately", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), true);
-                    eb.addField("📂 New Display Seperately", "╰┈➤"+((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), true);
+                    eb.addField("📂 Old Display Seperately", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), true);
+                    eb.addField("📂 New Display Seperately", "╰┈➤"+BooleanFormatter.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 
@@ -69,8 +70,8 @@ public class RoleUpdateEventHelper {
                     break;
 
                 case "mentionable":
-                    eb.addField("🔗 Old Mentionable", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), true);
-                    eb.addField("🔗 New Mentionable", "╰┈➤"+((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), true);
+                    eb.addField("🔗 Old Mentionable", "╰┈➤"+BooleanFormatter.formatToEmoji(oldValue), true);
+                    eb.addField("🔗 New Mentionable", "╰┈➤"+BooleanFormatter.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 

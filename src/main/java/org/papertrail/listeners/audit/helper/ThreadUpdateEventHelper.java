@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
 import org.papertrail.commons.utilities.TypeResolver;
 
@@ -42,8 +43,8 @@ public class ThreadUpdateEventHelper {
 
             switch(change) {
                 case "locked":
-                    eb.addField("🔒 Old Lock Status", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), true);
-                    eb.addField("🔒 New Lock Status", "╰┈➤"+((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), true);
+                    eb.addField("🔒 Old Lock Status", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), true);
+                    eb.addField("🔒 New Lock Status", "╰┈➤"+ BooleanFormatter.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 
@@ -66,8 +67,8 @@ public class ThreadUpdateEventHelper {
                     break;
 
                 case "archived":
-                    eb.addField("🗄️ Old Archive Status", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), true);
-                    eb.addField("🗄️ New Archive Status", "╰┈➤"+((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), true);
+                    eb.addField("🗄️ Old Archive Status", "╰┈➤"+BooleanFormatter.formatToEmoji(oldValue), true);
+                    eb.addField("🗄️ New Archive Status", "╰┈➤"+BooleanFormatter.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 

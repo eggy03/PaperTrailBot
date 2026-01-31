@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
 import org.papertrail.commons.utilities.TypeResolver;
 
@@ -56,8 +57,8 @@ public class ChannelUpdateEventHelper {
                     break;
 
                 case "nsfw":
-                    eb.addField("🔞 Old NSFW Settings", "╰┈➤"+((Boolean.TRUE.equals(oldValue)) ? "✅" : "❌"), true);
-                    eb.addField("🔞 New NSFW Settings", "╰┈➤"+((Boolean.TRUE.equals(newValue)) ? "✅" : "❌"), true);
+                    eb.addField("🔞 Old NSFW Settings", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), true);
+                    eb.addField("🔞 New NSFW Settings", "╰┈➤"+BooleanFormatter.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 
