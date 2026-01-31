@@ -11,9 +11,9 @@ import net.dv8tion.jda.api.entities.automod.AutoModRule;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
-import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Map;
 
 @UtilityClass
@@ -42,13 +42,13 @@ public class AutoModerationRuleUpdateEventHelper {
             switch(change) {
 
                 case "exempt_roles":
-                    String roleIds = String.valueOf(newValue);
-                    String cleanedRoleIds = StringUtils.strip(roleIds, "[]");
-                    String[] roleIdList = StringUtils.split(cleanedRoleIds, ",");
                     StringBuilder mentionableRoles = new StringBuilder();
-                    for(String roleId : roleIdList) {
-                        Role r = ale.getGuild().getRoleById(roleId.strip());
-                        mentionableRoles.append(r!=null ? r.getAsMention() : roleId.strip()).append(", ");
+                    if(newValue instanceof List<?> exemptRoleList) {
+                        exemptRoleList.forEach(roleId -> {
+                            Role r = ale.getGuild().getRoleById((String) roleId);
+                            mentionableRoles.append(r!=null ? r.getAsMention() : roleId).append(", ");
+                        });
+                        mentionableRoles.delete(mentionableRoles.length()-2, mentionableRoles.length());
                     }
                     eb.addField("✔️ New Exempt Roles: ", "╰┈➤"+ mentionableRoles, false);
                     break;
@@ -59,13 +59,13 @@ public class AutoModerationRuleUpdateEventHelper {
                     break;
 
                 case "exempt_channels":
-                    String channelIds = String.valueOf(newValue);
-                    String cleanedChannelIds = StringUtils.strip(channelIds, "[]");
-                    String[] channelIdList = StringUtils.split(cleanedChannelIds, ",");
                     StringBuilder mentionableChannels = new StringBuilder();
-                    for(String channelId : channelIdList) {
-                        GuildChannel r = ale.getGuild().getGuildChannelById(channelId.strip());
-                        mentionableChannels.append(r!=null ? r.getAsMention() : channelId.strip()).append(", ");
+                    if(newValue instanceof List<?> exemptChannelList) {
+                        exemptChannelList.forEach(channelId -> {
+                            GuildChannel r = ale.getGuild().getGuildChannelById((String) channelId);
+                            mentionableChannels.append(r!=null ? r.getAsMention() : channelId).append(", ");
+                        });
+                        mentionableChannels.delete(mentionableChannels.length()-2, mentionableChannels.length());
                     }
                     eb.addField("✔️ New Exempt Channels: ", "╰┈➤"+ mentionableChannels, false);
                     break;
