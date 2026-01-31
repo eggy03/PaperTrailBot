@@ -46,6 +46,9 @@ import org.papertrail.listeners.audit.helper.RoleUpdateEventHelper;
 import org.papertrail.listeners.audit.helper.ScheduledEventCreateEventHelper;
 import org.papertrail.listeners.audit.helper.ScheduledEventDeleteEventHelper;
 import org.papertrail.listeners.audit.helper.ScheduledEventUpdateEventHelper;
+import org.papertrail.listeners.audit.helper.SoundboardSoundCreateEventHelper;
+import org.papertrail.listeners.audit.helper.SoundboardSoundDeleteEventHelper;
+import org.papertrail.listeners.audit.helper.SoundboardSoundUpdateEventHelper;
 import org.papertrail.listeners.audit.helper.StageInstanceCreateEventHelper;
 import org.papertrail.listeners.audit.helper.StageInstanceDeleteEventHelper;
 import org.papertrail.listeners.audit.helper.StageInstanceUpdateEventHelper;
@@ -179,9 +182,13 @@ public class AuditLogEventListener extends ListenerAdapter {
                  MESSAGE_DELETE,
                  MESSAGE_UPDATE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
 
+            case SOUNDBOARD_SOUND_CREATE -> SoundboardSoundCreateEventHelper.format(event, ale, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_UPDATE -> SoundboardSoundUpdateEventHelper.format(event, ale, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_DELETE -> SoundboardSoundDeleteEventHelper.format(event, ale, channelIdToSendTo);
+
             default -> {
                 GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
-                log.warn("The following event has no enum value defined in JDA and is not covered by the UNKNOWN type {}", ale.getType().name());
+                log.warn("The following event has either no enum value defined in JDA and is not covered by the UNKNOWN type or is not implemented by me yet {}", ale.getType().name());
             }
         }
     }
