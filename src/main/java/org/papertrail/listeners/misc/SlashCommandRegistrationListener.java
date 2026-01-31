@@ -1,4 +1,4 @@
-package org.papertrail.main;
+package org.papertrail.listeners.misc;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /*
  * Registers all the slash commands places throughout the code
  */
-public class SlashCommandRegistrar extends ListenerAdapter {
+public class SlashCommandRegistrationListener extends ListenerAdapter {
 
 	@Override
 	public void onReady(@NotNull ReadyEvent event) {

@@ -1,4 +1,4 @@
-package org.papertrail.commons.version;
+package org.papertrail.commons.constant;
 
 public class ProjectInfo {
 	
