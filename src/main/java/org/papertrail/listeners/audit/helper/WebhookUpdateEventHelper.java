@@ -37,7 +37,6 @@ public class WebhookUpdateEventHelper {
             switch(change) {
                 case "type":
                     eb.addField("📡 Webhook Type", "╰┈➤ " + newValue, false);
-                    eb.addField("Webhook Type Legend", "-# 0 for PING; 1 for Event", false);
                     break;
 
                 case "avatar_hash":
