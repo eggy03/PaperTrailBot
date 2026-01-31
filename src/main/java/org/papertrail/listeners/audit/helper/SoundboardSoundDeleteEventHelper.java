@@ -46,10 +46,13 @@ public class SoundboardSoundDeleteEventHelper {
                     eb.addField("Related Emoji", "╰┈➤"+oldValue, false);
                     break;
 
+                case "emoji_id":
+                    eb.addField("Related Emoji ID", "╰┈➤"+oldValue, false);
+                    break;
+
                 case "name":
                     eb.addField("Sound Item Name", "╰┈➤"+oldValue, false);
                     break;
-
 
                 default:
                     eb.addField(change, "from "+oldValue+" to "+newValue, false);

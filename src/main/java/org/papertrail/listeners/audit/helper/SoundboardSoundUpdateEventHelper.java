@@ -48,6 +48,11 @@ public class SoundboardSoundUpdateEventHelper {
                     eb.addField("New Related Emoji", "╰┈➤"+newValue, false);
                     break;
 
+                case "emoji_id":
+                    eb.addField("Old Related Emoji ID", "╰┈➤"+oldValue, false);
+                    eb.addField("New Related Emoji ID", "╰┈➤"+newValue, false);
+                    break;
+
                 case "name":
                     eb.addField("Old Sound Item Name", "╰┈➤"+oldValue, false);
                     eb.addField("New Sound Item Name", "╰┈➤"+newValue, false);

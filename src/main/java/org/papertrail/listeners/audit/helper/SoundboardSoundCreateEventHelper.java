@@ -46,6 +46,10 @@ public class SoundboardSoundCreateEventHelper {
                     eb.addField("Related Emoji", "╰┈➤"+newValue, false);
                     break;
 
+                case "emoji_id":
+                    eb.addField("Related Emoji ID", "╰┈➤"+newValue, false);
+                    break;
+
                 case "name":
                     eb.addField("Sound Item Name", "╰┈➤"+newValue, false);
                     break;
