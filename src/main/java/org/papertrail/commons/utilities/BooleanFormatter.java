@@ -16,4 +16,15 @@ public class BooleanFormatter {
 
         return "❌";
     }
+
+    @NotNull
+    public static String formatToYesOrNo (Object value) {
+        if(value==null)
+            return "N/A";
+
+        if(Boolean.TRUE.equals(value))
+            return "Yes";
+
+        return "No";
+    }
 }

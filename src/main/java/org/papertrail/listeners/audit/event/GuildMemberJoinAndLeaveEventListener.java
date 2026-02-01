@@ -45,6 +45,7 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
                 Guild guild = event.getGuild();
                 User user = event.getUser();
+                Member member = event.getMember();
 
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setTitle("🛬 Member Join Event");
@@ -56,7 +57,8 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
                 eb.addField("ℹ️ Member Mention", "╰┈➤"+user.getAsMention(), false);
                 eb.addField("🆔 Member ID", "╰┈➤"+user.getId(), false);
                 eb.addField("📅 Account Created", "╰┈➤"+DurationFormatter.isoToLocalTimeCounter(user.getTimeCreated()), false);
-                eb.addField("🤖 Is Application ?", "╰┈➤"+ BooleanFormatter.formatToEmoji(user.isBot()), false);
+                eb.addField("🤖 Bot Account", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(user.isBot()), false);
+                eb.addField("📅 Has joined the server before ?", "╰┈➤"+BooleanFormatter.formatToYesOrNo(member.getFlags().contains(Member.MemberFlag.DID_REJOIN)), false);
                 eb.setFooter("Member Join Detection");
                 eb.setTimestamp(Instant.now());
 
