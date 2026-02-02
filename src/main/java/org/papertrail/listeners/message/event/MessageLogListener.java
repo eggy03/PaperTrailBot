@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.papertrail.commons.utilities.EnvConfig;
-import org.papertrail.commons.utilities.MessageEncryption;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -56,10 +55,10 @@ public class MessageLogListener extends ListenerAdapter {
             Optional<MessageLogRegistrationEntity> response = registrationClient.getRegisteredGuild(guildId);
             response.ifPresent(success -> {
                 String messageId = event.getMessageId();
-                String encryptedMessage = MessageEncryption.encrypt(event.getMessage().getContentRaw());
+                String messageContent = event.getMessage().getContentDisplay();
                 String authorId = event.getAuthor().getId();
 
-                contentClient.logMessage(messageId, encryptedMessage, authorId);
+                contentClient.logMessage(messageId, messageContent, authorId);
             });
 		});
 	}
@@ -86,22 +85,21 @@ public class MessageLogListener extends ListenerAdapter {
 
                 // fetch the old message object from the API
                 Optional<MessageLogContentEntity> oldMessageContent = contentClient.retrieveMessage(messageId);
-                oldMessageContent.ifPresent(content -> {
-                    // Decrypt the fetched message
-                    String decryptedMessage = MessageEncryption.decrypt(content.getMessageContent());
+                oldMessageContent.ifPresent(contentEntity -> {
+                    // Fetch the old message
+                    String oldMessage = contentEntity.getMessageContent();
                     // fetch the updated message and its author from the event
-                    String updatedMessage = event.getMessage().getContentRaw();
+                    String updatedMessage = event.getMessage().getContentDisplay();
 
                     // Ignore events where the message content wasn't edited (e.g., pin, embed resolve, thread creates and updates)
                     // This is required since MessageUpdateEvent is triggered in case of pins and embed resolves with no change to content
-                    if(updatedMessage.equals(decryptedMessage)) {
+                    if(updatedMessage.equals(oldMessage)) {
                         return;
                     }
 
                     // Splitting is required because each field in an embed can display only up-to 1024 characters
                     // A full embed can display up-to 6000 characters
-                    assert decryptedMessage != null; //TODO when removing encryption, remove this as well
-                    List<String> decryptedMessageSplits = Splitter.fixedLength(1024).splitToList(decryptedMessage);
+                    List<String> oldMessageSplits = Splitter.fixedLength(1024).splitToList(oldMessage);
                     List<String> updatedMessageSplits = Splitter.fixedLength(1024).splitToList(updatedMessage);
 
                     EmbedBuilder eb = new EmbedBuilder();
@@ -109,25 +107,22 @@ public class MessageLogListener extends ListenerAdapter {
                     eb.setDescription("A message sent by "+event.getAuthor().getAsMention()+" has been edited in: "+event.getJumpUrl());
                     eb.setColor(Color.YELLOW);
 
-                    decryptedMessageSplits.forEach(split -> eb.addField("Old Message", split, false)); // get only the message and not the author
+                    oldMessageSplits.forEach(split -> eb.addField("Old Message", split, false));
                     updatedMessageSplits.forEach(split -> eb.addField("New Message", split, false));
 
                     eb.setFooter(event.getGuild().getName());
                     eb.setTimestamp(Instant.now());
-                    // update the database with the new message
-                    contentClient.updateMessage(messageId, MessageEncryption.encrypt(updatedMessage), event.getAuthor().getId());
-                    // the reason this is above the send queue is that in case where the user did not give sufficient permissions to
-                    // the bot, the error responses wouldn't block the update of the message in the database.
 
-                    // fetch the channel id from the database
-                    // this channel is where the logs will be sent to
-                    // wrap the embed and send
                     MessageEmbed mb = eb.build();
 
+                    // send the old and updated message to the registered channel
                     TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
                     if(sendingChannel!=null && sendingChannel.canTalk()) {
                         sendingChannel.sendMessageEmbeds(mb).queue();
                     }
+
+                    // update the database with the new message
+                    contentClient.updateMessage(messageId, updatedMessage, event.getAuthor().getId());
                 });
             });
 		});
@@ -152,33 +147,27 @@ public class MessageLogListener extends ListenerAdapter {
 
                 // fetch the old message object from the API
                 Optional<MessageLogContentEntity> oldMessageContent = contentClient.retrieveMessage(messageId);
-                oldMessageContent.ifPresent(content -> {
+                oldMessageContent.ifPresent(contentEntity -> {
 
                     // retrieve the stored message and author in the database which was deleted
-                    String deletedMessage = MessageEncryption.decrypt(content.getMessageContent());
-                    String deletedMessageAuthorId = content.getAuthorId();
+                    String deletedMessage = contentEntity.getMessageContent();
+                    String deletedMessageAuthorId = contentEntity.getAuthorId();
 
                     User author = event.getJDA().getUserById(deletedMessageAuthorId);
                     String mentionableAuthor = (author !=null ? author.getAsMention() : deletedMessageAuthorId);
 
                     // Splitting is required because each field in an embed can display only up-to 1024 characters
-                    assert deletedMessage != null; //TODO when removing encryption, remove this as well
                     List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(deletedMessage);
 
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setTitle("🗑️ Message Delete Event");
-                    eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted");
+                    eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted in "+ event.getChannel().getAsMention());
                     eb.setColor(Color.RED);
 
                     deletedMessageSplits.forEach(split-> eb.addField("Deleted Message", split, false));
 
                     eb.setFooter(event.getGuild().getName());
                     eb.setTimestamp(Instant.now());
-
-                    // delete the message from the database
-                    contentClient.deleteMessage(messageId);
-                    // the reason this is above the send queue is that, in case where the user did not give sufficient permissions to
-                    // the bot, (such as no send message permissions) the exceptions wouldn't block the deletion in the database.
 
                     // send the fetched deleted message to the logging channel
                     MessageEmbed mb = eb.build();
@@ -187,6 +176,9 @@ public class MessageLogListener extends ListenerAdapter {
                     if(sendingChannel!=null && sendingChannel.canTalk()) {
                         sendingChannel.sendMessageEmbeds(mb).queue();
                     }
+
+                    // delete the message from the database
+                    contentClient.deleteMessage(messageId);
                 });
             });
 		});
