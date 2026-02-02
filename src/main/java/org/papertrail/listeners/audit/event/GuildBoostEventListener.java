@@ -1,6 +1,7 @@
 package org.papertrail.listeners.audit.event;
 
-import io.vavr.control.Either;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -11,18 +12,18 @@ import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostCountEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostTierEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jspecify.annotations.NonNull;
-import org.papertrail.commons.sdk.client.AuditLogClient;
-import org.papertrail.commons.sdk.model.AuditLogObject;
-import org.papertrail.commons.sdk.model.ErrorObject;
+import org.papertrail.commons.utilities.EnvConfig;
 
 import java.awt.Color;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 // Experimental
 public class GuildBoostEventListener extends ListenerAdapter {
 
+    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
     private final Executor vThreadPool;
 
     public GuildBoostEventListener(Executor vThreadPool) {
@@ -33,10 +34,10 @@ public class GuildBoostEventListener extends ListenerAdapter {
     public void onGuildUpdateBoostTier(@NonNull GuildUpdateBoostTierEvent event) {
 
         vThreadPool.execute(() -> {
-            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
-            response.peek(auditLogObject -> {
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(auditLogObject -> {
 
-                String registeredChannelId = auditLogObject.channelId();
+                String registeredChannelId = auditLogObject.getChannelId();
 
                 Guild guild = event.getGuild();
 
@@ -70,7 +71,7 @@ public class GuildBoostEventListener extends ListenerAdapter {
                 MessageEmbed mb = eb.build();
 
                 TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
-                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                if (sendingChannel != null && sendingChannel.canTalk()) {
                     sendingChannel.sendMessageEmbeds(mb).queue();
                 }
             });
@@ -81,9 +82,9 @@ public class GuildBoostEventListener extends ListenerAdapter {
     public void onGuildUpdateBoostCount(@NonNull GuildUpdateBoostCountEvent event) {
 
         vThreadPool.execute(() -> {
-            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
-            response.peek(success -> {
-                String registeredChannelId = success.channelId();
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(success -> {
+                String registeredChannelId = success.getChannelId();
 
                 Guild guild = event.getGuild();
 
@@ -105,7 +106,7 @@ public class GuildBoostEventListener extends ListenerAdapter {
                 MessageEmbed mb = eb.build();
 
                 TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
-                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                if (sendingChannel != null && sendingChannel.canTalk()) {
                     sendingChannel.sendMessageEmbeds(mb).queue();
                 }
             });
@@ -116,9 +117,9 @@ public class GuildBoostEventListener extends ListenerAdapter {
     public void onGuildMemberUpdateBoostTime(@NonNull GuildMemberUpdateBoostTimeEvent event) {
 
         vThreadPool.execute(() -> {
-            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
-            response.peek(success -> {
-                String registeredChannelId = success.channelId();
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(success -> {
+                String registeredChannelId = success.getChannelId();
 
                 Member member = event.getMember();
                 Guild guild = event.getGuild();
@@ -148,7 +149,7 @@ public class GuildBoostEventListener extends ListenerAdapter {
                 MessageEmbed mb = eb.build();
 
                 TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
-                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                if (sendingChannel != null && sendingChannel.canTalk()) {
                     sendingChannel.sendMessageEmbeds(mb).queue();
                 }
             });

@@ -59,17 +59,15 @@
 		 <artifactId>guava</artifactId>
 		 <version>33.4.8-jre</version>
 	 </dependency>
-     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-restclient -->
      <dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-restclient</artifactId>
-         <version>4.0.0-M2</version>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-web</artifactId>
+         <version>7.0.3</version>
      </dependency>
-     <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
      <dependency>
-         <groupId>io.vavr</groupId>
-         <artifactId>vavr</artifactId>
-         <version>0.10.7</version>
+         <groupId>io.github.eggy03</groupId>
+         <artifactId>papertrail-sdk</artifactId>
+         <version>1.0.0</version>
      </dependency>
      <dependency>
          <groupId>com.google.code.gson</groupId>

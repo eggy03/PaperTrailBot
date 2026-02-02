@@ -1,6 +1,7 @@
 package org.papertrail.listeners.audit.event;
 
-import io.vavr.control.Either;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -8,17 +9,17 @@ import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jspecify.annotations.NonNull;
-import org.papertrail.commons.sdk.client.AuditLogClient;
-import org.papertrail.commons.sdk.model.AuditLogObject;
-import org.papertrail.commons.sdk.model.ErrorObject;
+import org.papertrail.commons.utilities.EnvConfig;
 
 import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 public class GuildPollEventListener extends ListenerAdapter {
 
+    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
     private final Executor vThreadPool;
 
     public GuildPollEventListener(Executor vThreadPool) {
@@ -39,11 +40,10 @@ public class GuildPollEventListener extends ListenerAdapter {
 
             // guild poll events are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
-            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(success -> {
 
-            response.peek(success -> {
-
-                String registeredChannelId = success.channelId();
+                String registeredChannelId = success.getChannelId();
 
                 StringBuilder answers = new StringBuilder();
                 List<MessagePoll.Answer> answerList = messagePoll.getAnswers();

@@ -1,21 +1,24 @@
 package org.papertrail.listeners.message.setup;
 
-import io.vavr.control.Either;
+import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.papertrail.commons.sdk.client.MessageLogClient;
-import org.papertrail.commons.sdk.model.ErrorObject;
-import org.papertrail.commons.sdk.model.MessageLogObject;
+import org.papertrail.commons.utilities.EnvConfig;
 
 import java.awt.Color;
-import java.util.Objects;
+import java.util.Optional;
 
 public class MessageLogSetupCommandListener extends ListenerAdapter {
+
+    private static final MessageLogRegistrationClient client = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
 
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -48,58 +51,65 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 	}
 
 	private void setMessageLogging(SlashCommandInteractionEvent event) {
-		
-		// Only members with MANAGE_SERVER permissions should be able to use this command
-		Member member = event.getMember();
-		if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
-			event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
-			return;
-		}
 
-		String guildId = Objects.requireNonNull(event.getGuild()).getId();
+        // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
+        Member callerMember = event.getMember();
+        Guild callerGuild = event.getGuild();
+        TextChannel callerChannel = event.getChannel().asTextChannel();
+
+        if (callerMember == null || callerGuild == null) {
+            event.reply("❌ You can only use this command in a guild.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (!callerMember.hasPermission(Permission.ADMINISTRATOR)) {
+            event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
+            return;
+        }
 
         // Call the API to register guild for message logging
-        Either<ErrorObject, MessageLogObject> response = MessageLogClient.registerGuild(guildId, event.getChannelId());
-        response.peek(success -> {
+        boolean success = client.registerGuild(callerGuild.getId(), callerChannel.getId());
 
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("Message Log Registration");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Message Log Registration");
+
+        if (success) {
             eb.addField("✅ Channel Registration Success","╰┈➤"+"All edited and deleted messages will be logged here", false);
             eb.setColor(Color.GREEN);
 
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
-
-        }).peekLeft(failure -> {
-
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("Message Log Registration");
-            eb.addField("❌ Channel Registration Failure","╰┈➤"+"Channel could not be registered", false);
-            eb.addField("\uD83C\uDF10 API Response", "╰┈➤"+failure.message(), false);
+        } else {
+            eb.addField("❌ Channel Registration Failure", "╰┈➤" + "Channel could not be registered.\nCheck if a channel in this guild is already registered for logging.", false);
             eb.setColor(Color.YELLOW);
 
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
-        });
+        }
 
-	}
+    }
 	
 	private void retrieveMessageLoggingChannel(SlashCommandInteractionEvent event) {
-		
-		// Only members with MANAGE_SERVER permissions should be able to use this command
-		Member member = event.getMember();
-		if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
-			event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
-			return;
-		}
-		
-		String guildId = Objects.requireNonNull(event.getGuild()).getId();
+
+        // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
+        Member callerMember = event.getMember();
+        Guild callerGuild = event.getGuild();
+
+        if (callerMember == null || callerGuild == null) {
+            event.reply("❌ You can only use this command in a guild.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (!callerMember.hasPermission(Permission.ADMINISTRATOR)) {
+            event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
+            return;
+        }
 
         // Call the API to check for registered guild
-        Either<ErrorObject, MessageLogObject> response = MessageLogClient.getRegisteredGuild(guildId);
-        response.peek(success -> {
+        Optional<MessageLogRegistrationEntity> response = client.getRegisteredGuild(callerGuild.getId());
+        response.ifPresentOrElse(success -> {
 
-            String registeredChannelId = success.channelId();
+            String registeredChannelId = success.getChannelId();
             GuildChannel registeredChannel = event.getJDA().getGuildChannelById(registeredChannelId);
 
             EmbedBuilder eb = new EmbedBuilder();
@@ -109,8 +119,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
 
-        }).peekLeft(failure -> {
-
+        }, () -> {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Message Log Configuration");
             eb.addField("⚠️ Channel Registration Check", "╰┈➤"+"No channel has been registered for message logs", false);
@@ -122,39 +131,38 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 	
 	private void unsetMessageLogging(SlashCommandInteractionEvent event) {
 
-        // Only members with MANAGE_SERVER permissions should be able to use this command
-        Member member = event.getMember();
-        if (member == null || !member.hasPermission(Permission.ADMINISTRATOR)) {
+        // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
+        Member callerMember = event.getMember();
+        Guild callerGuild = event.getGuild();
+
+        if (callerMember == null || callerGuild == null) {
+            event.reply("❌ You can only use this command in a guild.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (!callerMember.hasPermission(Permission.ADMINISTRATOR)) {
             event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
             return;
         }
 
-        String guildId = Objects.requireNonNull(event.getGuild()).getId();
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("📝 Message Log Configuration");
+
 
         // Call the API to unregister guild
-        Either<ErrorObject, Void> response = MessageLogClient.deleteRegisteredGuild(guildId);
-        response.peek(success -> {
-
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("📝 Message Log Configuration");
+        boolean success = client.deleteRegisteredGuild(callerGuild.getId());
+        if (success) {
             eb.addField("✅ Channel Removal", "╰┈➤" + "Channel successfully unset", false);
             eb.setColor(Color.GREEN);
 
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
-
-        }).peekLeft(failure -> {
-
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("📝 Message Log Configuration");
-            eb.addField("❌ Channel Removal Failure", "╰┈➤" + "Channel could not be unset", false);
-            eb.addField("\uD83C\uDF10 API Response", "╰┈➤" + failure.message(), false);
+        } else {
+            eb.addField("❌ Channel Removal Failure", "╰┈➤"+"Channel could not be unset.\nThis may be because no channel has been registered in this guild yet.", false);
             eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
 
             event.replyEmbeds(mb).setEphemeral(false).queue();
-
-        });
-
+        }
     }
 }

@@ -1,15 +1,14 @@
 package org.papertrail.listeners.audit.event;
 
-import io.vavr.control.Either;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.commons.sdk.client.AuditLogClient;
-import org.papertrail.commons.sdk.model.AuditLogObject;
-import org.papertrail.commons.sdk.model.ErrorObject;
+import org.papertrail.commons.utilities.EnvConfig;
 import org.papertrail.listeners.audit.helper.AutoModerationFlagToChannelEventHelper;
 import org.papertrail.listeners.audit.helper.AutoModerationMemberTimeoutEventHelper;
 import org.papertrail.listeners.audit.helper.AutoModerationRuleBlockMessageEventHelper;
@@ -65,12 +64,14 @@ import org.papertrail.listeners.audit.helper.WebhookCreateEventHelper;
 import org.papertrail.listeners.audit.helper.WebhookRemoveEventHelper;
 import org.papertrail.listeners.audit.helper.WebhookUpdateEventHelper;
 
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 @Slf4j
 public class AuditLogEventListener extends ListenerAdapter {
 
     private final Executor vThreadPool;
+    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 
     public AuditLogEventListener(Executor vThreadPool) {
         this.vThreadPool = vThreadPool;
@@ -80,15 +81,13 @@ public class AuditLogEventListener extends ListenerAdapter {
     public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
         vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
-            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
-            response.peek(success -> {
-                AuditLogEntry ale = event.getEntry();
-                auditLogParser(event, ale, success.channelId());
-            });
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(success -> auditLogParser(event, success.getChannelId()));
         });
     }
 
-    private void auditLogParser(GuildAuditLogEntryCreateEvent event, AuditLogEntry ale, String channelIdToSendTo) {
+    private void auditLogParser(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+        AuditLogEntry ale = event.getEntry();
         ActionType action = ale.getType();
         switch (action) {
 
