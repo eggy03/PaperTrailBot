@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 /*
  * The main class of the bot
  */
-public class FireRun {
+public class Start {
 
 	// All I/O blocking operations run inside the vThreadPool
 	private static final Executor vThreadPool = Executors.newVirtualThreadPerTaskExecutor();

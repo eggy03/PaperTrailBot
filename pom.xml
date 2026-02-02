@@ -1,111 +1,146 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.egg.papertrail</groupId>
-  <artifactId>paper-trail-bot</artifactId>
-  <version>2.3.1</version>
-  <name>PaperTrail</name>
-  <description>A simple bot for logging all user actions</description>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>21</maven.compiler.source>
-  	<maven.compiler.target>21</maven.compiler.target>
-      <lombok.version>1.18.42</lombok.version>
-  </properties>
-  
- <dependencies>
-	<dependency>
-    	<groupId>net.dv8tion</groupId>
-    	<artifactId>JDA</artifactId>
-    	<version>6.3.0</version>
-	</dependency>
-	<dependency>
-    	<groupId>org.tinylog</groupId>
-    	<artifactId>slf4j-tinylog</artifactId>
-    	<version>2.7.0</version>
-	</dependency>
-	<dependency>
-    	<groupId>org.tinylog</groupId>
-    	<artifactId>tinylog-api</artifactId>
-    	<version>2.7.0</version>
-	</dependency>
-	<dependency>
-    	<groupId>org.tinylog</groupId>
-    	<artifactId>tinylog-impl</artifactId>
-    	<version>2.7.0</version>
-	</dependency>
-  	<dependency>
-    	<groupId>io.github.cdimascio</groupId>
-    	<artifactId>dotenv-java</artifactId>
-    	<version>3.2.0</version>
- 	</dependency>
-    <dependency>
-    	<groupId>org.apache.commons</groupId>
-    	<artifactId>commons-lang3</artifactId>
-    	<version>3.19.0</version>
-	</dependency> 
-	<dependency>
-    	<groupId>org.jasypt</groupId>
-    	<artifactId>jasypt</artifactId>
-    	<version>1.9.3</version>
-	</dependency>
-	<dependency>
-    	<groupId>org.bouncycastle</groupId>
-    	<artifactId>bcprov-jdk18on</artifactId>
-    	<version>1.81</version>
-	</dependency>
-	 <dependency>
-		 <groupId>com.google.guava</groupId>
-		 <artifactId>guava</artifactId>
-		 <version>33.4.8-jre</version>
-	 </dependency>
-     <dependency>
-         <groupId>org.springframework</groupId>
-         <artifactId>spring-web</artifactId>
-         <version>7.0.3</version>
-     </dependency>
-     <dependency>
-         <groupId>io.github.eggy03</groupId>
-         <artifactId>papertrail-sdk</artifactId>
-         <version>1.0.0</version>
-     </dependency>
-     <dependency>
-         <groupId>com.google.code.gson</groupId>
-         <artifactId>gson</artifactId>
-         <version>2.13.1</version>
-     </dependency>
-     <dependency>
-         <groupId>org.projectlombok</groupId>
-         <artifactId>lombok</artifactId>
-         <version>${lombok.version}</version>
-     </dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<build>
-    <finalName>${project.artifactId}</finalName>
-    <plugins>
-        <plugin> <!-- use  mvn clean package spring-boot:repackage for building -->
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>3.5.7</version>
-            <configuration>
-                <mainClass>org.papertrail.main.FireRun</mainClass>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.14.1</version>
-            <configuration>
-                <annotationProcessorPaths>
-                    <path>
-                        <groupId>org.projectlombok</groupId>
-                        <artifactId>lombok</artifactId>
-                        <version>${lombok.version}</version>
-                    </path>
-                </annotationProcessorPaths>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.egg.papertrail</groupId>
+    <artifactId>paper-trail-bot</artifactId>
+    <version>2.3.1</version>
+    <name>PaperTrail</name>
+    <description>A simple bot for logging all user actions</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+
+        <!-- Dependency Versions -->
+        <jda.version>6.3.0</jda.version>
+        <papertrail.sdk.version>1.0.0</papertrail.sdk.version>
+        <tinylog.version>2.7.0</tinylog.version>
+        <dotenv.version>3.2.0</dotenv.version>
+        <commons-lang3.version>3.19.0</commons-lang3.version>
+        <jasypt.version>1.9.3</jasypt.version>
+        <bouncycastle.version>1.81</bouncycastle.version>
+        <guava.version>33.4.8-jre</guava.version>
+        <spring.version>7.0.3</spring.version>
+        <gson.version>2.13.1</gson.version>
+        <lombok.version>1.18.42</lombok.version>
+
+        <!-- Plugin Versions -->
+        <spring-boot-maven-plugin.version>3.5.7</spring-boot-maven-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>${jda.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>slf4j-tinylog</artifactId>
+            <version>${tinylog.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-api</artifactId>
+            <version>${tinylog.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-impl</artifactId>
+            <version>${tinylog.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>${dotenv.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>${jasypt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.eggy03</groupId>
+            <artifactId>papertrail-sdk</artifactId>
+            <version>${papertrail.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <!-- use mvn clean package spring-boot:repackage for building -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-maven-plugin.version}</version>
+                <configuration>
+                    <mainClass>org.papertrail.main.Start</mainClass>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
