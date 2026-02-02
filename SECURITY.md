@@ -8,7 +8,7 @@ Currently, only the `main` branch of PaperTrail is actively maintained. Bug fixe
 
 If you discover a security vulnerability in PaperTrail, please **do not open a GitHub issue**. Instead, report it responsibly by contacting:
 
-📧 **egg03@duck.com**
+📧 **eggzerothree@proton.me**
 
 Please include:
 
