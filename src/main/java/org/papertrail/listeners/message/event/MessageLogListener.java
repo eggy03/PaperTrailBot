@@ -1,7 +1,6 @@
 package org.papertrail.listeners.message.event;
 
 import com.google.common.base.Splitter;
-import com.google.common.util.concurrent.Striped;
 import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogContentEntity;
@@ -16,7 +15,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 import org.papertrail.commons.utilities.EnvConfig;
 import org.papertrail.commons.utilities.MessageEncryption;
 
@@ -25,8 +23,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
 
 @Slf4j
 public class MessageLogListener extends ListenerAdapter {
@@ -35,25 +31,11 @@ public class MessageLogListener extends ListenerAdapter {
     private static final MessageLogContentClient contentClient = new MessageLogContentClient(EnvConfig.get("API_URL"));
 
     private final Executor vThreadPool;
-	private final Striped<@NonNull Lock> messageLocks = Striped.lock(8192);
-	private final AtomicLong activeLockCount = new AtomicLong(0);
 
 	public MessageLogListener(Executor vThreadPool) {
 		this.vThreadPool = vThreadPool;
 	}
 
-	private void withMessageLock (String messageId, Runnable task) {
-		Lock lock = messageLocks.get(messageId);
-		lock.lock();
-		log.debug("Lock acquired for message id: {} . Active lock count: {}", messageId, activeLockCount.incrementAndGet());
-		try{
-			task.run();
-		} finally {
-			lock.unlock();
-			log.debug("Lock released for message id: {} . Active lock count: {}", messageId, activeLockCount.decrementAndGet());
-		}
-	}
-	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 
@@ -77,7 +59,7 @@ public class MessageLogListener extends ListenerAdapter {
                 String encryptedMessage = MessageEncryption.encrypt(event.getMessage().getContentRaw());
                 String authorId = event.getAuthor().getId();
 
-                withMessageLock(messageId, () -> contentClient.logMessage(messageId, encryptedMessage, authorId));
+                contentClient.logMessage(messageId, encryptedMessage, authorId);
             });
 		});
 	}
@@ -133,11 +115,7 @@ public class MessageLogListener extends ListenerAdapter {
                     eb.setFooter(event.getGuild().getName());
                     eb.setTimestamp(Instant.now());
                     // update the database with the new message
-                    withMessageLock(messageId, ()->
-                            contentClient.updateMessage(
-                                    messageId, MessageEncryption.encrypt(updatedMessage), event.getAuthor().getId()
-                            )
-                    );
+                    contentClient.updateMessage(messageId, MessageEncryption.encrypt(updatedMessage), event.getAuthor().getId());
                     // the reason this is above the send queue is that in case where the user did not give sufficient permissions to
                     // the bot, the error responses wouldn't block the update of the message in the database.
 
@@ -198,7 +176,7 @@ public class MessageLogListener extends ListenerAdapter {
                     eb.setTimestamp(Instant.now());
 
                     // delete the message from the database
-                    withMessageLock(messageId, () -> contentClient.deleteMessage(messageId));
+                    contentClient.deleteMessage(messageId);
                     // the reason this is above the send queue is that, in case where the user did not give sufficient permissions to
                     // the bot, (such as no send message permissions) the exceptions wouldn't block the deletion in the database.
 
