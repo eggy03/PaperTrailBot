@@ -18,7 +18,7 @@
 
         <!-- Dependency Versions -->
         <jda.version>6.3.0</jda.version>
-        <papertrail.sdk.version>1.0.0</papertrail.sdk.version>
+        <papertrail.sdk.version>1.0.0-SNAPSHOT</papertrail.sdk.version>
         <tinylog.version>2.7.0</tinylog.version>
         <dotenv.version>3.2.0</dotenv.version>
         <commons-lang3.version>3.19.0</commons-lang3.version>
@@ -33,6 +33,20 @@
         <spring-boot-maven-plugin.version>3.5.7</spring-boot-maven-plugin.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <name>Central Portal Snapshots</name>
+            <id>central-portal-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
