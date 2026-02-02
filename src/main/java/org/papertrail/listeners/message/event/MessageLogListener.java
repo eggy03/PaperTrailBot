@@ -161,7 +161,7 @@ public class MessageLogListener extends ListenerAdapter {
 
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setTitle("🗑️ Message Delete Event");
-                    eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted in "+ event.getChannel().getAsMention());
+                    eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted from "+ event.getChannel().getAsMention());
                     eb.setColor(Color.RED);
 
                     deletedMessageSplits.forEach(split-> eb.addField("Deleted Message", split, false));
