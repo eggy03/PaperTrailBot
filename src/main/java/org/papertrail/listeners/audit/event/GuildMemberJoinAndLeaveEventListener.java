@@ -1,6 +1,7 @@
 package org.papertrail.listeners.audit.event;
 
-import io.vavr.control.Either;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -11,24 +12,23 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.papertrail.commons.sdk.client.AuditLogClient;
-import org.papertrail.commons.sdk.model.AuditLogObject;
-import org.papertrail.commons.sdk.model.ErrorObject;
 import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
+import org.papertrail.commons.utilities.EnvConfig;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 // this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
 // this event is logged in the same channel where the audit log events are logged
 public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
+    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 	private final Executor vThreadPool;
 
 	public GuildMemberJoinAndLeaveEventListener(Executor vThreadPool) {
-
 		this.vThreadPool = vThreadPool;
 	}
 	
@@ -38,10 +38,10 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 		vThreadPool.execute(()->{
 			// guild member join and leave events are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
-            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
-            response.peek(success -> {
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(success -> {
 
-                String registeredChannelId = success.channelId();
+                String registeredChannelId = success.getChannelId();
 
                 Guild guild = event.getGuild();
                 User user = event.getUser();
@@ -76,10 +76,10 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
 		vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
-            Either<ErrorObject, AuditLogObject> response = AuditLogClient.getRegisteredGuild(event.getGuild().getId());
-            response.peek(success -> {
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(success -> {
 
-                String registeredChannelId = success.channelId();
+                String registeredChannelId = success.getChannelId();
 
                 Guild guild = event.getGuild();
                 User user = event.getUser();

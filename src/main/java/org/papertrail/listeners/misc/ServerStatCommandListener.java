@@ -22,9 +22,12 @@ public class ServerStatCommandListener extends ListenerAdapter{
 		if(event.getName().equals("stats")) {
 			
 			Guild guild = event.getGuild();
+			if (guild == null) {
+				event.reply("You can only use this command in Guilds").setEphemeral(true).queue();
+				return;
+			}
 
-            assert guild != null;
-            List<Member> members = Objects.requireNonNull(guild).getMemberCache().asList();
+			List<Member> members = guild.getMemberCache().asList();
 			int botCount = 0;
 			int userCount = 0;
 			int onlineUserCount = 0;
