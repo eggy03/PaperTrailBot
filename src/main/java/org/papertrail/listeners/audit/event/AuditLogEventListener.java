@@ -39,6 +39,9 @@ import org.papertrail.listeners.audit.helper.MemberVoiceKickEventHelper;
 import org.papertrail.listeners.audit.helper.MemberVoiceMoveEventHelper;
 import org.papertrail.listeners.audit.helper.MessagePinEventHelper;
 import org.papertrail.listeners.audit.helper.MessageUnpinEventHelper;
+import org.papertrail.listeners.audit.helper.OnboardingPromptCreateEventHelper;
+import org.papertrail.listeners.audit.helper.OnboardingPromptDeleteEventHelper;
+import org.papertrail.listeners.audit.helper.OnboardingPromptUpdateEventHelper;
 import org.papertrail.listeners.audit.helper.OnboardingUpdateEventHelper;
 import org.papertrail.listeners.audit.helper.RoleCreateEventHelper;
 import org.papertrail.listeners.audit.helper.RoleDeleteEventHelper;
@@ -167,9 +170,9 @@ public class AuditLogEventListener extends ListenerAdapter {
             case SOUNDBOARD_SOUND_DELETE -> SoundboardSoundDeleteEventHelper.format(event, ale, channelIdToSendTo);
 
             case ONBOARDING_UPDATE -> OnboardingUpdateEventHelper.format(event, channelIdToSendTo);
-            case ONBOARDING_PROMPT_CREATE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
-            case ONBOARDING_PROMPT_UPDATE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
-            case ONBOARDING_PROMPT_DELETE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+            case ONBOARDING_PROMPT_CREATE -> OnboardingPromptCreateEventHelper.format(event, channelIdToSendTo);
+            case ONBOARDING_PROMPT_UPDATE -> OnboardingPromptUpdateEventHelper.format(event, channelIdToSendTo);
+            case ONBOARDING_PROMPT_DELETE -> OnboardingPromptDeleteEventHelper.format(event, channelIdToSendTo);
 
             case HOME_SETTINGS_CREATE, HOME_SETTINGS_UPDATE -> {
                 // might come back later and implement it
@@ -189,7 +192,7 @@ public class AuditLogEventListener extends ListenerAdapter {
 
             default -> {
                 GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
-                log.warn("The following event has either no enum value defined in JDA and is not covered by the UNKNOWN type or is not implemented by me yet {}", ale.getType().name());
+                log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by me yet {}", ale.getType().name());
             }
         }
     }
