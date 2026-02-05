@@ -40,9 +40,8 @@ public class OnboardingUtils {
         if(value instanceof List<?> channelIdList) {
             channelIdList.forEach(channelId -> {
                 GuildChannel channel = guild.getGuildChannelById((String) channelId);
-                sb.append(channel!=null ? channel.getAsMention() : channelId).append(", ");
+                sb.append(channel!=null ? channel.getAsMention() : channelId).append(" ");
             });
-            sb.delete(sb.length()-2, sb.length()); // delete trailing ", "
         }
 
         return sb.toString();
