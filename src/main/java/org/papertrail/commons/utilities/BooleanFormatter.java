@@ -27,4 +27,15 @@ public class BooleanFormatter {
 
         return "No";
     }
+
+    @NotNull
+    public static String formatToEnabledOrDisabled (Object value) {
+        if(value==null)
+            return "N/A";
+
+        if(Boolean.TRUE.equals(value))
+            return "Enabled";
+
+        return "Disabled";
+    }
 }
