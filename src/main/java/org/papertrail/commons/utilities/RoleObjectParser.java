@@ -22,8 +22,7 @@ public class RoleObjectParser {
                 if (o instanceof Map<?, ?> roleMap && roleMap.containsKey("id")) {
                     String roleId = (String) roleMap.get("id");
                     Role role = event.getGuild().getRoleById(roleId);
-                    roleString.append(role!=null ? role.getAsMention() : roleMap.get("name"))
-                            .append(System.lineSeparator());
+                    roleString.append(role!=null ? role.getAsMention() : roleMap.get("name")).append(" ");
                 }
             }
             return roleString.toString();
