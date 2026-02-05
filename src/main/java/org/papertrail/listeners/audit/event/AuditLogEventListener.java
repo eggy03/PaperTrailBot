@@ -39,6 +39,7 @@ import org.papertrail.listeners.audit.helper.MemberVoiceKickEventHelper;
 import org.papertrail.listeners.audit.helper.MemberVoiceMoveEventHelper;
 import org.papertrail.listeners.audit.helper.MessagePinEventHelper;
 import org.papertrail.listeners.audit.helper.MessageUnpinEventHelper;
+import org.papertrail.listeners.audit.helper.OnboardingUpdateEventHelper;
 import org.papertrail.listeners.audit.helper.RoleCreateEventHelper;
 import org.papertrail.listeners.audit.helper.RoleDeleteEventHelper;
 import org.papertrail.listeners.audit.helper.RoleUpdateEventHelper;
@@ -91,18 +92,12 @@ public class AuditLogEventListener extends ListenerAdapter {
         ActionType action = ale.getType();
         switch (action) {
 
-            case AUTO_MODERATION_FLAG_TO_CHANNEL ->
-                    AutoModerationFlagToChannelEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_MEMBER_TIMEOUT ->
-                    AutoModerationMemberTimeoutEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_BLOCK_MESSAGE ->
-                    AutoModerationRuleBlockMessageEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_CREATE ->
-                    AutoModerationRuleCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_UPDATE ->
-                    AutoModerationRuleUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_DELETE ->
-                    AutoModerationRuleDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case AUTO_MODERATION_FLAG_TO_CHANNEL -> AutoModerationFlagToChannelEventHelper.format(event, ale, channelIdToSendTo);
+            case AUTO_MODERATION_MEMBER_TIMEOUT -> AutoModerationMemberTimeoutEventHelper.format(event, ale, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_BLOCK_MESSAGE -> AutoModerationRuleBlockMessageEventHelper.format(event, ale, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_CREATE -> AutoModerationRuleCreateEventHelper.format(event, ale, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_UPDATE -> AutoModerationRuleUpdateEventHelper.format(event, ale, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_DELETE -> AutoModerationRuleDeleteEventHelper.format(event, ale, channelIdToSendTo);
 
             case KICK -> KickEventHelper.format(event, ale, channelIdToSendTo);
             case BAN -> BanEventHelper.format(event, ale, channelIdToSendTo);
@@ -160,20 +155,26 @@ public class AuditLogEventListener extends ListenerAdapter {
             case THREAD_UPDATE -> ThreadUpdateEventHelper.format(event, ale, channelIdToSendTo);
             case THREAD_DELETE -> ThreadDeleteEventHelper.format(event, ale, channelIdToSendTo);
 
-            case VOICE_CHANNEL_STATUS_DELETE ->
-                    VoiceChannelStatusDeleteEventHelper.format(event, ale, channelIdToSendTo);
-            case VOICE_CHANNEL_STATUS_UPDATE ->
-                    VoiceChannelStatusUpdateEventHelper.format(event, ale, channelIdToSendTo);
+            case VOICE_CHANNEL_STATUS_DELETE -> VoiceChannelStatusDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case VOICE_CHANNEL_STATUS_UPDATE -> VoiceChannelStatusUpdateEventHelper.format(event, ale, channelIdToSendTo);
 
             case WEBHOOK_CREATE -> WebhookCreateEventHelper.format(event, ale, channelIdToSendTo);
             case WEBHOOK_UPDATE -> WebhookUpdateEventHelper.format(event, ale, channelIdToSendTo);
             case WEBHOOK_REMOVE -> WebhookRemoveEventHelper.format(event, ale, channelIdToSendTo);
 
-            case APPLICATION_COMMAND_PRIVILEGES_UPDATE,
-                 PRUNE,
-                 INTEGRATION_UPDATE,
-                 INVITE_UPDATE,
-                 UNKNOWN -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_CREATE -> SoundboardSoundCreateEventHelper.format(event, ale, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_UPDATE -> SoundboardSoundUpdateEventHelper.format(event, ale, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_DELETE -> SoundboardSoundDeleteEventHelper.format(event, ale, channelIdToSendTo);
+
+            case ONBOARDING_UPDATE -> OnboardingUpdateEventHelper.format(event, channelIdToSendTo);
+            case ONBOARDING_PROMPT_CREATE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+            case ONBOARDING_PROMPT_UPDATE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+            case ONBOARDING_PROMPT_DELETE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+
+            case HOME_SETTINGS_CREATE, HOME_SETTINGS_UPDATE -> {
+                // might come back later and implement it
+                // but for now, don't send these events
+            }
 
             // these seemingly don't trigger properly, or are unreliable
             case MESSAGE_BULK_DELETE,
@@ -181,9 +182,10 @@ public class AuditLogEventListener extends ListenerAdapter {
                  MESSAGE_DELETE,
                  MESSAGE_UPDATE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
 
-            case SOUNDBOARD_SOUND_CREATE -> SoundboardSoundCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case SOUNDBOARD_SOUND_UPDATE -> SoundboardSoundUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case SOUNDBOARD_SOUND_DELETE -> SoundboardSoundDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            // except UNKNOWN, the rest have never been seen to be triggered
+            case APPLICATION_COMMAND_PRIVILEGES_UPDATE, PRUNE, INTEGRATION_UPDATE,
+                 INVITE_UPDATE, ONBOARDING_CREATE,
+                 UNKNOWN -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
 
             default -> {
                 GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);

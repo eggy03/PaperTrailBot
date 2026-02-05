@@ -1,0 +1,50 @@
+package org.papertrail.commons.utilities;
+
+import lombok.experimental.UtilityClass;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+@UtilityClass
+public class OnboardingUtils {
+
+    @NotNull
+    public static String formatMode(Object value) {
+        if(value==null) return "N/A";
+
+        return switch (String.valueOf(value)) {
+            case "1" -> "Advanced Mode";
+            case "0" -> "Regular Mode";
+            default -> "N/A";
+        };
+    }
+
+    @NotNull
+    public static String formatStatus(Object value) {
+        if(value==null)
+            return "N/A";
+
+        if(Boolean.TRUE.equals(value))
+            return "Enabled";
+
+        return "Disabled";
+    }
+
+    @NotNull
+    public static String resolveChannelsFromList(Guild guild, Object value) {
+        if(value == null) return "No Resolvable Channel IDs";
+
+        StringBuilder sb = new StringBuilder();
+        if(value instanceof List<?> channelIdList) {
+            channelIdList.forEach(channelId -> {
+                GuildChannel channel = guild.getGuildChannelById((String) channelId);
+                sb.append(channel!=null ? channel.getAsMention() : channelId).append(", ");
+            });
+            sb.delete(sb.length()-2, sb.length()); // delete trailing ", "
+        }
+
+        return sb.toString();
+    }
+}
