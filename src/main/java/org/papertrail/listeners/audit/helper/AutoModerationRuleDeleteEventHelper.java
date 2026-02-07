@@ -2,7 +2,6 @@ package org.papertrail.listeners.audit.helper;
 
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -10,7 +9,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 public class AutoModerationRuleDeleteEventHelper {
@@ -25,31 +23,20 @@ public class AutoModerationRuleDeleteEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following AutoMod rule was deleted");
+        eb.setDescription("ℹ️ The following AutoMod rule was deleted by: "+mentionableExecutor);
         eb.setColor(Color.RED);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        ale.getChanges().forEach((changeKey, changeValue) -> {
 
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+            Object oldValue = changeValue.getOldValue();
 
-            switch(change) {
-
-                case "exempt_roles", "enabled", "trigger_type", "actions", "exempt_channels", "event_type", "trigger_metadata":
-                    break;
-
-                case "name":
-                    eb.addField("🏷️ AutoMod Rule Name ", "╰┈➤"+oldValue, false);
-                    break;
-
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+            if (changeKey.equals("name")) {
+                eb.addField("AutoMod Rule Name ", "╰┈➤" + oldValue, false);
             }
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
