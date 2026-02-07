@@ -2,7 +2,6 @@ package org.papertrail.listeners.audit.helper;
 
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -13,7 +12,6 @@ import org.papertrail.commons.utilities.BooleanFormatter;
 import org.papertrail.commons.utilities.DurationFormatter;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 public class InviteCreateEventHelper {
@@ -25,56 +23,51 @@ public class InviteCreateEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Invite Create Event");
 
-        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
-        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
-
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following invite was created");
+        eb.setDescription("ℹ️ The following invite was created");
         eb.setColor(Color.CYAN);
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        ale.getChanges().forEach((changeKey, changeValue)-> {
 
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-            switch(change) {
+            switch (changeKey) {
 
-                case "code":
-                    eb.addField("🔗 Invite Code", "╰┈➤"+newValue, false);
-                    break;
+                case "code" -> eb.addField("Invite Code", "╰┈➤"+newValue, false);
 
-                case "inviter_id":
-                    User inviter = ale.getJDA().getUserById(String.valueOf(newValue));
-                    eb.addField("👤 Invite Created By", "╰┈➤"+(inviter != null ? inviter.getAsMention() : ale.getUserId()), false);
-                    break;
+                case "inviter_id" -> {
+                    User inviter = ale.getJDA().getUserById(ale.getUserIdLong());
+                    String mentionableInviter = (inviter != null ? inviter.getAsMention() : ale.getUserId());
+                    eb.addField("Invite Created By", "╰┈➤"+ mentionableInviter, false);
+                }
 
-                case "temporary":
-                    eb.addField("🕒 Temporary Invite", "╰┈➤"+ BooleanFormatter.formatToEmoji(newValue), false);
-                    break;
+                case "temporary" -> eb.addField("Temporary Invite", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(newValue), false);
 
-                case "max_uses":
+                case "max_uses" -> {
                     int maxUses = Integer.parseInt(String.valueOf(newValue));
-                    eb.addField("🔢 Max Uses", "╰┈➤"+(maxUses == 0 ? "Unlimited" : String.valueOf(maxUses)), false);
-                    break;
+                    eb.addField("Max Uses", "╰┈➤"+(maxUses == 0 ? "Unlimited" : String.valueOf(maxUses)), false);
+                }
 
-                case "uses", "flags":
-                    break;
+                case "uses", "flags" -> {
+                    // ignore
+                }
 
-                case "max_age":
-                    eb.addField("⏳ Expires After", "╰┈➤"+ DurationFormatter.formatSeconds(newValue), false);
-                    break;
+                case "max_age" -> eb.addField("Expires After", "╰┈➤"+ DurationFormatter.formatSeconds(newValue), false);
 
-                case "channel_id":
+                case "channel_id" -> {
                     GuildChannel channel = ale.getGuild().getGuildChannelById(String.valueOf(newValue));
-                    eb.addField("💬 Invite Channel", "╰┈➤"+(channel != null ? channel.getAsMention() : "`"+newValue+"`"), false);
-                    break;
+                    eb.addField("Invite Channel", "╰┈➤"+(channel != null ? channel.getAsMention() : "`"+newValue+"`"), false);
+                }
 
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                default -> {
+                    eb.addField(changeKey, "OLD_VALUE: "+oldValue, false);
+                    eb.addField(changeKey, "NEW_VALUE: "+newValue, false);
+                }
+
             }
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
