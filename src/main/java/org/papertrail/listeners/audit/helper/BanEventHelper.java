@@ -13,7 +13,9 @@ import java.awt.Color;
 @UtilityClass
 public class BanEventHelper {
 
-    public static void format(GuildAuditLogEntryCreateEvent event, AuditLogEntry ale, String channelIdToSendTo) {
+    public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+
+        AuditLogEntry ale = event.getEntry();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Ban Event");
@@ -30,7 +32,6 @@ public class BanEventHelper {
         String targetId = ale.getTargetId();
         String reason = ale.getReason();
 
-        // FIXME -> see if there is a way to not invoke a rest action, possibly since all the members are cached already
         event.getJDA().retrieveUserById(moderatorId).queue(moderator ->
                 event.getJDA().retrieveUserById(targetId).queue(target -> {
                     // if user objects are null we cannot use their mention so we instead use their IDs instead since they will never be null

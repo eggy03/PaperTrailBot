@@ -19,7 +19,9 @@ import java.util.Map;
 @UtilityClass
 public class AutoModerationRuleUpdateEventHelper {
 
-    public static void format (GuildAuditLogEntryCreateEvent event, AuditLogEntry ale, String channelIdToSendTo) {
+    public static void format (GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+
+        AuditLogEntry ale = event.getEntry();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | AutoMod Rule Update");

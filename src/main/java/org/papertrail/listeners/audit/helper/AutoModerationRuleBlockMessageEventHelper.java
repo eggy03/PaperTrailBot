@@ -13,7 +13,10 @@ import java.awt.Color;
 @UtilityClass
 public class AutoModerationRuleBlockMessageEventHelper {
 
-    public static void format (GuildAuditLogEntryCreateEvent event, AuditLogEntry ale, String channelIdToSendTo) {
+    public static void format (GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+
+        AuditLogEntry ale = event.getEntry();
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Automod Event");
 

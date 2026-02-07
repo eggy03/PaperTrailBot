@@ -95,79 +95,79 @@ public class AuditLogEventListener extends ListenerAdapter {
         ActionType action = ale.getType();
         switch (action) {
 
-            case AUTO_MODERATION_FLAG_TO_CHANNEL -> AutoModerationFlagToChannelEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_MEMBER_TIMEOUT -> AutoModerationMemberTimeoutEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_BLOCK_MESSAGE -> AutoModerationRuleBlockMessageEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_CREATE -> AutoModerationRuleCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_UPDATE -> AutoModerationRuleUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_DELETE -> AutoModerationRuleDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case AUTO_MODERATION_FLAG_TO_CHANNEL -> AutoModerationFlagToChannelEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_MEMBER_TIMEOUT -> AutoModerationMemberTimeoutEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_BLOCK_MESSAGE -> AutoModerationRuleBlockMessageEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_CREATE -> AutoModerationRuleCreateEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_UPDATE -> AutoModerationRuleUpdateEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_DELETE -> AutoModerationRuleDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case KICK -> KickEventHelper.format(event, ale, channelIdToSendTo);
-            case BAN -> BanEventHelper.format(event, ale, channelIdToSendTo);
-            case UNBAN -> UnbanEventHelper.format(event, ale, channelIdToSendTo);
-            case BOT_ADD -> BotAddEventHelper.format(event, ale, channelIdToSendTo);
+            case KICK -> KickEventHelper.format(event, channelIdToSendTo);
+            case BAN -> BanEventHelper.format(event, channelIdToSendTo);
+            case UNBAN -> UnbanEventHelper.format(event, channelIdToSendTo);
+            case BOT_ADD -> BotAddEventHelper.format(event, channelIdToSendTo);
             // PRUNE has generic formatting
 
-            case CHANNEL_CREATE -> ChannelCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case CHANNEL_UPDATE -> ChannelUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case CHANNEL_DELETE -> ChannelDeleteEventHelper.format(event, ale, channelIdToSendTo);
-            case CHANNEL_OVERRIDE_CREATE -> ChannelOverrideCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case CHANNEL_OVERRIDE_UPDATE -> ChannelOverrideUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case CHANNEL_OVERRIDE_DELETE -> ChannelOverrideDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case CHANNEL_CREATE -> ChannelCreateEventHelper.format(event, channelIdToSendTo);
+            case CHANNEL_UPDATE -> ChannelUpdateEventHelper.format(event, channelIdToSendTo);
+            case CHANNEL_DELETE -> ChannelDeleteEventHelper.format(event, channelIdToSendTo);
+            case CHANNEL_OVERRIDE_CREATE -> ChannelOverrideCreateEventHelper.format(event, channelIdToSendTo);
+            case CHANNEL_OVERRIDE_UPDATE -> ChannelOverrideUpdateEventHelper.format(event, channelIdToSendTo);
+            case CHANNEL_OVERRIDE_DELETE -> ChannelOverrideDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case ROLE_CREATE -> RoleCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case ROLE_UPDATE -> RoleUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case ROLE_DELETE -> RoleDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case ROLE_CREATE -> RoleCreateEventHelper.format(event, channelIdToSendTo);
+            case ROLE_UPDATE -> RoleUpdateEventHelper.format(event, channelIdToSendTo);
+            case ROLE_DELETE -> RoleDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case EMOJI_CREATE -> EmojiCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case EMOJI_UPDATE -> EmojiUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case EMOJI_DELETE -> EmojiDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case EMOJI_CREATE -> EmojiCreateEventHelper.format(event, channelIdToSendTo);
+            case EMOJI_UPDATE -> EmojiUpdateEventHelper.format(event, channelIdToSendTo);
+            case EMOJI_DELETE -> EmojiDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case STICKER_CREATE -> StickerCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case STICKER_UPDATE -> StickerUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case STICKER_DELETE -> StickerDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case STICKER_CREATE -> StickerCreateEventHelper.format(event, channelIdToSendTo);
+            case STICKER_UPDATE -> StickerUpdateEventHelper.format(event, channelIdToSendTo);
+            case STICKER_DELETE -> StickerDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case GUILD_UPDATE -> GuildUpdateEventHelper.format(event, ale, channelIdToSendTo);
+            case GUILD_UPDATE -> GuildUpdateEventHelper.format(event, channelIdToSendTo);
 
-            case INTEGRATION_CREATE -> IntegrationCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case INTEGRATION_DELETE -> IntegrationDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case INTEGRATION_CREATE -> IntegrationCreateEventHelper.format(event, channelIdToSendTo);
+            case INTEGRATION_DELETE -> IntegrationDeleteEventHelper.format(event, channelIdToSendTo);
             // INTEGRATION_UPDATE has generic formatting
 
-            case INVITE_CREATE -> InviteCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case INVITE_DELETE -> InviteDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case INVITE_CREATE -> InviteCreateEventHelper.format(event, channelIdToSendTo);
+            case INVITE_DELETE -> InviteDeleteEventHelper.format(event, channelIdToSendTo);
             // INVITE_UPDATE has generic formatting
 
-            case MEMBER_ROLE_UPDATE -> MemberRoleUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case MEMBER_UPDATE -> MemberUpdateEventHelper.format(event, ale, channelIdToSendTo);
+            case MEMBER_ROLE_UPDATE -> MemberRoleUpdateEventHelper.format(event, channelIdToSendTo);
+            case MEMBER_UPDATE -> MemberUpdateEventHelper.format(event, channelIdToSendTo);
 
-            case MEMBER_VOICE_KICK -> MemberVoiceKickEventHelper.format(event, ale, channelIdToSendTo);
-            case MEMBER_VOICE_MOVE -> MemberVoiceMoveEventHelper.format(event, ale, channelIdToSendTo);
+            case MEMBER_VOICE_KICK -> MemberVoiceKickEventHelper.format(event, channelIdToSendTo);
+            case MEMBER_VOICE_MOVE -> MemberVoiceMoveEventHelper.format(event, channelIdToSendTo);
 
-            case MESSAGE_PIN -> MessagePinEventHelper.format(event, ale, channelIdToSendTo);
-            case MESSAGE_UNPIN -> MessageUnpinEventHelper.format(event, ale, channelIdToSendTo);
+            case MESSAGE_PIN -> MessagePinEventHelper.format(event, channelIdToSendTo);
+            case MESSAGE_UNPIN -> MessageUnpinEventHelper.format(event, channelIdToSendTo);
 
-            case SCHEDULED_EVENT_CREATE -> ScheduledEventCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case SCHEDULED_EVENT_UPDATE -> ScheduledEventUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case SCHEDULED_EVENT_DELETE -> ScheduledEventDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case SCHEDULED_EVENT_CREATE -> ScheduledEventCreateEventHelper.format(event, channelIdToSendTo);
+            case SCHEDULED_EVENT_UPDATE -> ScheduledEventUpdateEventHelper.format(event, channelIdToSendTo);
+            case SCHEDULED_EVENT_DELETE -> ScheduledEventDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case STAGE_INSTANCE_CREATE -> StageInstanceCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case STAGE_INSTANCE_UPDATE -> StageInstanceUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case STAGE_INSTANCE_DELETE -> StageInstanceDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case STAGE_INSTANCE_CREATE -> StageInstanceCreateEventHelper.format(event, channelIdToSendTo);
+            case STAGE_INSTANCE_UPDATE -> StageInstanceUpdateEventHelper.format(event, channelIdToSendTo);
+            case STAGE_INSTANCE_DELETE -> StageInstanceDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case THREAD_CREATE -> ThreadCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case THREAD_UPDATE -> ThreadUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case THREAD_DELETE -> ThreadDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case THREAD_CREATE -> ThreadCreateEventHelper.format(event, channelIdToSendTo);
+            case THREAD_UPDATE -> ThreadUpdateEventHelper.format(event, channelIdToSendTo);
+            case THREAD_DELETE -> ThreadDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case VOICE_CHANNEL_STATUS_DELETE -> VoiceChannelStatusDeleteEventHelper.format(event, ale, channelIdToSendTo);
-            case VOICE_CHANNEL_STATUS_UPDATE -> VoiceChannelStatusUpdateEventHelper.format(event, ale, channelIdToSendTo);
+            case VOICE_CHANNEL_STATUS_DELETE -> VoiceChannelStatusDeleteEventHelper.format(event, channelIdToSendTo);
+            case VOICE_CHANNEL_STATUS_UPDATE -> VoiceChannelStatusUpdateEventHelper.format(event, channelIdToSendTo);
 
-            case WEBHOOK_CREATE -> WebhookCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case WEBHOOK_UPDATE -> WebhookUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case WEBHOOK_REMOVE -> WebhookRemoveEventHelper.format(event, ale, channelIdToSendTo);
+            case WEBHOOK_CREATE -> WebhookCreateEventHelper.format(event, channelIdToSendTo);
+            case WEBHOOK_UPDATE -> WebhookUpdateEventHelper.format(event, channelIdToSendTo);
+            case WEBHOOK_REMOVE -> WebhookRemoveEventHelper.format(event, channelIdToSendTo);
 
-            case SOUNDBOARD_SOUND_CREATE -> SoundboardSoundCreateEventHelper.format(event, ale, channelIdToSendTo);
-            case SOUNDBOARD_SOUND_UPDATE -> SoundboardSoundUpdateEventHelper.format(event, ale, channelIdToSendTo);
-            case SOUNDBOARD_SOUND_DELETE -> SoundboardSoundDeleteEventHelper.format(event, ale, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_CREATE -> SoundboardSoundCreateEventHelper.format(event, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_UPDATE -> SoundboardSoundUpdateEventHelper.format(event, channelIdToSendTo);
+            case SOUNDBOARD_SOUND_DELETE -> SoundboardSoundDeleteEventHelper.format(event, channelIdToSendTo);
 
             case ONBOARDING_UPDATE -> OnboardingUpdateEventHelper.format(event, channelIdToSendTo);
             case ONBOARDING_PROMPT_CREATE -> OnboardingPromptCreateEventHelper.format(event, channelIdToSendTo);
@@ -183,15 +183,15 @@ public class AuditLogEventListener extends ListenerAdapter {
             case MESSAGE_BULK_DELETE,
                  MESSAGE_CREATE,
                  MESSAGE_DELETE,
-                 MESSAGE_UPDATE -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+                 MESSAGE_UPDATE -> GenericAuditLogEventHelper.format(event, channelIdToSendTo);
 
             // except UNKNOWN, the rest have never been seen to be triggered
             case APPLICATION_COMMAND_PRIVILEGES_UPDATE, PRUNE, INTEGRATION_UPDATE,
                  INVITE_UPDATE, ONBOARDING_CREATE,
-                 UNKNOWN -> GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+                 UNKNOWN -> GenericAuditLogEventHelper.format(event, channelIdToSendTo);
 
             default -> {
-                GenericAuditLogEventHelper.format(event, ale, channelIdToSendTo);
+                GenericAuditLogEventHelper.format(event, channelIdToSendTo);
                 log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by me yet {}", ale.getType().name());
             }
         }

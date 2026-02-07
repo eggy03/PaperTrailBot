@@ -19,7 +19,9 @@ import java.util.Objects;
 @UtilityClass
 public class MemberUpdateEventHelper {
 
-    public static void format(GuildAuditLogEntryCreateEvent event, AuditLogEntry ale, String channelIdToSendTo) {
+    public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+
+        AuditLogEntry ale = event.getEntry();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Member Update Event");

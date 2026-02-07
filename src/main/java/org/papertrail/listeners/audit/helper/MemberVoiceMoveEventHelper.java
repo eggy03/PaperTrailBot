@@ -15,7 +15,10 @@ public class MemberVoiceMoveEventHelper {
 
     // the audit log does not expose much information regarding member vc move and kick events
     // therefore GuildVoiceEventListener has been created to know about channels the target has been moved or kicked from
-    public static void format(GuildAuditLogEntryCreateEvent event, AuditLogEntry ale, String channelIdToSendTo) {
+    public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+
+        AuditLogEntry ale = event.getEntry();
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Member Voice Move Event");
 

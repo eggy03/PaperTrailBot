@@ -14,7 +14,10 @@ import java.awt.Color;
 public class MessageUnpinEventHelper {
 
     // this audit log event does not expose anything other than the executor of the event
-    public static void format(GuildAuditLogEntryCreateEvent event, AuditLogEntry ale, String channelIdToSendTo) {
+    public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+
+        AuditLogEntry ale = event.getEntry();
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Message Unpin Event");
 
