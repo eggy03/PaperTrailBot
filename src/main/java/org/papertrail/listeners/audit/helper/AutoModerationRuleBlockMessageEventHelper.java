@@ -18,16 +18,18 @@ public class AutoModerationRuleBlockMessageEventHelper {
         AuditLogEntry ale = event.getEntry();
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Automod Event");
+        eb.setTitle("Audit Log Entry | Auto-mod Event");
 
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
         String mentionableTargetUser = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("🛈 Automod has blocked a message sent by: "+mentionableTargetUser);
+        eb.setDescription("Auto-mod has blocked a message sent by: "+mentionableTargetUser);
         eb.setColor(Color.ORANGE);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
+
+        eb.addField("Info", "For more info, check the channel where auto-mod is set to send events", false);
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
