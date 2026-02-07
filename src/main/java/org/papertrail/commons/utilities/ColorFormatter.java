@@ -26,9 +26,9 @@ public class ColorFormatter {
 
     // gradient is returned as a hash map in the following structure
     // {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
-	public static String formatGradientColorSystemToHex(Object gradientValue) {
+	public static String formatGradientColorSystemToHex(Object gradientMap) {
 
-        if(gradientValue instanceof Map<?, ?> colorMap){
+        if(gradientMap instanceof Map<?, ?> colorMap){
 
             String primaryColor = "Primary Color: "+ formatToHex(colorMap.get("primary_color"));
             String secondaryColor = "Secondary Color: "+ formatToHex(colorMap.get("secondary_color"));
