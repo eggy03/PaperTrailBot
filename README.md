@@ -9,19 +9,12 @@ Key Features:
 - Voice activity logging (join/leave, move)
 - Auto-deletion of logged messages after 30 days
 
-> 📎 Get it from here: https://discord.com/discovery/applications/1381658412550590475
-
-
 > [!IMPORTANT]
 > PaperTrail is currently in maintenance mode. Existing bugs will be fixed, dependency updates will be provided
 > but large new features will likely not be added.
 
 # Self-Hosting Guide
 > [!IMPORTANT]
-> Please note that this is only for advanced users who want to self-host this bot
-> 
-> A pre-hosted instance is already available: https://discord.com/discovery/applications/1381658412550590475
->
 > It is recommended that you deploy the [Persistence API](https://github.com/Egg-03/PaperTrail-PersistenceAPI?tab=readme-ov-file#papertrail-persistenceapi) service before deploying the bot itself since the bot relies on the URL of the service to communicate
 
 The project is split into two services:
