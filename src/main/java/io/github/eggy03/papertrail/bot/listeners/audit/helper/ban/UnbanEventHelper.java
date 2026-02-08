@@ -17,33 +17,31 @@ public class UnbanEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Member Unban Event");
+        User moderator = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableModerator = (moderator != null ? moderator.getAsMention() : ale.getUserId());
 
-        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
-        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+        event.getJDA().retrieveUserById(ale.getTargetId()).queue(unbannedUser -> {
 
-        eb.setDescription("👤 **By**: " + mentionableExecutor + "\nℹ️ The following user was un-banned");
-        eb.setColor(Color.GREEN);
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
+            String mentionableUnbannedUser = unbannedUser!=null ? unbannedUser.getAsMention() : ale.getTargetId();
 
-        String moderatorId = ale.getUserId();
-        String targetId = ale.getTargetId();
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("Audit Log Entry | Member Unban Event");
+            eb.setDescription("ℹ️ The following user was un-banned by: "+mentionableModerator);
+            eb.setColor(Color.GREEN);
 
-        event.getJDA().retrieveUserById(moderatorId).queue(moderator ->
-                event.getJDA().retrieveUserById(targetId).queue(target -> {
-                    // if user objects are null we cannot use their mention so we instead use their IDs instead since they will never be null
-                    eb.addField("🔓 A member has been un-banned", "╰┈➤" + (moderator != null ? moderator.getAsMention() : moderatorId) + " has un-banned " + (target != null ? target.getAsMention() : targetId), false);
+            eb.addField("Action Type", String.valueOf(ale.getType()), true);
+            eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-                    eb.setFooter("Audit Log Entry ID: " + ale.getId());
-                    eb.setTimestamp(ale.getTimeCreated());
-                    MessageEmbed mb = eb.build();
-                    TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-                    if (sendingChannel != null && sendingChannel.canTalk()) {
-                        sendingChannel.sendMessageEmbeds(mb).queue();
-                    }
-                })
-        );
+            eb.addField("Un-banned User", "╰┈➤" + mentionableUnbannedUser, false);
+
+            eb.setFooter("Audit Log Entry ID: " + ale.getId());
+            eb.setTimestamp(ale.getTimeCreated());
+
+            MessageEmbed mb = eb.build();
+            TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+            if (sendingChannel != null && sendingChannel.canTalk()) {
+                sendingChannel.sendMessageEmbeds(mb).queue();
+            }
+        });
     }
 }

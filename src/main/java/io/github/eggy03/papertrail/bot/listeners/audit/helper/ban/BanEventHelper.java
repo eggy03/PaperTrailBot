@@ -18,8 +18,9 @@ public class BanEventHelper {
 
         User moderator = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableModerator = (moderator != null ? moderator.getAsMention() : ale.getUserId());
-        String reason = ale.getReason()==null ? "No Reason Provided" : ale.getReason();
+        String reasonForBan = ale.getReason()==null ? "No Reason Provided" : ale.getReason();
 
+        // A REST Action is required here because banned members are not cached
         event.getJDA().retrieveUserById(ale.getTargetId()).queue(bannedUser -> {
 
             String mentionableBannedUser = bannedUser!=null ? bannedUser.getAsMention() : ale.getTargetId();
@@ -33,7 +34,7 @@ public class BanEventHelper {
             eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
             eb.addField("Banned Member", "╰┈➤"+mentionableBannedUser,false);
-            eb.addField("Ban Reason", "╰┈➤" +reason, false);
+            eb.addField("Ban Reason", "╰┈➤" + reasonForBan, false);
 
             eb.setFooter("Audit Log Entry ID: " + ale.getId());
             eb.setTimestamp(ale.getTimeCreated());
