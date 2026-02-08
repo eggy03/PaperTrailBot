@@ -29,9 +29,8 @@ public class GenericAuditLogEventHelper {
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
-            eb.addField(changeKey, "OLD_VALUE: "+changeValue.getOldValue(), true);
-            eb.addField(changeKey, "NEW_VALUE: "+changeValue.getNewValue(), true);
-            eb.addBlankField(false);
+            eb.addField(changeKey, "OLD_VALUE: "+changeValue.getOldValue(), false);
+            eb.addField(changeKey, "NEW_VALUE: "+changeValue.getNewValue(), false);
         });
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
