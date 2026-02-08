@@ -93,46 +93,6 @@ public class TypeResolver {
 
 	}
 
-	public static String guildVerificationLevelResolver(Object type) {
-		if (type == null) {
-			return "ERROR: Value Returned Null";
-		}
-
-		try {
-			int t = Integer.parseInt(type.toString());
-			return switch (t) {
-			case 0 -> "NONE";
-			case 1 -> "LOW (Verified Email)";
-			case 2 -> "MEDIUM (Registered on Discord for more than 5 minutes";
-			case 3 -> "HIGH (Must be a member of the server for longer than 10 minutes)";
-			case 4 -> "VERY_HIGH (Must have a verified phone number)";
-			default -> "Unknown";
-			};
-		} catch (NumberFormatException e) {
-			return "No Parsable Type Values Detected";
-		}
-
-	}
-	
-	public static String explicitFilterTypeResolver(Object type) {
-		if (type == null) {
-			return "ERROR: Value Returned Null";
-		}
-
-		try {
-			int t = Integer.parseInt(type.toString());
-			return switch (t) {
-			case 0 -> "No Filter";
-			case 1 -> "Filter Messages From Server Members Without Roles";
-			case 2 -> "Filter Messages From All Members";
-			default -> "Unknown";
-			};
-		} catch (NumberFormatException e) {
-			return "No Parsable Type Values Detected";
-		}
-
-	}
-	
 	public static String scheduleEventTypeResolver(Object type) {
 		if (type == null) {
 			return "ERROR: Value Returned Null";
