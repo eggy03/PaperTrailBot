@@ -93,45 +93,6 @@ public class TypeResolver {
 
 	}
 
-	public static String automodEventTypeResolver(Object type) {
-		if (type == null) {
-			return "ERROR: Value Returned Null";
-		}
-
-		try {
-			int typeInt = Integer.parseInt(type.toString());
-			return switch (typeInt) {
-			case 1 -> "Message Send";
-			case 2 -> "Message Update";
-			default -> "Unknown";
-			};
-		} catch (NumberFormatException e) {
-			return "Type Cannot Be Parsed";
-		}
-
-	}
-
-	public static String automodTriggerTypeResolver(Object type) {
-		if (type == null) {
-			return "ERROR: Value Returned Null";
-		}
-
-		try {
-			int typeInt = Integer.parseInt(type.toString());
-			return switch (typeInt) {
-			case 1 -> "Keyword";
-			case 3 -> "Spam";
-			case 4 -> "Keyword Preset";
-			case 5 -> "Mention Spam";
-			case 6 -> "Member Profile";
-			default -> "Unknown";
-			};
-		} catch (NumberFormatException e) {
-			return "Type Cannot Be Parsed";
-		}
-
-	}
-
 	public static String guildVerificationLevelResolver(Object type) {
 		if (type == null) {
 			return "ERROR: Value Returned Null";
