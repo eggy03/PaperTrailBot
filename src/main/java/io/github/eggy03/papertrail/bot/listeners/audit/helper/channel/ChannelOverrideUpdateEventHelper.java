@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -63,11 +62,9 @@ public class ChannelOverrideUpdateEventHelper {
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
-        MessageEmbed mb = eb.build();
-
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
         if(sendingChannel!=null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(mb).queue();
+            sendingChannel.sendMessageEmbeds(eb.build()).queue();
         }
     }
 
