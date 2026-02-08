@@ -93,24 +93,6 @@ public class TypeResolver {
 
 	}
 
-	public static String channelOverrideTypeResolver(Object type) {
-		if (type == null) {
-			return "ERROR: Value Returned Null";
-		}
-
-		try {
-			int typeInt = Integer.parseInt(type.toString());
-			return switch (typeInt) {
-			case 0 -> "Role";
-			case 1 -> "Member/Application";
-			default -> "Unknown";
-			};
-		} catch (NumberFormatException e) {
-			return "Type Cannot Be Parsed";
-		}
-
-	}
-
 	public static String automodEventTypeResolver(Object type) {
 		if (type == null) {
 			return "ERROR: Value Returned Null";

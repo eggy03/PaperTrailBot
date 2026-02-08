@@ -1,21 +1,16 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.PermissionResolver;
-import io.github.eggy03.papertrail.bot.commons.utilities.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 public class ChannelOverrideDeleteEventHelper {
@@ -24,67 +19,45 @@ public class ChannelOverrideDeleteEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        GuildChannel targetChannel = event.getGuild().getGuildChannelById(ale.getTargetId());
+        String mentionableTargetChannel = (targetChannel !=null ? targetChannel.getAsMention() : ale.getTargetId());
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Channel Override Delete");
 
-        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
-        GuildChannel targetChannel = event.getGuild().getGuildChannelById(ale.getTargetId());
-
-        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
-        String mentionableTargetChannel = (targetChannel !=null ? targetChannel.getAsMention() : ale.getTargetId());
-
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following channel overrides were deleted");
+        eb.setDescription("ℹ️ The following channel overrides were deleted by: "+mentionableExecutor);
         eb.setColor(Color.RED);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+            switch (changeKey) {
 
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+                case "type" -> eb.addField("Override Type", "╰┈➤"+ ChannelUtils.resolveChannelOverrideTargetType(oldValue), false);
 
-            switch(change) {
+                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolvePermissions(oldValue, "❌"), false);
+                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolvePermissions(oldValue, "✅"), false);
 
-                case "type":
-                    eb.addField("🧩 Override Type", "╰┈➤"+ TypeResolver.channelOverrideTypeResolver(oldValue), false);
-                    break;
+                // id exposes the member/role id which for which the channel permissions are overridden
+                // only one member/role permission id is fetched per loop
+                case "id" -> eb.addField("Target", "╰┈➤"+ChannelUtils.resolveMemberOrRole(oldValue, event), false);
 
-                case "deny":
-                    // the newValue will return null if an over-ride is deleted but we're not concerned with newValue
-                    // the oldValue returns the permissions the channel was previously denied
-                    eb.addField("Previously Denied Permissions", PermissionResolver.getParsedPermissions(oldValue, "❌"), false);
-                    break;
-
-                case "allow":
-                    // the newValue will return null if an over-ride is deleted but we're not concerned with newValue
-                    // the oldValue returns the permissions the channel was previously allowed
-                    eb.addField("Previously Allowed Permissions", PermissionResolver.getParsedPermissions(oldValue, "✅"), false);
-                    break;
-
-                case "id":
-                    // id exposes the member/role id which for which the channel permissions are over-riden
-                    Member mb = event.getGuild().getMemberById(String.valueOf(oldValue));
-                    Role r = event.getGuild().getRoleById(String.valueOf(oldValue));
-
-                    String mentionableRoleOrMember = "";
-                    if(mb!=null) {
-                        mentionableRoleOrMember = mb.getAsMention();
-                    } else if (r!=null) {
-                        mentionableRoleOrMember = r.getAsMention();
-                    }
-                    eb.addField("🎭 Deleted Target", "╰┈➤"+mentionableRoleOrMember, false);
-                    break;
-
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                default -> {
+                    eb.addField(changeKey, "OLD_VALUE: "+oldValue, false);
+                    eb.addField(changeKey, "NEW_VALUE: "+newValue, false);
+                }
             }
-        }
-        // add the target channel whose permissions were over-riden
+        });
+        // add the target channel whose permissions were overridden
         // can be retrieved via ALE's TargetID
-        eb.addField("🗨️ Target Channel", "╰┈➤"+mentionableTargetChannel, false);
+        eb.addField("Target Channel", "╰┈➤"+mentionableTargetChannel, false);
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

@@ -1,9 +1,8 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.PermissionResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -14,8 +13,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
-import java.util.Objects;
 
 @UtilityClass
 public class ChannelOverrideUpdateEventHelper {
@@ -24,70 +21,44 @@ public class ChannelOverrideUpdateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Channel Override Update");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
-        GuildChannel targetChannel = event.getGuild().getGuildChannelById(ale.getTargetId());
-
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        GuildChannel targetChannel = event.getGuild().getGuildChannelById(ale.getTargetId());
         String mentionableTargetChannel = (targetChannel !=null ? targetChannel.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following channel overrides were updated");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Channel Override Update");
+        eb.setDescription("ℹ️ The following channel overrides were updated by: "+mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        // changes do not expose the id and type keys in case of override updates
-        String overriddenId = ale.getOptionByName("id");
-        String overriddenType = ale.getOptionByName("type");
+        eb.addField("Override Type", "╰┈➤"+ ChannelUtils.resolveChannelOverrideTargetType(ale.getOptionByName("type")), false);
+        eb.addField("Permissions Overridden For", "╰┈➤"+getTargetRoleOrMember(ale, event), false);
 
-        String mentionableOverrideTarget = overriddenId;
-        if ("0".equals(overriddenType)) {
-            // It’s a role
-            Role role = event.getGuild().getRoleById(Objects.requireNonNull(overriddenId));
-            if (role != null) {
-                mentionableOverrideTarget = role.getAsMention();
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
+
+            switch (changeKey) {
+
+                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolvePermissions(newValue, "❌"), false);
+                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolvePermissions(newValue, "✅"), false);
+
+                default -> {
+                    eb.addField(changeKey, "OLD_VALUE: "+oldValue, false);
+                    eb.addField(changeKey, "NEW_VALUE: "+newValue, false);
+                }
+
             }
-        } else if ("1".equals(overriddenType)) {
-            // It’s a member
-            Member member = event.getGuild().getMemberById(Objects.requireNonNull(overriddenId));
-            if (member != null) {
-                mentionableOverrideTarget = member.getAsMention();
-            }
-        }
-
-        eb.addField("🎭 Permissions Overridden For", "╰┈➤"+mentionableOverrideTarget, false);
-
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
-
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
-
-            switch(change) {
-
-                case "deny":
-                    String deniedPerms = PermissionResolver.getParsedPermissions(newValue, "❌");
-                    // if a channel is synchronized with it's category, the permission list will be blank and the StringBuilder will return a blank string
-                    eb.addField("Denied Permissions", (deniedPerms.isBlank() ? "Permissions Synced With Category" : deniedPerms), false);
-                    break;
-
-                case "allow":
-                    String allowedPerms = PermissionResolver.getParsedPermissions(newValue, "✅");
-                    // if a channel is synchronized with it's category, the permission list will be blank and the StringBuilder will return a blank string
-                    eb.addField("Allowed Permissions", (allowedPerms.isBlank() ? "Permissions Synced With Category" : allowedPerms), false);
-                    break;
-
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
-            }
-        }
+        });
 
         // add the target channel whose permissions were overridden
         // can be retrieved via ALE's TargetID
-        eb.addField("🗨️ Target Channel", "╰┈➤"+mentionableTargetChannel, false);
+        eb.addField("Target Channel", "╰┈➤"+mentionableTargetChannel, false);
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
@@ -98,5 +69,36 @@ public class ChannelOverrideUpdateEventHelper {
         if(sendingChannel!=null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
+    }
+
+    // ALE changes do not expose the id and type keys in case of override updates
+    // therefore, this hacky method is required
+    // IDK why channel override updates don't show this info
+    private static String getTargetRoleOrMember(AuditLogEntry ale, GuildAuditLogEntryCreateEvent event) {
+
+        String overriddenId = ale.getOptionByName("id"); // id of the member or role
+        String overriddenType = ale.getOptionByName("type"); // type that determines if the ID is that of a role or a member
+
+        if(overriddenId==null)
+            return "Member or Role ID is null";
+
+        return switch (overriddenType) {
+
+            case "0" -> {
+                // It’s a role
+                Role role = event.getGuild().getRoleById(overriddenId);
+                yield role!=null ? role.getAsMention() : overriddenId;
+            }
+
+            case "1" -> {
+                // It's a member
+                Member member = event.getGuild().getMemberById(overriddenId);
+                yield member!=null ? member.getAsMention() : overriddenId;
+            }
+
+            case null -> "Override Type is null";
+            default -> "Unimplemented Override Type: "+overriddenType;
+
+        };
     }
 }
