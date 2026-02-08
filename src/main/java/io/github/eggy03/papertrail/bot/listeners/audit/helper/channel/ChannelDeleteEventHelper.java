@@ -49,7 +49,7 @@ public class ChannelDeleteEventHelper {
             }
         });
 
-        eb.addField("🆔 Deleted Channel ID", "╰┈➤" + mentionableTargetChannel, false);
+        eb.addField("Deleted Channel ID", "╰┈➤" + mentionableTargetChannel, false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
