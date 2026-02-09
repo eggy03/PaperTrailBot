@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.automod;
 
 import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.utils.AutomodUtil;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.utils.AutoModUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -39,9 +39,9 @@ public class AutoModerationRuleCreateEventHelper {
 
                 case "enabled" -> eb.addField("Enabled", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(newValue), false);
 
-                case "trigger_type" -> eb.addField("Trigger Type", "╰┈➤"+ AutomodUtil.automodTriggerTypeResolver(newValue), false);
+                case "trigger_type" -> eb.addField("Trigger Type", "╰┈➤"+ AutoModUtils.autoModTriggerTypeResolver(newValue), false);
 
-                case "event_type" -> eb.addField("Event Type", "╰┈➤"+AutomodUtil.automodEventTypeResolver(newValue), false);
+                case "event_type" -> eb.addField("Event Type", "╰┈➤"+ AutoModUtils.autoModEventTypeResolver(newValue), false);
 
                 case "name" -> eb.addField("AutoMod Rule Name ", "╰┈➤"+newValue, false);
 

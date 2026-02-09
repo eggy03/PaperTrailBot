@@ -37,17 +37,15 @@ public class GuildUpdateEventHelper {
 
             switch (changeKey) {
                 case "description" -> {
-                    eb.addField("Old Description", String.valueOf(oldValue), true);
-                    eb.addField("New Description", String.valueOf(newValue), true);
-                    eb.addBlankField(false);
+                    eb.addField("Old Description", String.valueOf(oldValue), false);
+                    eb.addField("New Description", String.valueOf(newValue), false);
                 }
 
                 case "icon_hash" -> eb.addField("Icon Hash Change", "Guild Icon has been updated", false);
 
                 case "name" -> {
-                    eb.addField("Old Guild Name", String.valueOf(oldValue), true);
-                    eb.addField("New Guild Name", String.valueOf(newValue), true);
-                    eb.addBlankField(false);
+                    eb.addField("Old Guild Name", String.valueOf(oldValue), false);
+                    eb.addField("New Guild Name", String.valueOf(newValue), false);
                 }
 
                 case "preferred_locale" -> eb.addField("Preferred Locale Set To", String.valueOf(newValue), false);
@@ -75,9 +73,8 @@ public class GuildUpdateEventHelper {
                     User newOwner = ale.getJDA().getUserById(String.valueOf(newValue));
                     String mentionableOldOwner = (oldOwner != null ? oldOwner.getAsMention() : String.valueOf(oldValue));
                     String mentionableNewOwner = (newOwner != null ? newOwner.getAsMention() : String.valueOf(newValue));
-                    eb.addField("Old Owner", mentionableOldOwner, true);
-                    eb.addField("New Owner", mentionableNewOwner, true);
-                    eb.addBlankField(false);
+                    eb.addField("Old Owner", mentionableOldOwner, false);
+                    eb.addField("New Owner", mentionableNewOwner, false);
                 }
 
                 case "public_updates_channel_id" -> eb.addField("Announcements Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
