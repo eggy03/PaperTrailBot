@@ -1,8 +1,9 @@
-package io.github.eggy03.papertrail.bot.listeners.audit.helper.ban;
+package io.github.eggy03.papertrail.bot.listeners.audit.helper.modactions;
 
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -10,7 +11,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import java.awt.Color;
 
 @UtilityClass
-public class KickEventHelper {
+public class UnbanEventHelper {
 
     public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
 
@@ -18,30 +19,28 @@ public class KickEventHelper {
 
         User moderator = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableModerator = (moderator != null ? moderator.getAsMention() : ale.getUserId());
-        String reasonForKick = ale.getReason()==null ? "No Reason Provided" : ale.getReason();
 
-        // A REST Action is required here because kicked members are not cached
-        event.getJDA().retrieveUserById(ale.getTargetId()).queue(kickedUser -> {
+        event.getJDA().retrieveUserById(ale.getTargetId()).queue(unbannedUser -> {
 
-            String mentionableKickedUser = kickedUser!=null ? kickedUser.getAsMention() : ale.getTargetId();
+            String mentionableUnbannedUser = unbannedUser!=null ? unbannedUser.getAsMention() : ale.getTargetId();
 
             EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("Audit Log Entry | Kick Event");
-            eb.setDescription("ℹ️ The following member was kicked by: "+mentionableModerator);
-            eb.setColor(Color.ORANGE);
+            eb.setTitle("Audit Log Entry | Member Unban Event");
+            eb.setDescription("ℹ️ The following user was un-banned by: "+mentionableModerator);
+            eb.setColor(Color.GREEN);
 
             eb.addField("Action Type", String.valueOf(ale.getType()), true);
             eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-            eb.addField("Kicked Member/Application", "╰┈➤" + mentionableKickedUser, false);
-            eb.addField("Reason", "╰┈➤" + reasonForKick, false);
+            eb.addField("Un-banned User", "╰┈➤" + mentionableUnbannedUser, false);
 
             eb.setFooter("Audit Log Entry ID: " + ale.getId());
             eb.setTimestamp(ale.getTimeCreated());
 
+            MessageEmbed mb = eb.build();
             TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
             if (sendingChannel != null && sendingChannel.canTalk()) {
-                sendingChannel.sendMessageEmbeds(eb.build()).queue();
+                sendingChannel.sendMessageEmbeds(mb).queue();
             }
         });
     }

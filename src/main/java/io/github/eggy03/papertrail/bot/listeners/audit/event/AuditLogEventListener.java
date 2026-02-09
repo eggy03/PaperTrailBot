@@ -7,9 +7,6 @@ import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.AutoModera
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.AutoModerationRuleCreateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.AutoModerationRuleDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.AutoModerationRuleUpdateEventHelper;
-import io.github.eggy03.papertrail.bot.listeners.audit.helper.ban.BanEventHelper;
-import io.github.eggy03.papertrail.bot.listeners.audit.helper.ban.KickEventHelper;
-import io.github.eggy03.papertrail.bot.listeners.audit.helper.ban.UnbanEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.bot.BotAddEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.ChannelCreateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.ChannelDeleteEventHelper;
@@ -34,6 +31,9 @@ import io.github.eggy03.papertrail.bot.listeners.audit.helper.member.MemberVoice
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.member.MemberVoiceMoveEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.message.MessagePinEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.message.MessageUnpinEventHelper;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.modactions.BanEventHelper;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.modactions.KickEventHelper;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.modactions.UnbanEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.OnboardingPromptCreateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.OnboardingPromptDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.OnboardingPromptUpdateEventHelper;
