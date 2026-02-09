@@ -59,7 +59,7 @@ public class OnboardingUpdateEventHelper {
                 case "prompts" -> eb.addField("Prompt Updates", "Overall Pre-join/Post-join questions may have been updated.\n Review changes manually.", false);
 
                 default -> {
-                    eb.addField("Unimplemented/Unknown Change Key", changeKey, false);
+                    eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }

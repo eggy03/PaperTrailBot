@@ -53,7 +53,7 @@ public class OnboardingPromptCreateEventHelper {
                 case "in_onboarding" -> eb.addField("Is a Pre-Join Question", BooleanFormatter.formatToYesOrNo(newValue), false);
 
                 default -> {
-                    eb.addField("Unimplemented/Unknown Change Key", changeKey, false);
+                    eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }

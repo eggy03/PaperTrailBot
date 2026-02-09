@@ -51,7 +51,7 @@ public class OnboardingPromptDeleteEventHelper {
                 case "in_onboarding" -> eb.addField("Was a Pre-Join Question", BooleanFormatter.formatToYesOrNo(oldValue), false);
 
                 default -> {
-                    eb.addField("Unimplemented/Unknown Change Key", changeKey, false);
+                    eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }

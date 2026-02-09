@@ -65,7 +65,7 @@ public class OnboardingPromptUpdateEventHelper {
                 }
 
                 default -> {
-                    eb.addField("Unimplemented/Unknown Change Key", changeKey, false);
+                    eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
