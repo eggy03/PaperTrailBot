@@ -15,126 +15,117 @@ import java.util.EnumSet;
 @UtilityClass
 public class ChannelUtils {
 
+    // INTERNAL HELPERS
+    @Nullable
+    private static Long parseLong(@Nullable Object possibleLongValue) {
+        if (possibleLongValue == null) return null;
+        try {
+            return Long.parseLong(String.valueOf(possibleLongValue));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private static Integer parseInt(@Nullable Object possibleIntegerValue) {
+        if (possibleIntegerValue == null) return null;
+        try {
+            return Integer.parseInt(String.valueOf(possibleIntegerValue));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     // CHANNEL UTILS
     @NotNull
     public static String resolveChannelType(@Nullable Object channelTypeInteger) {
-        if (channelTypeInteger == null) {
-            return "Channel Type Integer is Null";
-        }
 
-        try {
-            int t = Integer.parseInt(channelTypeInteger.toString());
-            return ChannelType.fromId(t).name();
-        } catch (NumberFormatException e) {
-            return "Channel Type Is Not Parsable: "+channelTypeInteger;
-        }
+        Integer channelType = parseInt(channelTypeInteger);
+        if (channelType == null)
+            return "Channel Type cannot be parsed: " + channelTypeInteger;
 
+        return ChannelType.fromId(channelType).name();
     }
 
     @NotNull
     public static String resolveVoiceChannelUserLimit(Object limitNumber) {
-        if (limitNumber == null) {
-            return "User Limit was Null";
-        }
+        Integer userLimit = parseInt(limitNumber);
+        if (userLimit == null)
+            return "User Limit cannot be parsed";
 
-        try {
-            int limitNumberInt = Integer.parseInt(limitNumber.toString());
-            return limitNumberInt==0 ? "Unlimited" : String.valueOf(limitNumberInt);
-        } catch (NumberFormatException e) {
-            return "User Limit Cannot Be Parsed";
-        }
-
+        return userLimit == 0 ? "Unlimited" : userLimit.toString();
     }
 
     @NotNull
-    public static String resolveVoiceChannelBitrate(@Nullable Object bitrate) {
-        if (bitrate == null) {
-            return "Voice Channel Bitrate was Null";
-        }
+    public static String resolveVoiceChannelBitrate(@Nullable Object bitrateInteger) {
+        Integer bitrate = parseInt(bitrateInteger);
+        if (bitrate == null)
+            return "Voice Channel Bitrate cannot be parsed";
 
-        try {
-            int bitrateInt = Integer.parseInt(bitrate.toString());
-            return (bitrateInt / 1000) + " kbps";
-        } catch (NumberFormatException e) {
-            return "Bitrate could not be parsed: "+bitrate;
-        }
+        return (bitrate / 1000) + " kbps";
     }
 
     @NotNull
     public static String resolveVoiceChannelVideoQuality(@Nullable Object voiceChannelVideoQualityInteger) {
-        if (voiceChannelVideoQualityInteger == null) {
-            return "Video Quality Integer was Null";
-        }
 
-        try {
-            int videoQuality = Integer.parseInt(voiceChannelVideoQualityInteger.toString());
-            return switch (videoQuality) {
-                case 1 -> "Auto";
-                case 2 -> "720p/full";
-                default -> "Unknown Quality Mode: "+videoQuality;
-            };
-        } catch (NumberFormatException e) {
-            return "Video Quality Integer Cannot Be Parsed";
-        }
+        Integer videoQuality = parseInt(voiceChannelVideoQualityInteger);
+
+        return switch (videoQuality) {
+            case 1 -> "Auto";
+            case 2 -> "720p/full";
+            case null -> "Video Quality cannot be parsed";
+            default -> "Unknown Quality Mode: " + videoQuality;
+        };
     }
 
     // CHANNEL OVERRIDE UTILS
     @NotNull
-    public static String resolveChannelOverrideTargetType (@Nullable Object targetTypeInteger) {
-        if (targetTypeInteger == null) {
-            return "Null Target Type Integer";
-        }
+    public static String resolveChannelOverrideTargetType(@Nullable Object targetTypeInteger) {
+        Integer targetType = parseInt(targetTypeInteger);
 
-        try {
-            int typeInt = Integer.parseInt(targetTypeInteger.toString());
-            return switch (typeInt) {
-                case 0 -> "Role";
-                case 1 -> "Member/Application";
-                default -> "Unknown Type: "+typeInt;
-            };
-        } catch (NumberFormatException e) {
-            return "Target Type Integer Cannot Be Parsed: "+targetTypeInteger;
-        }
+        return switch (targetType) {
+            case 0 -> "Role";
+            case 1 -> "Member/Application";
+            case null -> "Target Type cannot be parsed";
+            default -> "Unknown Type: " + targetType;
+        };
 
     }
 
     @NotNull
-    public static String resolveChannelOverridePermissions(@Nullable Object permissionValue, @NonNull String emoji) {
-        if(permissionValue==null)
-            return "Null Permission Value";
+    public static String resolveChannelOverridePermissions(@Nullable Object permissionValueLong, @NonNull String emoji) {
 
-        if(String.valueOf(permissionValue).trim().isEmpty())
-            return "Permission Value was blank";
+        Long permissionValue = parseLong(permissionValueLong);
+        if (permissionValue == null)
+            return "Permission Value cannot be parsed";
 
-        try {
-            long permValue = Long.parseLong(String.valueOf(permissionValue));
-            if(permValue==0) return "Permissions synced with category";
+        if (permissionValue == 0)
+            return "Permissions synced with category";
 
-            StringBuilder permissions = new StringBuilder();
-            EnumSet<Permission> permissionEnumSet = Permission.getPermissions(permValue);
-            permissionEnumSet.forEach(permission -> permissions
-                    .append(emoji)
-                    .append(" ")
-                    .append(permission.getName())
-                    .append(System.lineSeparator()));
+        StringBuilder permissions = new StringBuilder();
+        EnumSet<Permission> permissionEnumSet = Permission.getPermissions(permissionValue);
+        permissionEnumSet.forEach(permission -> permissions
+                .append(emoji)
+                .append(" ")
+                .append(permission.getName())
+                .append(System.lineSeparator()));
 
-            return permissions.toString();
-
-        } catch (NumberFormatException e){
-            return "Permission Value could not be parsed: "+permissionValue;
-        }
+        return permissions.toString().trim();
     }
 
     // MISC UTILS
     @NotNull
     public static String autoResolveMemberOrRole(@Nullable Object memberOrRoleId, @NonNull GuildAuditLogEntryCreateEvent event) {
 
+        if (memberOrRoleId == null)
+            return "Member/Role ID cannot be parsed";
+
         Member mb = event.getGuild().getMemberById(String.valueOf(memberOrRoleId));
         Role r = event.getGuild().getRoleById(String.valueOf(memberOrRoleId));
 
-        if(mb!=null) {
+        if (mb != null) {
             return mb.getAsMention();
-        } else if (r!=null) {
+        } else if (r != null) {
             return r.getAsMention();
         }
 

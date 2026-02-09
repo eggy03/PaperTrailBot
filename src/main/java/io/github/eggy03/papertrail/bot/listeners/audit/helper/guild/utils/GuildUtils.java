@@ -11,99 +11,104 @@ import org.jetbrains.annotations.Nullable;
 @UtilityClass
 public class GuildUtils {
 
-    @NotNull
-    public static String resolveGuildVerificationLevel(@Nullable Object verificationLevel) {
-        if (verificationLevel == null) {
-            return "N/A";
-        }
+    public static final String NOT_AVAILABLE = "N/A";
 
+    // INTERNAL HELPERS
+    @Nullable
+    private static Long parseLong(@Nullable Object possibleLongValue) {
+        if (possibleLongValue == null) return null;
         try {
-            int t = Integer.parseInt(verificationLevel.toString());
-            return switch (t) { //we could have used JDA's Guild.VerficationLevel but they don't have description
-                case 0 -> "NONE";
-                case 1 -> "LOW (Verified Email)";
-                case 2 -> "MEDIUM (Registered on Discord for more than 5 minutes";
-                case 3 -> "HIGH (Must be a member of the server for longer than 10 minutes)";
-                case 4 -> "VERY_HIGH (Must have a verified phone number)";
-                default -> "Unknown";
-            };
+            return Long.parseLong(String.valueOf(possibleLongValue));
         } catch (NumberFormatException e) {
-            return "Could not parse verification level";
+            return null;
         }
+    }
+
+    @Nullable
+    private static Integer parseInt(@Nullable Object possibleIntegerValue) {
+        if (possibleIntegerValue == null) return null;
+        try {
+            return Integer.parseInt(String.valueOf(possibleIntegerValue));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    // GUILD UTILS
+    @NotNull
+    public static String resolveGuildVerificationLevel(@Nullable Object verificationLevelInteger) {
+
+        Integer verificationLevel = parseInt(verificationLevelInteger);
+        return switch (verificationLevel) { //we could have used JDA's Guild.VerficationLevel but they don't have description
+            case 0 -> "NONE";
+            case 1 -> "LOW (Verified Email)";
+            case 2 -> "MEDIUM (Registered on Discord for more than 5 minutes";
+            case 3 -> "HIGH (Must be a member of the server for longer than 10 minutes)";
+            case 4 -> "VERY_HIGH (Must have a verified phone number)";
+            case null -> NOT_AVAILABLE;
+            default -> "Unknown";
+        };
 
     }
 
     @NotNull
-    public static String resolveGuildModActionMFALevel(@Nullable Object mfaLevel) {
-        if (mfaLevel == null) {
-            return "N/A";
-        }
-        try {
-            int t = Integer.parseInt(mfaLevel.toString());
-            return Guild.MFALevel.fromKey(t).name();
-        } catch (NumberFormatException e) {
-            return "Could not parse MFA level";
-        }
+    public static String resolveGuildModActionMFALevel(@Nullable Object mfaLevelInteger) {
+        Integer mfaLevel = parseInt(mfaLevelInteger);
+        if (mfaLevel == null)
+            return NOT_AVAILABLE;
+
+        return Guild.MFALevel.fromKey(mfaLevel).name();
 
     }
 
     @NotNull
-    public static String resolveGuildDefaultMessageNotificationLevel(@Nullable Object notificationLevel) {
-        if (notificationLevel == null) {
-            return "N/A";
-        }
-        try {
-            int t = Integer.parseInt(notificationLevel.toString());
-            return Guild.NotificationLevel.fromKey(t).name();
-        } catch (NumberFormatException e) {
-            return "Could not parse Notification Level";
-        }
+    public static String resolveGuildDefaultMessageNotificationLevel(@Nullable Object notificationLevelInteger) {
+        Integer notificationLevel = parseInt(notificationLevelInteger);
+        if (notificationLevel == null)
+            return NOT_AVAILABLE;
+
+        return Guild.NotificationLevel.fromKey(notificationLevel).name();
 
     }
 
     @NotNull
-    public static String resolveExplicitContentFilterLevel (@Nullable Object explicitContentFilterLevel) {
-        if(explicitContentFilterLevel==null)
-            return "ECF Level is null";
+    public static String resolveExplicitContentFilterLevel(@Nullable Object explicitContentFilterLevelInteger) {
+        Integer ecfLevel = parseInt(explicitContentFilterLevelInteger);
+        if (ecfLevel == null)
+            return NOT_AVAILABLE;
 
-        try {
-            int level = Integer.parseInt(String.valueOf(explicitContentFilterLevel));
-            return Guild.ExplicitContentLevel.fromKey(level).getDescription();
-        } catch (NumberFormatException e) {
-            return "Could not parse ECF Level";
-        }
+        return Guild.ExplicitContentLevel.fromKey(ecfLevel).getDescription();
     }
 
     @NotNull
-    public static String resolveSystemChannelFlags (@Nullable Object systemFlagsBitfield) {
+    public static String resolveSystemChannelFlags(@Nullable Object systemChannelFlagsIntegerObject) {
+        Integer systemChannelFlagsInteger = parseInt(systemChannelFlagsIntegerObject);
 
-        if(systemFlagsBitfield==null)
-            return "Bitfield for System Flags was null";
+        if (systemChannelFlagsInteger == null)
+            return NOT_AVAILABLE;
 
-        try {
-            StringBuilder systemChannelFlags = new StringBuilder();
-            int bitfield = Integer.parseInt(String.valueOf(systemFlagsBitfield));
-            if (bitfield==0) return "No Flags Suppressed";
+        if (systemChannelFlagsInteger == 0)
+            return "No Flags Suppressed";
 
-            SystemChannelFlag.getFlags(bitfield).forEach(flag -> systemChannelFlags.append(flag.name()).append(System.lineSeparator()));
+        StringBuilder systemChannelFlags = new StringBuilder();
+        SystemChannelFlag
+                .getFlags(systemChannelFlagsInteger)
+                .forEach(flag ->
+                        systemChannelFlags
+                                .append(flag.name())
+                                .append(System.lineSeparator()));
 
-            return systemChannelFlags.toString();
-        } catch (NumberFormatException e) {
-            return "Could not parse System Flags";
-        }
+        return systemChannelFlags.toString().trim();
     }
 
+    // MISC
     @NotNull
-    public static String resolveMentionableChannel (Object channelId, GuildAuditLogEntryCreateEvent event) {
-        if(channelId==null)
-            return "N/A";
+    public static String resolveMentionableChannel(Object channelId, GuildAuditLogEntryCreateEvent event) {
+        Long channelIdLong = parseLong(channelId);
+        if (channelIdLong == null)
+            return NOT_AVAILABLE;
 
-        try {
-            long channelIdLong = Long.parseLong(String.valueOf(channelId));
-            GuildChannel channel = event.getGuild().getGuildChannelById(channelIdLong);
-            return channel!=null ? channel.getAsMention() : String.valueOf(channelIdLong);
-        } catch (NumberFormatException e){
-            return "Could not parse channel ID";
-        }
+        GuildChannel channel = event.getGuild().getGuildChannelById(channelIdLong);
+        return channel != null ? channel.getAsMention() : channelIdLong.toString();
     }
 }
