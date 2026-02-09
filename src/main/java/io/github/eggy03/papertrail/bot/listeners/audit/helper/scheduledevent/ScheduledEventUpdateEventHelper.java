@@ -1,7 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent;
 
-import io.github.eggy03.papertrail.bot.commons.utils.GuildScheduledEventRecurrenceRuleStructureParser;
-import io.github.eggy03.papertrail.bot.commons.utils.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent.utils.ScheduledEventUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -45,8 +44,8 @@ public class ScheduledEventUpdateEventHelper {
 
             switch(change) {
                 case "entity_type":
-                    eb.addField("📂 Old Event Type", "╰┈➤"+ TypeResolver.scheduleEventTypeResolver(oldValue), false);
-                    eb.addField("📂 New Event Type", "╰┈➤"+TypeResolver.scheduleEventTypeResolver(newValue), false);
+                    eb.addField("📂 Old Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(oldValue), false);
+                    eb.addField("📂 New Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(newValue), false);
                     break;
 
                 case "privacy_level", "image_hash":
@@ -63,8 +62,8 @@ public class ScheduledEventUpdateEventHelper {
                     break;
 
                 case "status":
-                    eb.addField("📊 Old Event Status", "╰┈➤"+TypeResolver.scheduleEventStatusTypeResolver(oldValue), false);
-                    eb.addField("📊 New Event Status", "╰┈➤"+TypeResolver.scheduleEventStatusTypeResolver(newValue), false);
+                    eb.addField("📊 Old Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(oldValue), false);
+                    eb.addField("📊 New Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(newValue), false);
                     break;
 
                 case "location":
@@ -80,8 +79,8 @@ public class ScheduledEventUpdateEventHelper {
                     break;
 
                 case "recurrence_rule":
-                    eb.addField("📊 Old Recurrence Rule", GuildScheduledEventRecurrenceRuleStructureParser.parse(oldValue), false);
-                    eb.addField("📊 New Recurrence Rule", GuildScheduledEventRecurrenceRuleStructureParser.parse(newValue), false);
+                    eb.addField("📊 Old Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
+                    eb.addField("📊 New Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
                     break;
 
                 default:

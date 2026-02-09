@@ -1,16 +1,42 @@
-package io.github.eggy03.papertrail.bot.commons.utils;
+package io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent.utils;
 
 import lombok.experimental.UtilityClass;
+import net.dv8tion.jda.api.entities.ScheduledEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-/**
- * Parser for: <a href="https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-frequency">Recurrence Rule Structure</a>
- */
-@UtilityClass
-public class GuildScheduledEventRecurrenceRuleStructureParser {
+import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseInt;
 
-    public static String parse(Object recurrenceRuleStructure) {
+@UtilityClass
+public class ScheduledEventUtils {
+
+    @NotNull
+    public static String resolveEventType (@Nullable Object eventTypeInteger) {
+
+        Integer eventType = parseInt(eventTypeInteger);
+        if (eventType == null)
+            return "N/A";
+
+        return ScheduledEvent.Type.fromKey(eventType).name();
+
+    }
+
+    @NotNull
+    public static String resolveStatusType (@Nullable Object eventTypeInteger) {
+        Integer eventType = parseInt(eventTypeInteger);
+        if (eventType == null)
+            return "N/A";
+
+        return ScheduledEvent.Status.fromKey(eventType).name();
+    }
+
+    @NotNull
+    public static String resolveRecurrenceRules(@Nullable Object recurrenceRuleStructure) {
+
+        if(recurrenceRuleStructure==null)
+            return "N/A";
 
         StringBuilder stringBuilder = new StringBuilder();
         if(recurrenceRuleStructure instanceof Map<?,?> recurrenceRuleMap) {
@@ -19,72 +45,72 @@ public class GuildScheduledEventRecurrenceRuleStructureParser {
                     .append("**_Start Time of Interval_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("start")))
+                    .append(recurrenceRuleMap.get("start"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_End Time of Interval_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("end")))
+                    .append(recurrenceRuleMap.get("end"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Frequency of Interval_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("frequency")))
+                    .append(recurrenceRuleMap.get("frequency"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Spacing between events_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("interval")))
+                    .append(recurrenceRuleMap.get("interval"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Weekday Recurrence_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("by_weekday")))
+                    .append(recurrenceRuleMap.get("by_weekday"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Specific days within a weekday to recur on_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("by_n_weekday")))
+                    .append(recurrenceRuleMap.get("by_n_weekday"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Monthly Recurrence_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("by_month")))
+                    .append(recurrenceRuleMap.get("by_month"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Specific days within a month to recur on_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("by_month_day")))
+                    .append(recurrenceRuleMap.get("by_month_day"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Set of days within a year to recur on_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("by_year_day")))
+                    .append(recurrenceRuleMap.get("by_year_day"))
                     .append(System.lineSeparator());
 
             stringBuilder
                     .append("**_Event to be repeated_**")
                     .append(System.lineSeparator())
                     .append("╰┈➤")
-                    .append(String.valueOf(recurrenceRuleMap.get("count")));
+                    .append(recurrenceRuleMap.get("count"));
 
         }
-        return stringBuilder.toString();
+        return stringBuilder.toString().trim();
     }
 }

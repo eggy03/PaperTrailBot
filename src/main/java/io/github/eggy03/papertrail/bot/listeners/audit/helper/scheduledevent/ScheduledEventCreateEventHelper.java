@@ -1,7 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent;
 
-import io.github.eggy03.papertrail.bot.commons.utils.GuildScheduledEventRecurrenceRuleStructureParser;
-import io.github.eggy03.papertrail.bot.commons.utils.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent.utils.ScheduledEventUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,7 +41,7 @@ public class ScheduledEventCreateEventHelper {
 
             switch(change) {
                 case "entity_type":
-                    eb.addField("📂 Event Type", "╰┈➤"+ TypeResolver.scheduleEventTypeResolver(newValue), false);
+                    eb.addField("📂 Event Type", "╰┈➤"+ ScheduledEventUtils.resolveEventType(newValue), false);
                     break;
 
                 case "privacy_level", "image_hash":
@@ -57,7 +56,7 @@ public class ScheduledEventCreateEventHelper {
                     break;
 
                 case "status":
-                    eb.addField("📊 Event Status", "╰┈➤"+TypeResolver.scheduleEventStatusTypeResolver(newValue), false);
+                    eb.addField("📊 Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(newValue), false);
                     break;
 
                 case "location":
@@ -70,7 +69,7 @@ public class ScheduledEventCreateEventHelper {
                     break;
 
                 case "recurrence_rule":
-                    eb.addField("📊 Recurrence Rule", GuildScheduledEventRecurrenceRuleStructureParser.parse(newValue), false);
+                    eb.addField("📊 Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
                     break;
 
 
