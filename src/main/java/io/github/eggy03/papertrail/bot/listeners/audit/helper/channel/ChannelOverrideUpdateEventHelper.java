@@ -44,8 +44,8 @@ public class ChannelOverrideUpdateEventHelper {
 
             switch (changeKey) {
 
-                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolvePermissions(newValue, "❌"), false);
-                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolvePermissions(newValue, "✅"), false);
+                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolveChannelPermissions(newValue, "❌"), false);
+                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolveChannelPermissions(newValue, "✅"), false);
 
                 default -> {
                     eb.addField(changeKey, "OLD_VALUE: "+oldValue, false);
