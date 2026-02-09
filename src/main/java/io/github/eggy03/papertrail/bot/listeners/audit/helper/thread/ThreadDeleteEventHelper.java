@@ -2,7 +2,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.thread;
 
 import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
 import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogChange;
@@ -51,8 +51,9 @@ public class ThreadDeleteEventHelper {
                     eb.addField("🐌 Slowmode Limit", "╰┈➤"+DurationFormatter.formatSeconds(oldValue), false);
                     break;
 
+                    // TODO make threadutils
                 case "type":
-                    eb.addField("📁 Thread Type", "╰┈➤"+ TypeResolver.channelTypeResolver(oldValue), false);
+                    eb.addField("📁 Thread Type", "╰┈➤"+ ChannelUtils.resolveChannelType(oldValue), false);
                     break;
 
                 case "archived":

@@ -2,7 +2,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
 import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
 import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -44,8 +44,8 @@ public class ChannelUpdateEventHelper {
             switch (changeKey) {
 
                 case "user_limit" -> {
-                    eb.addField("Old User Limit", "╰┈➤"+ TypeResolver.formatNumberOrUnlimited(oldValue), true);
-                    eb.addField("New User Limit", "╰┈➤"+TypeResolver.formatNumberOrUnlimited(newValue), true);
+                    eb.addField("Old User Limit", "╰┈➤"+ChannelUtils.resolveVoiceChannelUserLimit(oldValue), true);
+                    eb.addField("New User Limit", "╰┈➤"+ChannelUtils.resolveVoiceChannelUserLimit(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -68,8 +68,8 @@ public class ChannelUpdateEventHelper {
                 }
 
                 case "video_quality_mode" -> {
-                    eb.addField("Old Video Quality Mode", "╰┈➤"+TypeResolver.videoQualityModeResolver(oldValue), true);
-                    eb.addField("New Video Quality Mode", "╰┈➤"+TypeResolver.videoQualityModeResolver(newValue), true);
+                    eb.addField("Old Video Quality Mode", "╰┈➤"+ChannelUtils.resolveVoiceChannelVideoQuality(oldValue), true);
+                    eb.addField("New Video Quality Mode", "╰┈➤"+ChannelUtils.resolveVoiceChannelVideoQuality(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -80,8 +80,8 @@ public class ChannelUpdateEventHelper {
                 }
 
                 case "bitrate" -> {
-                    eb.addField("Old Voice Channel Bitrate", "╰┈➤"+TypeResolver.voiceChannelBitrateResolver(oldValue), true);
-                    eb.addField("New Voice Channel Bitrate", "╰┈➤"+TypeResolver.voiceChannelBitrateResolver(newValue), true);
+                    eb.addField("Old Voice Channel Bitrate", "╰┈➤"+ChannelUtils.resolveVoiceChannelBitrate(oldValue), true);
+                    eb.addField("New Voice Channel Bitrate", "╰┈➤"+ChannelUtils.resolveVoiceChannelBitrate(newValue), true);
                     eb.addBlankField(true);
                 }
 

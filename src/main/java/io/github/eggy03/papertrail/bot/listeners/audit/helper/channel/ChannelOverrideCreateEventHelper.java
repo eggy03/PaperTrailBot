@@ -40,8 +40,8 @@ public class ChannelOverrideCreateEventHelper {
 
                 case "type" -> eb.addField("Override Type", "╰┈➤"+ ChannelUtils.resolveChannelOverrideTargetType(newValue), false);
 
-                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolveChannelPermissions(newValue, "❌"), false);
-                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolveChannelPermissions(newValue, "✅"), false);
+                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolveChannelOverridePermissions(newValue, "❌"), false);
+                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolveChannelOverridePermissions(newValue, "✅"), false);
 
                 // id exposes the member/role id which for which the channel permissions are overridden
                 // only one member/role permission id is fetched per loop

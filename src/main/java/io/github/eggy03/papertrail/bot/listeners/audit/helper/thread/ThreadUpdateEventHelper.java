@@ -2,7 +2,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.thread;
 
 import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
 import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogChange;
@@ -62,9 +62,10 @@ public class ThreadUpdateEventHelper {
                     eb.addBlankField(true);
                     break;
 
+                    // TODO make threadutils
                 case "type":
-                    eb.addField("📁 Old Thread Type", "╰┈➤"+ TypeResolver.channelTypeResolver(oldValue), true);
-                    eb.addField("📁 New Thread Type", "╰┈➤"+TypeResolver.channelTypeResolver(newValue), true);
+                    eb.addField("📁 Old Thread Type", "╰┈➤"+ChannelUtils.resolveChannelType(oldValue), true);
+                    eb.addField("📁 New Thread Type", "╰┈➤"+ChannelUtils.resolveChannelType(newValue), true);
                     eb.addBlankField(true);
                     break;
 

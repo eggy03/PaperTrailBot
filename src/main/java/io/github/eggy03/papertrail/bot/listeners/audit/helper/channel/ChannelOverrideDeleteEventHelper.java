@@ -41,8 +41,8 @@ public class ChannelOverrideDeleteEventHelper {
 
                 case "type" -> eb.addField("Override Type", "╰┈➤"+ ChannelUtils.resolveChannelOverrideTargetType(oldValue), false);
 
-                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolveChannelPermissions(oldValue, "❌"), false);
-                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolveChannelPermissions(oldValue, "✅"), false);
+                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolveChannelOverridePermissions(oldValue, "❌"), false);
+                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolveChannelOverridePermissions(oldValue, "✅"), false);
 
                 // id exposes the member/role id which for which the channel permissions are overridden
                 // only one member/role permission id is fetched per loop

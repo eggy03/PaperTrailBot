@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -41,7 +41,7 @@ public class ChannelDeleteEventHelper {
             switch (changeKey) {
                 case "name" -> eb.addField("Name", "╰┈➤" + oldValue, false);
 
-                case "type" -> eb.addField("Type", "╰┈➤" + TypeResolver.channelTypeResolver(oldValue), false);
+                case "type" -> eb.addField("Type", "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), false);
 
                 default -> {
                     // omit all other fields

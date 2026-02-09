@@ -2,7 +2,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
 import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
 import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.TypeResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -41,11 +41,11 @@ public class ChannelCreateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "user_limit" -> eb.addField("User Limit", "╰┈➤"+ TypeResolver.formatNumberOrUnlimited(newValue), false);
+                case "user_limit" -> eb.addField("User Limit", "╰┈➤"+ ChannelUtils.resolveVoiceChannelUserLimit(newValue), false);
 
                 case "rate_limit_per_user" -> eb.addField("Slow Mode", "╰┈➤"+ DurationFormatter.formatSeconds(newValue), false);
 
-                case "type" -> eb.addField("Channel Type", "╰┈➤"+TypeResolver.channelTypeResolver(newValue), false);
+                case "type" -> eb.addField("Channel Type", "╰┈➤"+ ChannelUtils.resolveChannelType(newValue), false);
 
                 case "nsfw" -> eb.addField("Is NSFW", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(newValue), false);
 
@@ -54,7 +54,7 @@ public class ChannelCreateEventHelper {
                     eb.addField("Channel Mention", "╰┈➤"+mentionableTargetChannel, true);
                 }
 
-                case "bitrate" -> eb.addField("Voice Channel Bitrate", "╰┈➤"+TypeResolver.voiceChannelBitrateResolver(newValue), false);
+                case "bitrate" -> eb.addField("Voice Channel Bitrate", "╰┈➤"+ ChannelUtils.resolveVoiceChannelBitrate(newValue), false);
 
                 case "permission_overwrites", "flags", "template", "available_tags" -> {
                     // the first two are for all types of channels and may stay empty during creation events
