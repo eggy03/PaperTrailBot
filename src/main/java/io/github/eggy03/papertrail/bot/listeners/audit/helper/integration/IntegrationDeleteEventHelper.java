@@ -22,7 +22,6 @@ public class IntegrationDeleteEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Integration Delete Event");
         eb.setDescription("ℹ️ The following integration was deleted by: "+mentionableExecutor);
@@ -33,6 +32,7 @@ public class IntegrationDeleteEventHelper {
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
             switch(changeKey) {
                 case "type" -> eb.addField("Integration Type","╰┈➤"+oldValue, false);
@@ -40,7 +40,7 @@ public class IntegrationDeleteEventHelper {
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
-                    log.info("Unimplemented Change Key: {}", changeKey);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
         });

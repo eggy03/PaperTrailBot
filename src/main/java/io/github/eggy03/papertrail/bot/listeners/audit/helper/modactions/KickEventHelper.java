@@ -1,8 +1,10 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.modactions;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -10,6 +12,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import java.awt.Color;
 
 @UtilityClass
+@Slf4j
 public class KickEventHelper {
 
     public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
@@ -39,9 +42,15 @@ public class KickEventHelper {
             eb.setFooter("Audit Log Entry ID: " + ale.getId());
             eb.setTimestamp(ale.getTimeCreated());
 
+            MessageEmbed mb = eb.build();
+            if(!mb.isSendable()){
+                log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+                return;
+            }
+
             TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-            if (sendingChannel != null && sendingChannel.canTalk()) {
-                sendingChannel.sendMessageEmbeds(eb.build()).queue();
+            if(sendingChannel!=null && sendingChannel.canTalk()) {
+                sendingChannel.sendMessageEmbeds(mb).queue();
             }
         });
     }

@@ -2,6 +2,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding;
 
 import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import java.awt.Color;
 
 @UtilityClass
+@Slf4j
 public class OnboardingPromptCreateEventHelper {
 
     public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
@@ -36,32 +38,24 @@ public class OnboardingPromptCreateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey){
-                case "single_select":
-                    eb.addField("Single Selection Mode", BooleanFormatter.formatToYesOrNo(newValue), false);
-                    break;
+                case "single_select" -> eb.addField("Single Selection Mode", BooleanFormatter.formatToYesOrNo(newValue), false);
 
-                case "required":
-                    eb.addField("Required", BooleanFormatter.formatToYesOrNo(newValue), false);
-                    break;
+                case "required" -> eb.addField("Required", BooleanFormatter.formatToYesOrNo(newValue), false);
 
-                case "type", "id":
-                    break;
+                case "type", "id" -> {
+                    // skip
+                }
 
-                case "title":
-                    eb.addField("Question Title", String.valueOf(newValue), false);
-                    break;
+                case "title" -> eb.addField("Question Title", String.valueOf(newValue), false);
 
-                case "options":
-                    eb.addField("Question Options", "Review the options in Onboarding Settings", false);
-                    break;
+                case "options" -> eb.addField("Question Options", "Review the options in Onboarding Settings", false);
 
-                case "in_onboarding":
-                    eb.addField("Is a Pre-Join Question", BooleanFormatter.formatToYesOrNo(newValue), false);
-                    break;
+                case "in_onboarding" -> eb.addField("Is a Pre-Join Question", BooleanFormatter.formatToYesOrNo(newValue), false);
 
-                default:
-                    eb.addField(changeKey, "OLD_VALUE: "+oldValue, false);
-                    eb.addField(changeKey, "NEW_VALUE: "+newValue, false);
+                default -> {
+                    eb.addField("Unimplemented/Unknown Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
 
         });
@@ -70,6 +64,10 @@ public class OnboardingPromptCreateEventHelper {
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
+        if(!mb.isSendable()){
+            log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+            return;
+        }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
         if(sendingChannel!=null && sendingChannel.canTalk()) {

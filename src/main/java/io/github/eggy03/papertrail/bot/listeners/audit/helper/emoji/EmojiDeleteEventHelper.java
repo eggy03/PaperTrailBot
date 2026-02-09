@@ -1,8 +1,10 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.emoji;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -10,6 +12,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import java.awt.Color;
 
 @UtilityClass
+@Slf4j
 public class EmojiDeleteEventHelper {
 
     public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
@@ -35,8 +38,8 @@ public class EmojiDeleteEventHelper {
             if (changeKey.equals("name")) {
                 eb.addField("Emoji Name", "╰┈➤" + oldValue, false);
             } else {
-                eb.addField(changeKey, "OLD_VALUE: " + oldValue, false);
-                eb.addField(changeKey, "NEW_VALUE: " + newValue, false);
+                eb.addField("Unimplemented Change Key", changeKey, false);
+                log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
             }
         });
         eb.addField("Deleted Emoji ID", "╰┈➤"+ale.getTargetId(), false);
@@ -44,9 +47,15 @@ public class EmojiDeleteEventHelper {
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
+        MessageEmbed mb = eb.build();
+        if(!mb.isSendable()){
+            log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+            return;
+        }
+
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
         if(sendingChannel!=null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(eb.build()).queue();
+            sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }
 }

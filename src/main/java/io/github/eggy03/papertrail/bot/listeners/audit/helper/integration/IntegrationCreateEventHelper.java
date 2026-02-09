@@ -31,6 +31,8 @@ public class IntegrationCreateEventHelper {
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
+
+            Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch(changeKey) {
@@ -39,7 +41,7 @@ public class IntegrationCreateEventHelper {
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
-                    log.info("Unimplemented Change Key: {}", changeKey);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
         });

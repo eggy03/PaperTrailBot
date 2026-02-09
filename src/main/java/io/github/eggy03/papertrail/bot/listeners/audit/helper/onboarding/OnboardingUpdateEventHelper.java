@@ -2,6 +2,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding;
 
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.utils.OnboardingUtils;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
@@ -13,6 +14,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import java.awt.Color;
 
 @UtilityClass
+@Slf4j
 public class OnboardingUpdateEventHelper {
 
     public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
@@ -38,27 +40,28 @@ public class OnboardingUpdateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey){
-                case "enabled":
+                case "enabled" -> {
                     eb.addField("Old Onboarding Status", OnboardingUtils.formatStatus(oldValue), false);
                     eb.addField("New Onboarding Status", OnboardingUtils.formatStatus(newValue), true);
-                    break;
+                }
 
-                case "mode":
+                case "mode" -> {
                     eb.addField("Old Onboarding Mode", OnboardingUtils.formatMode(oldValue), false);
                     eb.addField("New Onboarding Mode", OnboardingUtils.formatMode(newValue), true);
-                    break;
+                }
 
-                case "default_channel_ids":
+                case "default_channel_ids" ->{
                     eb.addField("Old Default Channels", OnboardingUtils.resolveChannelsFromList(guild, oldValue), false);
                     eb.addField("New Default Channels", OnboardingUtils.resolveChannelsFromList(guild, newValue), false);
-                    break;
+                }
 
-                case "prompts": // unknown as to exactly why this is triggered
-                    eb.addField("Prompt Updates", "Overall Pre-join/Post-join questions may have been updated.\n Review changes manually.", false);
-                    break;
+                // triggered also when prompts are deleted/created besides the default of update
+                case "prompts" -> eb.addField("Prompt Updates", "Overall Pre-join/Post-join questions may have been updated.\n Review changes manually.", false);
 
-                default:
-                    eb.addField(changeKey, "from: "+oldValue+" to: "+newValue, false);
+                default -> {
+                    eb.addField("Unimplemented/Unknown Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
 
         });
@@ -67,6 +70,10 @@ public class OnboardingUpdateEventHelper {
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
+        if(!mb.isSendable()){
+            log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+            return;
+        }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
         if(sendingChannel!=null && sendingChannel.canTalk()) {
