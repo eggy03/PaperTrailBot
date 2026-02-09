@@ -8,31 +8,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 
+import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseLong;
+
 @UtilityClass
 public class RoleUtils {
-
-    // INTERNAL HELPERS
-    @Nullable
-    private static Long parseLong(@Nullable Object possibleLongValue) {
-        if (possibleLongValue == null) return null;
-        try {
-            return Long.parseLong(String.valueOf(possibleLongValue));
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    @Nullable
-    private static Integer parseInt(@Nullable Object possibleIntegerValue) {
-        if (possibleIntegerValue == null) return null;
-        try {
-            return Integer.parseInt(String.valueOf(possibleIntegerValue));
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    // ROLE UTILS
 
     @NotNull
     public static String resolveRolePermissions (@Nullable Object permissionsValue, @NonNull String emoji) {

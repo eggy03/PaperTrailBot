@@ -8,31 +8,13 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseInt;
+import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseLong;
+
 @UtilityClass
 public class GuildUtils {
 
     public static final String NOT_AVAILABLE = "N/A";
-
-    // INTERNAL HELPERS
-    @Nullable
-    private static Long parseLong(@Nullable Object possibleLongValue) {
-        if (possibleLongValue == null) return null;
-        try {
-            return Long.parseLong(String.valueOf(possibleLongValue));
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    @Nullable
-    private static Integer parseInt(@Nullable Object possibleIntegerValue) {
-        if (possibleIntegerValue == null) return null;
-        try {
-            return Integer.parseInt(String.valueOf(possibleIntegerValue));
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
 
     // GUILD UTILS
     @NotNull
