@@ -2,11 +2,10 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.role;
 
 import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
 import io.github.eggy03.papertrail.bot.commons.utilities.ColorFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.PermissionResolver;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.role.utils.RoleUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
@@ -15,7 +14,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 @Slf4j
@@ -25,70 +23,72 @@ public class RoleUpdateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Role Update Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserId());
-        Role targetRole = ale.getJDA().getRoleById(ale.getTargetId());
-
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        Role targetRole = ale.getJDA().getRoleById(ale.getTargetId());
         String mentionableTargetRole = (targetRole !=null ? targetRole.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following member role was updated");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Role Update Event");
+        eb.setDescription("ℹ️ The following role was updated by: "+mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        eb.addField("Target Role", mentionableTargetRole, false);
+        eb.addField("Target Role", "╰┈➤"+mentionableTargetRole, false);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        ale.getChanges().forEach((changeKey, changeValue) -> {
 
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-            switch(change) {
+            switch (changeKey) {
 
-                case "name":
-                    eb.addField("🏷️ Old Role Name", "╰┈➤"+oldValue, true);
-                    eb.addField("🏷️ New Role Name", "╰┈➤"+newValue, true);
+                case "name" -> {
+                    eb.addField("Old Role Name", "╰┈➤"+oldValue, true);
+                    eb.addField("New Role Name", "╰┈➤"+newValue, true);
                     eb.addBlankField(true);
-                    break;
+                }
 
-                case "hoist":
-                    eb.addField("📂 Old Display Seperately", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), true);
-                    eb.addField("📂 New Display Seperately", "╰┈➤"+BooleanFormatter.formatToEmoji(newValue), true);
+                case "hoist" -> {
+                    eb.addField("Old Display Separately", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(oldValue), true);
+                    eb.addField("New Display Separately", "╰┈➤"+BooleanFormatter.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
-                    break;
+                }
 
-                case "color":
-                    eb.addField("🎨 Old Color", "╰┈➤"+ ColorFormatter.formatToHex(oldValue), true);
-                    eb.addField("🎨 New Color", "╰┈➤"+ColorFormatter.formatToHex(newValue), true);
+                case "color" -> {
+                    eb.addField("Old Color", "╰┈➤"+ ColorFormatter.formatToHex(oldValue), true);
+                    eb.addField("New Color", "╰┈➤"+ColorFormatter.formatToHex(newValue), true);
                     eb.addBlankField(true);
-                    break;
+                }
 
-                case "permissions":
-                    eb.addField("Old Role Permissions", PermissionResolver.getParsedPermissions(oldValue, "✅"), true);
-                    eb.addField("New Role Permissions", PermissionResolver.getParsedPermissions(newValue, "✅"), true);
+                case "permissions" -> {
+                    eb.addField("Old Role Permissions", RoleUtils.resolveRolePermissions(oldValue, "✅"), true);
+                    eb.addField("New Role Permissions", RoleUtils.resolveRolePermissions(newValue, "✅"), true);
                     eb.addBlankField(true);
-                    break;
+                }
 
-                case "mentionable":
-                    eb.addField("🔗 Old Mentionable", "╰┈➤"+BooleanFormatter.formatToEmoji(oldValue), true);
-                    eb.addField("🔗 New Mentionable", "╰┈➤"+BooleanFormatter.formatToEmoji(newValue), true);
+                case "mentionable" -> {
+                    eb.addField("Old Mentionable", "╰┈➤"+BooleanFormatter.formatToYesOrNo(oldValue), true);
+                    eb.addField("New Mentionable", "╰┈➤"+BooleanFormatter.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
-                    break;
+                }
 
-                case "colors":
-                    eb.addField("🌈 Old Gradient Color System", "╰┈➤"+ColorFormatter.formatGradientColorSystemToHex(oldValue), true);
-                    eb.addField("🌈 New Gradient Color System", "╰┈➤"+ColorFormatter.formatGradientColorSystemToHex(newValue), true);
+                case "colors" -> {
+                    eb.addField("Old Gradient Color System", ColorFormatter.formatGradientColorSystemToHex(oldValue), true);
+                    eb.addField("New Gradient Color System", ColorFormatter.formatGradientColorSystemToHex(newValue), true);
                     eb.addBlankField(true);
-                    break;
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                }
+
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
+
             }
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

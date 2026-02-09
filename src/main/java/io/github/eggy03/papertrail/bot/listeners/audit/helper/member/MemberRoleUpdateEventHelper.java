@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.member;
 
-import io.github.eggy03.papertrail.bot.listeners.audit.helper.role.utils.RoleUtils;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.member.utils.MemberUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -43,9 +43,9 @@ public class MemberRoleUpdateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "$add" -> eb.addField("✅ Role(s) Added", "╰┈➤"+ RoleUtils.parseRoleListMap(event, newValue), false);
+                case "$add" -> eb.addField("✅ Role(s) Added", "╰┈➤"+ MemberUtils.parseRoleListMap(event, newValue), false);
 
-                case "$remove" -> eb.addField("❌ Role(s) Removed", "╰┈➤"+RoleUtils.parseRoleListMap(event, newValue), false);
+                case "$remove" -> eb.addField("❌ Role(s) Removed", "╰┈➤"+MemberUtils.parseRoleListMap(event, newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

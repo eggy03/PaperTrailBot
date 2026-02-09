@@ -22,22 +22,46 @@ public class RoleCreateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Role Create Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserId());
-        Role targetRole = ale.getJDA().getRoleById(ale.getTargetId());
-
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        Role targetRole = ale.getJDA().getRoleById(ale.getTargetId());
         String mentionableTargetRole = (targetRole !=null ? targetRole.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\n The following role was created");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Role Create Event");
+        eb.setDescription("The following role was created by: "+mentionableExecutor);
         eb.setColor(Color.GREEN);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        eb.addField("Target Role", mentionableTargetRole, false);
+        eb.addField("Target Role", "╰┈➤"+mentionableTargetRole, false);
+
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
+
+            switch (changeKey) {
+
+                case "name" -> eb.addField("Role Name", "╰┈➤"+newValue, false);
+
+                case "colors", "hoist", "color", "permissions", "mentionable" -> {
+                     /* discord for some reason shows the following to be default/null even
+                     * when you set them during the creation of the role itself
+                     * and delegates them to ROLE_UPDATE event
+                     */
+                }
+
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
+
+            }
+
+        });
         for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
 
             String change = changes.getKey();
