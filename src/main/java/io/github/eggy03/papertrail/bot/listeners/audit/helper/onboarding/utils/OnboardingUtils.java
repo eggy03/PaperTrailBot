@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.commons.utilities;
+package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.utils;
 
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Guild;

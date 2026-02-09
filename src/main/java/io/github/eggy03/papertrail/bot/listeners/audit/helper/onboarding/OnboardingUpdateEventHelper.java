@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.OnboardingUtils;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.utils.OnboardingUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
