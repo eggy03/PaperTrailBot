@@ -8,14 +8,13 @@ import java.util.Map;
 @UtilityClass
 public class ColorFormatter {
 
-	public static String formatToHex(Object colorValue) {
+	public static String formatToHex(Object colorValueInteger) {
 		
-		if(String.valueOf(colorValue).equals("null")) {
+		if(colorValueInteger==null)
 			return "N/A";
-		}
 		
 		try {
-			int color = Integer.parseInt(String.valueOf(colorValue));
+			int color = Integer.parseInt(String.valueOf(colorValueInteger));
 			return String.format("#%06X", color);
 		} catch (NumberFormatException e ) {
 			return "No Parsable Color Integer Detected";
