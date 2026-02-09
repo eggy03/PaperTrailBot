@@ -15,7 +15,8 @@ import java.awt.Color;
 @Slf4j
 public class MessageUnpinEventHelper {
 
-    // this audit log event does not expose anything other than the executor of the event
+    // this audit log event does not expose anything other than the target of the event who sent the message
+    // nothing about the person who un-pinned it or the message itself
     public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
 
         AuditLogEntry ale = event.getEntry();
@@ -23,10 +24,10 @@ public class MessageUnpinEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Message Unpin Event");
 
-        User executor = ale.getJDA().getUserById(ale.getTargetId());
-        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
+        User target = ale.getJDA().getUserById(ale.getTargetId());
+        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 **A message from **: "+mentionableExecutor+" un-pinned");
+        eb.setDescription("**A message from **: "+ mentionableTarget +" un-pinned");
         eb.setColor(Color.MAGENTA);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
