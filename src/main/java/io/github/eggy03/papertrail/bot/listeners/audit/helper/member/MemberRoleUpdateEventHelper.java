@@ -1,10 +1,9 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.member;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.RoleObjectParser;
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.role.utils.RoleUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -12,7 +11,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 import java.util.Objects;
 
 @UtilityClass
@@ -23,44 +21,38 @@ public class MemberRoleUpdateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry  | Member Role Update");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
-        User target = ale.getJDA().getUserById(ale.getTargetIdLong());
-
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        User target = ale.getJDA().getUserById(ale.getTargetIdLong());
         String mentionableTarget = (target !=null ? target.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following member role was updated");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry  | Member Role Update");
+        eb.setDescription("ℹ️ The following member had their role(s) updated by: "+mentionableExecutor);
         eb.setThumbnail(Objects.requireNonNull(event.getGuild().getMemberById(ale.getTargetIdLong())).getEffectiveAvatarUrl());
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        eb.addField("\uD83C\uDFF7️️ Target Member", "╰┈➤"+mentionableTarget, false);
 
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-            switch(change) {
+            switch (changeKey) {
+                case "$add" -> eb.addField("✅ Role(s) Added", "╰┈➤"+ RoleUtils.parseRoleListMap(event, newValue), false);
 
-                case "$add":
-                    eb.addField("🏷️Target Member", "╰┈➤"+mentionableTarget, false);
-                    eb.addField("✅Role(s) Added", "╰┈➤"+RoleObjectParser.parseRole(event, newValue), false);
-                    break;
+                case "$remove" -> eb.addField("❌ Role(s) Removed", "╰┈➤"+RoleUtils.parseRoleListMap(event, newValue), false);
 
-                case "$remove":
-                    eb.addField("🏷️Target Member", "╰┈➤"+mentionableTarget, false);
-                    eb.addField("❌Role(s) Removed", "╰┈➤"+RoleObjectParser.parseRole(event, newValue), false);
-                    break;
-
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
