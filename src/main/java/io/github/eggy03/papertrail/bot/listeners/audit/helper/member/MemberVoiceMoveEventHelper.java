@@ -21,13 +21,12 @@ public class MemberVoiceMoveEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Member Voice Move Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A voice move event was detected");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Member Voice Move Event");
+        eb.setDescription("ℹ️ A member was moved to a different voice channel by: "+mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);

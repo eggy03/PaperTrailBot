@@ -21,13 +21,12 @@ public class MemberVoiceKickEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Member Voice Kick Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A voice kick event was detected");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Member Voice Kick Event");
+        eb.setDescription("ℹ️ A member was kicked from a voice channel by: "+mentionableExecutor);
         eb.setColor(Color.RED);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
