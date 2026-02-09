@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
@@ -53,7 +53,7 @@ public class ServerStatCommandListener extends ListenerAdapter{
 			
 			eb.addField("🏠 Guild Name", "╰┈➤"+guild.getName(), false);
 			eb.addField("👑 Guild Owner", "╰┈➤"+ Objects.requireNonNull(guild.getMemberById(guild.getOwnerId())).getAsMention(), false);
-			eb.addField("📅 Guild Created On", "╰┈➤"+DurationFormatter.isoToLocalTimeCounter(guild.getTimeCreated()), false);
+			eb.addField("📅 Guild Created On", "╰┈➤"+ DurationUtils.isoToLocalTimeCounter(guild.getTimeCreated()), false);
 			eb.addField("🔗 Guild Vanity URL", "╰┈➤"+(guild.getVanityUrl() !=null ? guild.getVanityUrl() : "Not Set"), false);
 			
 			eb.addField("👥 Member Count", "╰┈➤"+userCount, true);

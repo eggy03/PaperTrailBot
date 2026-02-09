@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.role;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.ColorFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.ColorUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.role.utils.RoleUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -42,15 +42,15 @@ public class RoleDeleteEventHelper {
 
                 case "name"-> eb.addField("Role Name", "╰┈➤"+oldValue, false);
 
-                case "hoist"-> eb.addField("Display Separately", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(oldValue), false);
+                case "hoist"-> eb.addField("Display Separately", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "color" -> eb.addField("Color", "╰┈➤"+ ColorFormatter.formatToHex(oldValue), false);
+                case "color" -> eb.addField("Color", "╰┈➤"+ ColorUtils.formatToHex(oldValue), false);
 
                 case "permissions"-> eb.addField("Role Permissions", RoleUtils.resolveRolePermissions(oldValue, "✅"), false);
 
-                case "mentionable"-> eb.addField("Mentionable", "╰┈➤"+BooleanFormatter.formatToYesOrNo(oldValue), false);
+                case "mentionable"-> eb.addField("Mentionable", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "colors" -> eb.addField("Gradient Color System", ColorFormatter.formatGradientColorSystemToHex(oldValue), false);
+                case "colors" -> eb.addField("Gradient Color System", ColorUtils.formatGradientColorSystemToHex(oldValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

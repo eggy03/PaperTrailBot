@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.thread;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -42,15 +42,15 @@ public class ThreadDeleteEventHelper {
 
             switch(change) {
                 case "🔒 locked":
-                    eb.addField("Locked", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), false);
+                    eb.addField("Locked", "╰┈➤"+ BooleanUtils.formatToEmoji(oldValue), false);
                     break;
 
                 case "🕒 auto_archive_duration":
-                    eb.addField("Auto Archive Duration", "╰┈➤"+ DurationFormatter.formatMinutes(oldValue), false);
+                    eb.addField("Auto Archive Duration", "╰┈➤"+ DurationUtils.formatMinutes(oldValue), false);
                     break;
 
                 case "rate_limit_per_user":
-                    eb.addField("🐌 Slowmode Limit", "╰┈➤"+DurationFormatter.formatSeconds(oldValue), false);
+                    eb.addField("🐌 Slowmode Limit", "╰┈➤"+ DurationUtils.formatSeconds(oldValue), false);
                     break;
 
                     // TODO make threadutils
@@ -59,7 +59,7 @@ public class ThreadDeleteEventHelper {
                     break;
 
                 case "archived":
-                    eb.addField("🗄️ Archived", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), false);
+                    eb.addField("🗄️ Archived", "╰┈➤"+ BooleanUtils.formatToEmoji(oldValue), false);
                     break;
 
                 case "flags":

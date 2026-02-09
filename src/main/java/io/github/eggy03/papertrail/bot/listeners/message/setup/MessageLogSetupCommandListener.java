@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.message.setup;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.EnvConfig;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
 import net.dv8tion.jda.api.EmbedBuilder;

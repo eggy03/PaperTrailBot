@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,13 +39,13 @@ public class OnboardingPromptUpdateEventHelper {
 
             switch (changeKey){
                 case "single_select" -> {
-                    eb.addField("Old Single Selection Mode", BooleanFormatter.formatToYesOrNo(oldValue), false);
-                    eb.addField("New Single Selection Mode", BooleanFormatter.formatToYesOrNo(newValue), false);
+                    eb.addField("Old Single Selection Mode", BooleanUtils.formatToYesOrNo(oldValue), false);
+                    eb.addField("New Single Selection Mode", BooleanUtils.formatToYesOrNo(newValue), false);
                 }
 
                 case "required" -> {
-                    eb.addField("Was Required", BooleanFormatter.formatToYesOrNo(oldValue), false);
-                    eb.addField("Is Required", BooleanFormatter.formatToYesOrNo(newValue), false);
+                    eb.addField("Was Required", BooleanUtils.formatToYesOrNo(oldValue), false);
+                    eb.addField("Is Required", BooleanUtils.formatToYesOrNo(newValue), false);
                 }
 
                 case "type", "id" -> {
@@ -60,8 +60,8 @@ public class OnboardingPromptUpdateEventHelper {
                 case "options" -> eb.addField("Question Options", "Review the changed options in Onboarding Settings", false);
 
                 case "in_onboarding" -> {
-                    eb.addField("Was a Pre-Join Question", BooleanFormatter.formatToYesOrNo(oldValue), false);
-                    eb.addField("Is a Pre-Join Question", BooleanFormatter.formatToYesOrNo(newValue), false);
+                    eb.addField("Was a Pre-Join Question", BooleanUtils.formatToYesOrNo(oldValue), false);
+                    eb.addField("Is a Pre-Join Question", BooleanUtils.formatToYesOrNo(newValue), false);
                 }
 
                 default -> {

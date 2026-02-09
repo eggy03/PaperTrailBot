@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.setup;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.EnvConfig;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import net.dv8tion.jda.api.EmbedBuilder;

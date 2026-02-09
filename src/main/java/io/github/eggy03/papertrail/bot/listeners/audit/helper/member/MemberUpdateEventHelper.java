@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.member;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -54,18 +54,18 @@ public class MemberUpdateEventHelper {
                     } else {
                         eb.setColor(Color.YELLOW);
                         eb.addField("Timeout Received", "╰┈➤ Member has received a timeout", false);
-                        eb.addField("Timeout Ends On", "╰┈➤"+ DurationFormatter.isoToLocalTimeCounter(newValue), false);
+                        eb.addField("Timeout Ends On", "╰┈➤"+ DurationUtils.isoToLocalTimeCounter(newValue), false);
                         eb.addField("Timeout Reason", "╰┈➤"+(ale.getReason()!=null ? ale.getReason() : "No Reason Provided"), false);
                     }
                 }
 
                 case "nick" -> eb.addField("Nickname Update", "╰┈➤"+resolveNickNameChanges(oldValue, newValue), false);
 
-                case "mute" -> eb.addField("Is Muted in VC", BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "mute" -> eb.addField("Is Muted in VC", BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "deaf" -> eb.addField("Is Deafened in VC", BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "deaf" -> eb.addField("Is Deafened in VC", BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "bypasses_verification" -> eb.addField("Bypass Verification", BooleanFormatter.formatToEnabledOrDisabled(newValue), false);
+                case "bypasses_verification" -> eb.addField("Bypass Verification", BooleanUtils.formatToEnabledOrDisabled(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

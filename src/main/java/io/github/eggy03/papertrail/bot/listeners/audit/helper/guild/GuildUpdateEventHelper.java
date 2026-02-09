@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.guild;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.guild.utils.GuildUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -57,15 +57,15 @@ public class GuildUpdateEventHelper {
 
                 case "default_message_notifications" -> eb.addField("Default Message Notifications Update", GuildUtils.resolveGuildDefaultMessageNotificationLevel(newValue), false);
 
-                case "afk_timeout" -> eb.addField("AFK Channel Timeout Change", DurationFormatter.formatSeconds(newValue), false);
+                case "afk_timeout" -> eb.addField("AFK Channel Timeout Change", DurationUtils.formatSeconds(newValue), false);
 
                 case "system_channel_id" -> eb.addField("Community Updates Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
 
-                case "widget_enabled" -> eb.addField("Widget Enabled", BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "widget_enabled" -> eb.addField("Widget Enabled", BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "widget_channel_id" -> eb.addField("Widget Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
 
-                case "premium_progress_bar_enabled" -> eb.addField("Server Boost Progress Bar Enabled", BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "premium_progress_bar_enabled" -> eb.addField("Server Boost Progress Bar Enabled", BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "mfa_level" -> eb.addField("MFA Requirement Set To", GuildUtils.resolveGuildModActionMFALevel(newValue), false);
 

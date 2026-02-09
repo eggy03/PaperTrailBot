@@ -1,10 +1,10 @@
-package io.github.eggy03.papertrail.bot.commons.utilities;
+package io.github.eggy03.papertrail.bot.commons.utils;
 
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
-public class BooleanFormatter {
+public class BooleanUtils {
 
     @NotNull
     public static String formatToEmoji (Object value) {

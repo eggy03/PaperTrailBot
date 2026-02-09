@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.event.guild;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.EnvConfig;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -55,8 +55,8 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
                 eb.setThumbnail(user.getEffectiveAvatarUrl());
                 eb.addField("ℹ️ Member Mention", "╰┈➤"+user.getAsMention(), false);
                 eb.addField("🆔 Member ID", "╰┈➤"+user.getId(), false);
-                eb.addField("📅 Account Created", "╰┈➤"+DurationFormatter.isoToLocalTimeCounter(user.getTimeCreated()), false);
-                eb.addField("🤖 Bot Account", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(user.isBot()), false);
+                eb.addField("📅 Account Created", "╰┈➤"+ DurationUtils.isoToLocalTimeCounter(user.getTimeCreated()), false);
+                eb.addField("🤖 Bot Account", "╰┈➤"+ BooleanUtils.formatToYesOrNo(user.isBot()), false);
 
                 eb.setFooter("Member Join Detection");
                 eb.setTimestamp(Instant.now());

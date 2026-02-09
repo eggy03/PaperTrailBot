@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,16 +39,16 @@ public class OnboardingPromptDeleteEventHelper {
 
             switch (changeKey){
 
-                case "single_select" -> eb.addField("Single Selection Mode", BooleanFormatter.formatToYesOrNo(oldValue), false);
+                case "single_select" -> eb.addField("Single Selection Mode", BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "required" -> eb.addField("Was Required", BooleanFormatter.formatToYesOrNo(oldValue), false);
+                case "required" -> eb.addField("Was Required", BooleanUtils.formatToYesOrNo(oldValue), false);
 
                 case "type", "id", "options" -> {
                     // skip
                 }
                 case "title" -> eb.addField("Question Title", String.valueOf(oldValue), false);
 
-                case "in_onboarding" -> eb.addField("Was a Pre-Join Question", BooleanFormatter.formatToYesOrNo(oldValue), false);
+                case "in_onboarding" -> eb.addField("Was a Pre-Join Question", BooleanUtils.formatToYesOrNo(oldValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.event;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.EnvConfig;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.AutoModerationFlagToChannelEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.AutoModerationMemberTimeoutEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.AutoModerationRuleBlockMessageEventHelper;

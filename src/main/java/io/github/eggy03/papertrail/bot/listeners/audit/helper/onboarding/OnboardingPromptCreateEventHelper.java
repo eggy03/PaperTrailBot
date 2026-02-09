@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -38,9 +38,9 @@ public class OnboardingPromptCreateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey){
-                case "single_select" -> eb.addField("Single Selection Mode", BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "single_select" -> eb.addField("Single Selection Mode", BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "required" -> eb.addField("Required", BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "required" -> eb.addField("Required", BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "type", "id" -> {
                     // skip
@@ -50,7 +50,7 @@ public class OnboardingPromptCreateEventHelper {
 
                 case "options" -> eb.addField("Question Options", "Review the options in Onboarding Settings", false);
 
-                case "in_onboarding" -> eb.addField("Is a Pre-Join Question", BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "in_onboarding" -> eb.addField("Is a Pre-Join Question", BooleanUtils.formatToYesOrNo(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

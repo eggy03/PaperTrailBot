@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -53,20 +53,20 @@ public class ChannelUpdateEventHelper {
                 }
 
                 case "rate_limit_per_user" -> {
-                    eb.addField("Old Slow mode Value", "╰┈➤"+ DurationFormatter.formatSeconds(oldValue), true);
-                    eb.addField("New Slow mode Value", "╰┈➤"+DurationFormatter.formatSeconds(newValue), true);
+                    eb.addField("Old Slow mode Value", "╰┈➤"+ DurationUtils.formatSeconds(oldValue), true);
+                    eb.addField("New Slow mode Value", "╰┈➤"+ DurationUtils.formatSeconds(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "default_thread_rate_limit_per_user" -> {
-                    eb.addField("Old Thread Slow mode Value", "╰┈➤"+ DurationFormatter.formatSeconds(oldValue), true);
-                    eb.addField("New Thread Slow mode Value", "╰┈➤"+DurationFormatter.formatSeconds(newValue), true);
+                    eb.addField("Old Thread Slow mode Value", "╰┈➤"+ DurationUtils.formatSeconds(oldValue), true);
+                    eb.addField("New Thread Slow mode Value", "╰┈➤"+ DurationUtils.formatSeconds(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "nsfw" -> {
-                    eb.addField("Was NSFW", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(oldValue), true);
-                    eb.addField("Is NSFW", "╰┈➤"+BooleanFormatter.formatToYesOrNo(newValue), true);
+                    eb.addField("Was NSFW", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField("Is NSFW", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -101,8 +101,8 @@ public class ChannelUpdateEventHelper {
                 }
 
                 case "default_auto_archive_duration" -> {
-                    eb.addField("Old Hide After Inactivity Timer", "╰┈➤"+DurationFormatter.formatMinutes(oldValue), true);
-                    eb.addField("New Hide After Inactivity Timer", "╰┈➤"+DurationFormatter.formatMinutes(newValue), true);
+                    eb.addField("Old Hide After Inactivity Timer", "╰┈➤"+ DurationUtils.formatMinutes(oldValue), true);
+                    eb.addField("New Hide After Inactivity Timer", "╰┈➤"+ DurationUtils.formatMinutes(newValue), true);
                     eb.addBlankField(true);
                 }
 

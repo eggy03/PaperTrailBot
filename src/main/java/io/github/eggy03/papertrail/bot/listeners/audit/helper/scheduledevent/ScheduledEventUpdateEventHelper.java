@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.GuildScheduledEventRecurrenceRuleStructureParser;
-import io.github.eggy03.papertrail.bot.commons.utilities.TypeResolver;
+import io.github.eggy03.papertrail.bot.commons.utils.GuildScheduledEventRecurrenceRuleStructureParser;
+import io.github.eggy03.papertrail.bot.commons.utils.TypeResolver;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;

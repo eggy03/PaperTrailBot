@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.role;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.ColorFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.ColorUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.role.utils.RoleUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -53,14 +53,14 @@ public class RoleUpdateEventHelper {
                 }
 
                 case "hoist" -> {
-                    eb.addField("Old Display Separately", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(oldValue), true);
-                    eb.addField("New Display Separately", "╰┈➤"+BooleanFormatter.formatToYesOrNo(newValue), true);
+                    eb.addField("Old Display Separately", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField("New Display Separately", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "color" -> {
-                    eb.addField("Old Color", "╰┈➤"+ ColorFormatter.formatToHex(oldValue), true);
-                    eb.addField("New Color", "╰┈➤"+ColorFormatter.formatToHex(newValue), true);
+                    eb.addField("Old Color", "╰┈➤"+ ColorUtils.formatToHex(oldValue), true);
+                    eb.addField("New Color", "╰┈➤"+ ColorUtils.formatToHex(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -71,14 +71,14 @@ public class RoleUpdateEventHelper {
                 }
 
                 case "mentionable" -> {
-                    eb.addField("Old Mentionable", "╰┈➤"+BooleanFormatter.formatToYesOrNo(oldValue), true);
-                    eb.addField("New Mentionable", "╰┈➤"+BooleanFormatter.formatToYesOrNo(newValue), true);
+                    eb.addField("Old Mentionable", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField("New Mentionable", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "colors" -> {
-                    eb.addField("Old Gradient Color System", ColorFormatter.formatGradientColorSystemToHex(oldValue), true);
-                    eb.addField("New Gradient Color System", ColorFormatter.formatGradientColorSystemToHex(newValue), true);
+                    eb.addField("Old Gradient Color System", ColorUtils.formatGradientColorSystemToHex(oldValue), true);
+                    eb.addField("New Gradient Color System", ColorUtils.formatGradientColorSystemToHex(newValue), true);
                     eb.addBlankField(true);
                 }
 

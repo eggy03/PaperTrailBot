@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.commons.utilities;
+package io.github.eggy03.papertrail.bot.commons.utils;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.experimental.UtilityClass;

@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.invite;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -45,7 +45,7 @@ public class InviteCreateEventHelper {
                     eb.addField("Invite Created By", "╰┈➤"+ mentionableInviter, false);
                 }
 
-                case "temporary" -> eb.addField("Temporary Invite", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "temporary" -> eb.addField("Temporary Invite", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "max_uses" -> {
                     int maxUses = Integer.parseInt(String.valueOf(newValue));
@@ -56,7 +56,7 @@ public class InviteCreateEventHelper {
                     // ignore
                 }
 
-                case "max_age" -> eb.addField("Expires After", "╰┈➤"+ DurationFormatter.formatSeconds(newValue), false);
+                case "max_age" -> eb.addField("Expires After", "╰┈➤"+ DurationUtils.formatSeconds(newValue), false);
 
                 case "channel_id" -> {
                     GuildChannel channel = ale.getGuild().getGuildChannelById(String.valueOf(newValue));

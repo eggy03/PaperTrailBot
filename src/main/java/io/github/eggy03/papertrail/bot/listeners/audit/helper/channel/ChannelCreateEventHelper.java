@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -46,11 +46,11 @@ public class ChannelCreateEventHelper {
             switch (changeKey) {
                 case "user_limit" -> eb.addField("User Limit", "╰┈➤"+ ChannelUtils.resolveVoiceChannelUserLimit(newValue), false);
 
-                case "rate_limit_per_user" -> eb.addField("Slow Mode", "╰┈➤"+ DurationFormatter.formatSeconds(newValue), false);
+                case "rate_limit_per_user" -> eb.addField("Slow Mode", "╰┈➤"+ DurationUtils.formatSeconds(newValue), false);
 
                 case "type" -> eb.addField("Channel Type", "╰┈➤"+ ChannelUtils.resolveChannelType(newValue), false);
 
-                case "nsfw" -> eb.addField("Is NSFW", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "nsfw" -> eb.addField("Is NSFW", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "name" -> {
                     eb.addField("Channel Name", "╰┈➤"+newValue, false);

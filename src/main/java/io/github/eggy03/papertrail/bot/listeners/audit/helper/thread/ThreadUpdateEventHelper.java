@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.thread;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
-import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -47,20 +47,20 @@ public class ThreadUpdateEventHelper {
 
             switch(change) {
                 case "locked":
-                    eb.addField("🔒 Old Lock Status", "╰┈➤"+ BooleanFormatter.formatToEmoji(oldValue), true);
-                    eb.addField("🔒 New Lock Status", "╰┈➤"+ BooleanFormatter.formatToEmoji(newValue), true);
+                    eb.addField("🔒 Old Lock Status", "╰┈➤"+ BooleanUtils.formatToEmoji(oldValue), true);
+                    eb.addField("🔒 New Lock Status", "╰┈➤"+ BooleanUtils.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 
                 case "auto_archive_duration":
-                    eb.addField("🕒 Old Auto Archive Duration", "╰┈➤"+ DurationFormatter.formatMinutes(oldValue), true);
-                    eb.addField("🕒 New Auto Archive Duration", "╰┈➤"+DurationFormatter.formatMinutes(newValue), true);
+                    eb.addField("🕒 Old Auto Archive Duration", "╰┈➤"+ DurationUtils.formatMinutes(oldValue), true);
+                    eb.addField("🕒 New Auto Archive Duration", "╰┈➤"+ DurationUtils.formatMinutes(newValue), true);
                     eb.addBlankField(true);
                     break;
 
                 case "rate_limit_per_user":
-                    eb.addField("🐌 Old Slowmode Limit", "╰┈➤"+DurationFormatter.formatSeconds(oldValue), true);
-                    eb.addField("🐌 New Slowmode Limit", "╰┈➤"+DurationFormatter.formatSeconds(newValue), true);
+                    eb.addField("🐌 Old Slowmode Limit", "╰┈➤"+ DurationUtils.formatSeconds(oldValue), true);
+                    eb.addField("🐌 New Slowmode Limit", "╰┈➤"+ DurationUtils.formatSeconds(newValue), true);
                     eb.addBlankField(true);
                     break;
 
@@ -72,8 +72,8 @@ public class ThreadUpdateEventHelper {
                     break;
 
                 case "archived":
-                    eb.addField("🗄️ Old Archive Status", "╰┈➤"+BooleanFormatter.formatToEmoji(oldValue), true);
-                    eb.addField("🗄️ New Archive Status", "╰┈➤"+BooleanFormatter.formatToEmoji(newValue), true);
+                    eb.addField("🗄️ Old Archive Status", "╰┈➤"+ BooleanUtils.formatToEmoji(oldValue), true);
+                    eb.addField("🗄️ New Archive Status", "╰┈➤"+ BooleanUtils.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 

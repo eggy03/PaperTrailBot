@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.invite;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -45,7 +45,7 @@ public class InviteDeleteEventHelper {
                     eb.addField("Invite Originally Created By", "╰┈➤"+(inviter != null ? inviter.getAsMention() : "`Unknown`"), false);
                 }
 
-                case "temporary" -> eb.addField("Temporary Invite", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(oldValue), false);
+                case "temporary" -> eb.addField("Temporary Invite", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), false);
 
                 case "max_uses", "flags", "max_age" -> {
                     // ignore

@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.commons.utilities;
+package io.github.eggy03.papertrail.bot.commons.utils;
 
 import lombok.experimental.UtilityClass;
 
@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @UtilityClass
-public class DurationFormatter {
+public class DurationUtils {
 
 	public static String formatSeconds(Object seconds) {
 		if (seconds == null) {

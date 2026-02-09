@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.main;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.EnvConfig;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.misc.ActivityUpdateListener;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;

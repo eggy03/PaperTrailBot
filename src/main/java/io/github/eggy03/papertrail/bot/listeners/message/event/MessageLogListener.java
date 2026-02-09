@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.message.event;
 
 import com.google.common.base.Splitter;
-import io.github.eggy03.papertrail.bot.commons.utilities.EnvConfig;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogContentEntity;

@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.automod;
 
-import io.github.eggy03.papertrail.bot.commons.utilities.BooleanFormatter;
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.utils.AutoModUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class AutoModerationRuleCreateEventHelper {
 
             switch (changeKey) {
 
-                case "enabled" -> eb.addField("Enabled", "╰┈➤"+ BooleanFormatter.formatToYesOrNo(newValue), false);
+                case "enabled" -> eb.addField("Enabled", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "trigger_type" -> eb.addField("Trigger Type", "╰┈➤"+ AutoModUtils.autoModTriggerTypeResolver(newValue), false);
 

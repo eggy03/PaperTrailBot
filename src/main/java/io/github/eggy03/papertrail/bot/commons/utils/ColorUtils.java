@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.commons.utilities;
+package io.github.eggy03.papertrail.bot.commons.utils;
 
 import lombok.experimental.UtilityClass;
 
@@ -6,7 +6,7 @@ import java.util.IllegalFormatException;
 import java.util.Map;
 
 @UtilityClass
-public class ColorFormatter {
+public class ColorUtils {
 
 	public static String formatToHex(Object colorValueInteger) {
 		
