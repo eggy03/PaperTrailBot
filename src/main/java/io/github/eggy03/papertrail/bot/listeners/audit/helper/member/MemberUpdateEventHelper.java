@@ -5,16 +5,15 @@ import io.github.eggy03.papertrail.bot.commons.utilities.DurationFormatter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
-import java.util.Map;
 import java.util.Objects;
 
 @UtilityClass
@@ -25,76 +24,55 @@ public class MemberUpdateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Member Update Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
-        User target = ale.getJDA().getUserById(ale.getTargetIdLong());
-
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        User target = ale.getJDA().getUserById(ale.getTargetIdLong());
         String mentionableTarget = (target !=null ? target.getAsMention() : ale.getTargetId());
 
-        Member targetMember = ale.getGuild().getMemberById(ale.getTargetId());
-        String mentionableTargetEffectiveName = targetMember!=null ? targetMember.getEffectiveName() : "Name could not be fetched";
-
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following member was updated");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Member Update Event");
+        eb.setDescription("ℹ️ The following member was updated by: "+mentionableExecutor);
         eb.setThumbnail(Objects.requireNonNull(event.getGuild().getMemberById(ale.getTargetId())).getEffectiveAvatarUrl());
         eb.setColor(Color.CYAN);
+
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        eb.addField("Target", "╰┈➤"+mentionableTarget, false);
 
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-            switch(change) {
+            switch (changeKey) {
 
-                case "communication_disabled_until":
+                case "communication_disabled_until" -> {
                     if(newValue==null) {
                         eb.setColor(Color.GREEN);
-                        eb.addField("🟢 Timeout Lifted", "╰┈➤ Timeout for "+mentionableTarget+ " has been removed", false);
+                        eb.addField("Timeout Lifted", "╰┈➤ Timeout has been removed", false);
                     } else {
                         eb.setColor(Color.YELLOW);
-                        eb.addField("⛔ Timeout Received", "╰┈➤"+mentionableTarget+ " has received a timeout", false);
-                        eb.addField("⏱️ Till", "╰┈➤"+ DurationFormatter.isoToLocalTimeCounter(newValue), false);
-                        eb.addField("📝 Reason", "╰┈➤"+(ale.getReason()!=null ? ale.getReason() : "No Reason Provided"), false);
+                        eb.addField("Timeout Received", "╰┈➤ Member has received a timeout", false);
+                        eb.addField("Timeout Ends On", "╰┈➤"+ DurationFormatter.isoToLocalTimeCounter(newValue), false);
+                        eb.addField("Timeout Reason", "╰┈➤"+(ale.getReason()!=null ? ale.getReason() : "No Reason Provided"), false);
                     }
+                }
 
-                    break;
+                case "nick" -> eb.addField("Nickname Update", "╰┈➤"+resolveNickNameChanges(oldValue, newValue), false);
 
-                case "nick":
-                    if(oldValue!=null && newValue==null) { // resetting to default nickname
-                        eb.addField("🏷️ Target", "╰┈➤"+mentionableTarget, false);
-                        eb.addField("🏷️ Old Nickname", "╰┈➤"+oldValue, false);
-                        eb.addField("🏷️ Reset Name To", "╰┈➤"+mentionableTargetEffectiveName, false);
-                    } else if(oldValue != null) { // changing from one nickname to another
-                        eb.addField("🏷️ Target", "╰┈➤"+mentionableTarget, false);
-                        eb.addField("🏷️ Old Nickname", "╰┈➤"+oldValue, false);
-                        eb.addField("🏷️ New Nickname", "╰┈➤"+newValue, false);
-                    } else if(newValue != null) { // changing from default nickname to a new nickname
-                        eb.addField("🏷️ Target", "╰┈➤"+mentionableTarget, false);
-                        eb.addField("🏷️ Nickname Added", "╰┈➤"+ newValue, false);
-                    }
-                    break;
+                case "mute" -> eb.addField("Is Muted in VC", BooleanFormatter.formatToYesOrNo(newValue), false);
 
-                case "mute":
-                    eb.addField("🎙️ Is Muted", "╰┈➤Set "+mentionableTarget+"'s Mute Status as "+ BooleanFormatter.formatToEmoji(newValue), false);
-                    break;
+                case "deaf" -> eb.addField("Is Deafened in VC", BooleanFormatter.formatToYesOrNo(newValue), false);
 
-                case "deaf":
-                    eb.addField("🔇 Is Deafened", "╰┈➤Set "+mentionableTarget+"'s Deafened Status as "+ BooleanFormatter.formatToEmoji(newValue), false);
-                    break;
+                case "bypasses_verification" -> eb.addField("Bypass Verification", BooleanFormatter.formatToEnabledOrDisabled(newValue), false);
 
-                case "bypasses_verification":
-                    eb.addField("🛡️ Bypass Verification", "╰┈➤Set "+mentionableTarget+"'s verification bypass status as "+ BooleanFormatter.formatToEmoji(newValue), false);
-                    break;
-
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
@@ -109,5 +87,25 @@ public class MemberUpdateEventHelper {
         if(sendingChannel!=null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
+    }
+
+    @NotNull
+    @SuppressWarnings("all")
+    private static String resolveNickNameChanges(@Nullable Object oldNickValue, @Nullable Object newNickValue) {
+
+        if(oldNickValue==null && newNickValue!=null) { // change from global name to a new nickname in the server
+            return "New Nickname Added: `"+newNickValue+"`";
+        }
+
+        if (oldNickValue!=null && newNickValue==null) { // change to the global name from having a nickname
+            return "Reset to Global Name from: `"+oldNickValue+"`";
+        }
+
+        if (oldNickValue!=null && newNickValue!=null) { // changing from one nick to another
+            return "Changed nickname from: `"+oldNickValue+"` to: `"+newNickValue+"`";
+        }
+
+        // both shouldn't be null which indicates that names couldn't be fetched from the event
+        return "Changes could not be resolved!";
     }
 }
