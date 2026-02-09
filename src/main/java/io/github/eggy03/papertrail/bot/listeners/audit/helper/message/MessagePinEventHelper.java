@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.message;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import java.awt.Color;
 
 @UtilityClass
+@Slf4j
 public class MessagePinEventHelper {
 
     // this audit log event does not expose anything other than the executor of the event
@@ -34,6 +36,10 @@ public class MessagePinEventHelper {
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
+        if(!mb.isSendable()){
+            log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+            return;
+        }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
         if(sendingChannel!=null && sendingChannel.canTalk()) {

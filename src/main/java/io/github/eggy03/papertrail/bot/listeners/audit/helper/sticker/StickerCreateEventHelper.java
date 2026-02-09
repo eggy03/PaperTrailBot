@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.sticker;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -14,6 +15,7 @@ import java.awt.Color;
 import java.util.Map;
 
 @UtilityClass
+@Slf4j
 public class StickerCreateEventHelper {
 
     public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
@@ -70,6 +72,10 @@ public class StickerCreateEventHelper {
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
+        if(!mb.isSendable()){
+            log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+            return;
+        }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
         if(sendingChannel!=null && sendingChannel.canTalk()) {
