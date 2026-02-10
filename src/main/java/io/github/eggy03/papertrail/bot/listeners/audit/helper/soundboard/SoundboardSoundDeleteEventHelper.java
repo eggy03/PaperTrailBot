@@ -3,7 +3,6 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.soundboard;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -11,7 +10,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 @Slf4j
@@ -21,55 +19,48 @@ public class SoundboardSoundDeleteEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Soundboard Sound Create Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A sound item was deleted from the soundboard");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Soundboard Sound Create Event");
+        eb.setDescription("ℹ️ A sound item was deleted from the soundboard by: "+mentionableExecutor);
         eb.setColor(Color.RED);
+
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+        ale.getChanges().forEach((changeKey, changeValue)-> {
 
-            switch(change) {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-                case "user_id", "sound_id", "id", "guild_id", "available":
-                    break;
+            switch (changeKey) {
 
-                case "volume":
-                    eb.addField("Volume", "╰┈➤"+oldValue, false);
-                    break;
+                case "user_id", "sound_id", "id", "guild_id", "available" -> {
+                    // skip
+                }
+                case "volume" -> eb.addField("Volume", "╰┈➤"+oldValue, false);
 
-                case "emoji_name":
-                    eb.addField("Related Emoji", "╰┈➤"+oldValue, false);
-                    break;
+                case "emoji_name" -> eb.addField("Related Emoji", "╰┈➤"+oldValue, false);
 
-                case "emoji_id":
-                    eb.addField("Related Emoji ID", "╰┈➤"+oldValue, false);
-                    break;
+                case "emoji_id" -> eb.addField("Related Emoji ID", "╰┈➤"+oldValue, false);
 
-                case "name":
-                    eb.addField("Sound Item Name", "╰┈➤"+oldValue, false);
-                    break;
+                case "name" -> eb.addField("Sound Item Name", "╰┈➤"+oldValue, false);
 
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
-
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
         if(!mb.isSendable()){
-            log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+            log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
