@@ -58,7 +58,7 @@ public class StageInstanceCreateEventHelper {
 
         MessageEmbed mb = eb.build();
         if(!mb.isSendable()){
-            log.warn("An embed is either empty or has exceed the max length for characters, with current length: {}", eb.length());
+            log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
