@@ -4,18 +4,13 @@ import io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent.uti
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.ScheduledEvent;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
-import java.util.Objects;
 
 @UtilityClass
 @Slf4j
@@ -25,69 +20,56 @@ public class ScheduledEventUpdateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Scheduled Event Update Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        ScheduledEvent targetEvent = event.getGuild().getScheduledEventById(ale.getTargetId());
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following scheduled event was updated: "+ Objects.requireNonNull(targetEvent).getName());
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Scheduled Event Update Event");
+        eb.setDescription("ℹ️ The following scheduled event was updated by: "+mentionableExecutor);
         eb.setColor(Color.YELLOW);
+
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-            switch(change) {
-                case "entity_type":
-                    eb.addField("📂 Old Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(oldValue), false);
-                    eb.addField("📂 New Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(newValue), false);
-                    break;
+            switch (changeKey) {
+                case "entity_type" -> {
+                    eb.addField("Old Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(oldValue), false);
+                    eb.addField("New Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(newValue), false);
+                }
+                case "name" -> {
+                    eb.addField("Old Event Name", "╰┈➤"+oldValue, false);
+                    eb.addField("New Event Name","╰┈➤"+newValue, false);
+                }
+                case "description" -> {
+                    eb.addField("Old Event Description", "╰┈➤"+oldValue, false);
+                    eb.addField("New Event Description", "╰┈➤"+newValue, false);
+                }
+                case "status" -> {
+                    eb.addField("Old Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(oldValue), false);
+                    eb.addField("New Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(newValue), false);
+                }
+                case "location" -> {
+                    eb.addField("Event Location", "╰┈➤"+oldValue, false);
+                    eb.addField("Event Location", "╰┈➤"+newValue, false);
+                }
+                case "privacy_level" -> eb.addField("Privacy", "╰┈➤Event privacy has been updated", false);
+                case "image_hash" -> eb.addField("Image", "╰┈➤Event Image has been updated", false);
+                case "channel_id" -> eb.addField("Channel", "╰┈➤Event Channel has been updated", false);
 
-                case "privacy_level", "image_hash":
-                    break;
-
-                case "name":
-                    eb.addField("🏷️ Old Event Name", "╰┈➤"+oldValue, false);
-                    eb.addField("🏷️ New Event Name","╰┈➤"+newValue, false);
-                    break;
-
-                case "description":
-                    eb.addField("📝 Old Event Description", "╰┈➤"+oldValue, false);
-                    eb.addField("📝 New Event Description", "╰┈➤"+newValue, false);
-                    break;
-
-                case "status":
-                    eb.addField("📊 Old Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(oldValue), false);
-                    eb.addField("📊 New Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(newValue), false);
-                    break;
-
-                case "location":
-                    eb.addField("📍 Event Location", "╰┈➤"+oldValue, false);
-                    eb.addField("📍 Event Location", "╰┈➤"+newValue, false);
-                    break;
-
-                case "channel_id":
-                    GuildChannel eventChannel = event.getGuild().getGuildChannelById(String.valueOf(oldValue));
-                    eb.addField("💬 Old Event Channel", "╰┈➤"+(eventChannel!=null ? eventChannel.getAsMention() : String.valueOf(oldValue)), false);
-                    eventChannel = event.getGuild().getGuildChannelById(String.valueOf(newValue));
-                    eb.addField("💬 New Event Channel", "╰┈➤"+(eventChannel!=null ? eventChannel.getAsMention() : String.valueOf(newValue)), false);
-                    break;
-
-                case "recurrence_rule":
-                    eb.addField("📊 Old Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
-                    eb.addField("📊 New Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
-                    break;
-
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                case "recurrence_rule" -> {
+                    eb.addField("Old Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
+                    eb.addField("New Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
+                }
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
-
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

@@ -4,16 +4,13 @@ import io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent.uti
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 @Slf4j
@@ -23,60 +20,37 @@ public class ScheduledEventDeleteEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Scheduled Event Delete Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A scheduled event has been deleted");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Scheduled Event Delete Event");
+        eb.setDescription("ℹ️ A scheduled event has been deleted by: "+mentionableExecutor);
         eb.setColor(Color.RED);
+
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-            switch(change) {
-                case "entity_type":
-                    eb.addField("📂 Event Type", "╰┈➤"+ ScheduledEventUtils.resolveEventType(oldValue), false);
-                    break;
-
-                case "privacy_level", "image_hash":
-                    break;
-
-                case "name":
-                    eb.addField("🏷️ Event Name", "╰┈➤"+oldValue, false);
-                    break;
-
-                case "description":
-                    eb.addField("📝 Event Description", "╰┈➤"+newValue, false);
-                    break;
-
-                case "status":
-                    eb.addField("📊 Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(oldValue), false);
-                    break;
-
-                case "location":
-                    eb.addField("📍 Event Location", "╰┈➤"+oldValue, false);
-                    break;
-
-                case "channel_id":
-                    GuildChannel eventChannel = event.getGuild().getGuildChannelById(String.valueOf(oldValue));
-                    eb.addField("💬 Event Channel", "╰┈➤"+(eventChannel!=null ? eventChannel.getAsMention() : String.valueOf(oldValue)), false);
-                    break;
-
-                case "recurrence_rule":
-                    eb.addField("📊 Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
-                    break;
-
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+            switch (changeKey) {
+                case "entity_type" -> eb.addField("Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), false);
+                case "name" -> eb.addField("Event Name", "╰┈➤" + oldValue, false);
+                case "description" -> eb.addField("Event Description", "╰┈➤" + oldValue, false);
+                case "status" -> eb.addField("Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), false);
+                case "location" -> eb.addField("Event Location", "╰┈➤" + oldValue, false);
+                case "privacy_level", "image_hash", "channel_id" -> {
+                    // skip
+                }
+                case "recurrence_rule" -> eb.addField("Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
-
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
