@@ -1,9 +1,9 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.stage;
 
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.stage.utils.StageUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 @Slf4j
@@ -21,37 +20,32 @@ public class StageInstanceCreateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Stage Instance Create Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A stage instance was created");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Stage Instance Create Event");
+        eb.setDescription("ℹ️ A stage instance was created by: "+mentionableExecutor);
         eb.setColor(Color.GREEN);
+
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
 
-            switch(change) {
-                case "topic":
-                    eb.addField("📝 Stage Topic", "╰┈➤"+newValue, false);
-                    break;
+            switch(changeKey) {
+                case "topic" -> eb.addField("Stage Topic", "╰┈➤"+newValue, false);
 
-                case "privacy_level":
-                    eb.addField("🌐 Stage Privacy", "╰┈➤"+newValue, false);
-                    eb.addField("Stage Privacy Result Inference", "-# A value of 1 means PUBLIC (deprecated) and 2 means GUILD_ONLY", false);
-                    break;
+                case "privacy_level" -> eb.addField("Stage Privacy", "╰┈➤"+ StageUtils.resolveStagePrivacyLevel(newValue), false);
 
-                default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
             }
-
-        }
+        });
 
         eb.setFooter("Audit Log Entry ID: "+ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
