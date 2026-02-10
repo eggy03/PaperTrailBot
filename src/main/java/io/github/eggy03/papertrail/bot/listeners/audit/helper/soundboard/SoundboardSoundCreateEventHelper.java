@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.soundboard;
 
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.soundboard.utils.SoundboardUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -40,7 +41,7 @@ public class SoundboardSoundCreateEventHelper {
                 case "user_id", "sound_id", "id", "guild_id", "available" -> {
                     // skip
                 }
-                case "volume" -> eb.addField("Volume", "╰┈➤"+newValue, false);
+                case "volume" -> eb.addField("Volume", "╰┈➤"+ SoundboardUtils.resolveVolumePercentage(newValue), false);
 
                 case "emoji_name" -> eb.addField("Related Emoji", "╰┈➤"+newValue, false);
 

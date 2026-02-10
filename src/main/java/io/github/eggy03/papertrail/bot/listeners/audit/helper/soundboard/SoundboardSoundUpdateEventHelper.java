@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.soundboard;
 
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.soundboard.utils.SoundboardUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -40,8 +41,8 @@ public class SoundboardSoundUpdateEventHelper {
                     // skip
                 }
                 case "volume" -> {
-                    eb.addField("Old Volume", "╰┈➤"+oldValue, true);
-                    eb.addField("New Volume", "╰┈➤"+newValue, true);
+                    eb.addField("Old Volume", "╰┈➤"+SoundboardUtils.resolveVolumePercentage(oldValue), true);
+                    eb.addField("New Volume", "╰┈➤"+SoundboardUtils.resolveVolumePercentage(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "emoji_name" -> {
