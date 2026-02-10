@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent.utils;
 
+import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
 import org.jetbrains.annotations.NotNull;
@@ -7,15 +8,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseInt;
-
 @UtilityClass
 public class ScheduledEventUtils {
 
     @NotNull
     public static String resolveEventType (@Nullable Object eventTypeInteger) {
 
-        Integer eventType = parseInt(eventTypeInteger);
+        Integer eventType = NumberParseUtils.parseInt(eventTypeInteger);
         if (eventType == null)
             return "N/A";
 
@@ -25,7 +24,7 @@ public class ScheduledEventUtils {
 
     @NotNull
     public static String resolveStatusType (@Nullable Object eventTypeInteger) {
-        Integer eventType = parseInt(eventTypeInteger);
+        Integer eventType = NumberParseUtils.parseInt(eventTypeInteger);
         if (eventType == null)
             return "N/A";
 

@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.role.utils;
 
+import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.Permission;
@@ -8,14 +9,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 
-import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseLong;
-
 @UtilityClass
 public class RoleUtils {
 
     @NotNull
     public static String resolveRolePermissions (@Nullable Object permissionsValue, @NonNull String emoji) {
-        Long permissionLong = parseLong(permissionsValue);
+        Long permissionLong = NumberParseUtils.parseLong(permissionsValue);
         if(permissionLong==null)
             return "Permission cannot be parsed";
 

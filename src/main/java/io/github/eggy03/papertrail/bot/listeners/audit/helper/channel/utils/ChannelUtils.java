@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils;
 
+import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.Permission;
@@ -12,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 
-import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseInt;
-import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseLong;
-
 @UtilityClass
 public class ChannelUtils {
 
@@ -22,7 +20,7 @@ public class ChannelUtils {
     @NotNull
     public static String resolveChannelType(@Nullable Object channelTypeInteger) {
 
-        Integer channelType = parseInt(channelTypeInteger);
+        Integer channelType = NumberParseUtils.parseInt(channelTypeInteger);
         if (channelType == null)
             return "Channel Type cannot be parsed: " + channelTypeInteger;
 
@@ -31,7 +29,7 @@ public class ChannelUtils {
 
     @NotNull
     public static String resolveVoiceChannelUserLimit(Object limitNumber) {
-        Integer userLimit = parseInt(limitNumber);
+        Integer userLimit = NumberParseUtils.parseInt(limitNumber);
         if (userLimit == null)
             return "User Limit cannot be parsed";
 
@@ -40,7 +38,7 @@ public class ChannelUtils {
 
     @NotNull
     public static String resolveVoiceChannelBitrate(@Nullable Object bitrateInteger) {
-        Integer bitrate = parseInt(bitrateInteger);
+        Integer bitrate = NumberParseUtils.parseInt(bitrateInteger);
         if (bitrate == null)
             return "Voice Channel Bitrate cannot be parsed";
 
@@ -50,7 +48,7 @@ public class ChannelUtils {
     @NotNull
     public static String resolveVoiceChannelVideoQuality(@Nullable Object voiceChannelVideoQualityInteger) {
 
-        Integer videoQuality = parseInt(voiceChannelVideoQualityInteger);
+        Integer videoQuality = NumberParseUtils.parseInt(voiceChannelVideoQualityInteger);
 
         return switch (videoQuality) {
             case 1 -> "Auto";
@@ -63,7 +61,7 @@ public class ChannelUtils {
     // CHANNEL OVERRIDE UTILS
     @NotNull
     public static String resolveChannelOverrideTargetType(@Nullable Object targetTypeInteger) {
-        Integer targetType = parseInt(targetTypeInteger);
+        Integer targetType = NumberParseUtils.parseInt(targetTypeInteger);
 
         return switch (targetType) {
             case 0 -> "Role";
@@ -77,7 +75,7 @@ public class ChannelUtils {
     @NotNull
     public static String resolveChannelOverridePermissions(@Nullable Object permissionValueLong, @NonNull String emoji) {
 
-        Long permissionValue = parseLong(permissionValueLong);
+        Long permissionValue = NumberParseUtils.parseLong(permissionValueLong);
         if (permissionValue == null)
             return "Permission Value cannot be parsed";
 

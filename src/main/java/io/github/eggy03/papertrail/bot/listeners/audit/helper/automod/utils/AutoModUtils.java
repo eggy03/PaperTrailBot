@@ -1,12 +1,11 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.utils;
 
+import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.automod.AutoModEventType;
 import net.dv8tion.jda.api.entities.automod.AutoModTriggerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseInt;
 
 @UtilityClass
 public class AutoModUtils {
@@ -16,7 +15,7 @@ public class AutoModUtils {
     // AUTO MOD UTILS
     @NotNull
     public static String autoModEventTypeResolver(@Nullable Object autoModEventTypeInteger) {
-        Integer eventTypeInt = parseInt(autoModEventTypeInteger);
+        Integer eventTypeInt = NumberParseUtils.parseInt(autoModEventTypeInteger);
         if (eventTypeInt == null) {
             return NOT_AVAILABLE;
         }
@@ -25,7 +24,7 @@ public class AutoModUtils {
     }
 
     public static String autoModTriggerTypeResolver(@Nullable Object autoModTriggerTypeInteger) {
-        Integer triggerTypeInt = parseInt(autoModTriggerTypeInteger);
+        Integer triggerTypeInt = NumberParseUtils.parseInt(autoModTriggerTypeInteger);
         if (triggerTypeInt == null)
             return NOT_AVAILABLE;
 

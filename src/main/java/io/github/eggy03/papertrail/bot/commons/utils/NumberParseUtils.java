@@ -7,9 +7,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @UtilityClass
-public class NumberFormatUtils {
+public class NumberParseUtils {
 
-    // INTERNAL HELPERS
     @Nullable
     public static Long parseLong(@Nullable Object possibleLongValue) {
         if (possibleLongValue == null) return null;

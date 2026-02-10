@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.guild.utils;
 
+import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
@@ -7,9 +8,6 @@ import net.dv8tion.jda.api.entities.guild.SystemChannelFlag;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseInt;
-import static io.github.eggy03.papertrail.bot.commons.utils.NumberFormatUtils.parseLong;
 
 @UtilityClass
 public class GuildUtils {
@@ -20,7 +18,7 @@ public class GuildUtils {
     @NotNull
     public static String resolveGuildVerificationLevel(@Nullable Object verificationLevelInteger) {
 
-        Integer verificationLevel = parseInt(verificationLevelInteger);
+        Integer verificationLevel = NumberParseUtils.parseInt(verificationLevelInteger);
         return switch (verificationLevel) { //we could have used JDA's Guild.VerficationLevel but they don't have description
             case 0 -> "NONE";
             case 1 -> "LOW (Verified Email)";
@@ -35,7 +33,7 @@ public class GuildUtils {
 
     @NotNull
     public static String resolveGuildModActionMFALevel(@Nullable Object mfaLevelInteger) {
-        Integer mfaLevel = parseInt(mfaLevelInteger);
+        Integer mfaLevel = NumberParseUtils.parseInt(mfaLevelInteger);
         if (mfaLevel == null)
             return NOT_AVAILABLE;
 
@@ -45,7 +43,7 @@ public class GuildUtils {
 
     @NotNull
     public static String resolveGuildDefaultMessageNotificationLevel(@Nullable Object notificationLevelInteger) {
-        Integer notificationLevel = parseInt(notificationLevelInteger);
+        Integer notificationLevel = NumberParseUtils.parseInt(notificationLevelInteger);
         if (notificationLevel == null)
             return NOT_AVAILABLE;
 
@@ -55,7 +53,7 @@ public class GuildUtils {
 
     @NotNull
     public static String resolveExplicitContentFilterLevel(@Nullable Object explicitContentFilterLevelInteger) {
-        Integer ecfLevel = parseInt(explicitContentFilterLevelInteger);
+        Integer ecfLevel = NumberParseUtils.parseInt(explicitContentFilterLevelInteger);
         if (ecfLevel == null)
             return NOT_AVAILABLE;
 
@@ -64,7 +62,7 @@ public class GuildUtils {
 
     @NotNull
     public static String resolveSystemChannelFlags(@Nullable Object systemChannelFlagsIntegerObject) {
-        Integer systemChannelFlagsInteger = parseInt(systemChannelFlagsIntegerObject);
+        Integer systemChannelFlagsInteger = NumberParseUtils.parseInt(systemChannelFlagsIntegerObject);
 
         if (systemChannelFlagsInteger == null)
             return NOT_AVAILABLE;
@@ -86,7 +84,7 @@ public class GuildUtils {
     // MISC
     @NotNull
     public static String resolveMentionableChannel(Object channelId, GuildAuditLogEntryCreateEvent event) {
-        Long channelIdLong = parseLong(channelId);
+        Long channelIdLong = NumberParseUtils.parseLong(channelId);
         if (channelIdLong == null)
             return NOT_AVAILABLE;
 
