@@ -1,7 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.role;
 
 import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
-import io.github.eggy03.papertrail.bot.commons.utils.ColorUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.role.utils.RoleUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -60,8 +59,8 @@ public class RoleUpdateEventHelper {
                 }
 
                 case "color" -> {
-                    eb.addField("Old Color", "╰┈➤" + ColorUtils.formatToHex(oldValue), true);
-                    eb.addField("New Color", "╰┈➤" + ColorUtils.formatToHex(newValue), true);
+                    eb.addField("Old Color", "╰┈➤" + RoleUtils.formatToHex(oldValue), true);
+                    eb.addField("New Color", "╰┈➤" + RoleUtils.formatToHex(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -78,8 +77,8 @@ public class RoleUpdateEventHelper {
                 }
 
                 case "colors" -> {
-                    eb.addField("Old Gradient Color System", ColorUtils.formatGradientColorSystemToHex(oldValue), true);
-                    eb.addField("New Gradient Color System", ColorUtils.formatGradientColorSystemToHex(newValue), true);
+                    eb.addField("Old Gradient Color System", RoleUtils.formatGradientToHex(oldValue), true);
+                    eb.addField("New Gradient Color System", RoleUtils.formatGradientToHex(newValue), true);
                     eb.addBlankField(true);
                 }
 
