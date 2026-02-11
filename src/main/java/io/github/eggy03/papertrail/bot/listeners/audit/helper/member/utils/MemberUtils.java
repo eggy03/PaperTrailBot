@@ -3,7 +3,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.member.utils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ public class MemberUtils {
     // Parses an array list of map of role objects supplied by JDA
     // roles are exposed as arraylists of maps [{name=role, id=1}, {name=role2, id=2}]
     @NotNull
-    public static String parseRoleListMap(@NonNull GuildAuditLogEntryCreateEvent event, @Nullable Object roleObject) {
+    public static String parseRoleListMap(@NonNull GenericGuildEvent event, @Nullable Object roleObject) {
 
         if(roleObject==null) return "N/A";
 

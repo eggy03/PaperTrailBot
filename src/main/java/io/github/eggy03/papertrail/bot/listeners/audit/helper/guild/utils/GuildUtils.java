@@ -1,11 +1,12 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.guild.utils;
 
 import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.guild.SystemChannelFlag;
-import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +84,7 @@ public class GuildUtils {
 
     // MISC
     @NotNull
-    public static String resolveMentionableChannel(Object channelId, GuildAuditLogEntryCreateEvent event) {
+    public static String resolveMentionableChannel(Object channelId, @NonNull GenericGuildEvent event) {
         Long channelIdLong = NumberParseUtils.parseLong(channelId);
         if (channelIdLong == null)
             return NOT_AVAILABLE;

@@ -1,9 +1,11 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.utils;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
 public class OnboardingUtils {
 
     @NotNull
-    public static String formatMode(Object value) {
+    public static String formatMode(@Nullable Object value) {
         if(value==null) return "N/A";
 
         return switch (String.valueOf(value)) {
@@ -22,7 +24,7 @@ public class OnboardingUtils {
     }
 
     @NotNull
-    public static String formatStatus(Object value) {
+    public static String formatStatus(@Nullable Object value) {
         if(value==null)
             return "N/A";
 
@@ -33,7 +35,7 @@ public class OnboardingUtils {
     }
 
     @NotNull
-    public static String resolveChannelsFromList(Guild guild, Object value) {
+    public static String resolveChannelsFromList(@NonNull Guild guild, @Nullable Object value) {
         if(value == null) return "No Resolvable Channel IDs";
 
         StringBuilder sb = new StringBuilder();

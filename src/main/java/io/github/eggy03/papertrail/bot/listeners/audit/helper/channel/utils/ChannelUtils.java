@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class ChannelUtils {
     }
 
     @NotNull
-    public static String resolveVoiceChannelUserLimit(Object limitNumber) {
+    public static String resolveVoiceChannelUserLimit(@Nullable Object limitNumber) {
         Integer userLimit = NumberParseUtils.parseInt(limitNumber);
         if (userLimit == null)
             return "User Limit cannot be parsed";
@@ -95,7 +95,7 @@ public class ChannelUtils {
 
     // MISC UTILS
     @NotNull
-    public static String autoResolveMemberOrRole(@Nullable Object memberOrRoleId, @NonNull GuildAuditLogEntryCreateEvent event) {
+    public static String autoResolveMemberOrRole(@Nullable Object memberOrRoleId, @NonNull GenericGuildEvent event) {
 
         if (memberOrRoleId == null)
             return "Member/Role ID cannot be parsed";
