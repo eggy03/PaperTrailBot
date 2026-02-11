@@ -3,6 +3,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.setup;
 import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -18,10 +19,11 @@ import java.util.Optional;
 
 public class AuditLogSetupCommandListener extends ListenerAdapter {
 
+    @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 
 	@Override
-	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+	public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
         if(!event.getName().equals("auditlog")){
             return;
@@ -51,7 +53,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 	}
 
 
-	private void setAuditLogging(SlashCommandInteractionEvent event) {
+	private void setAuditLogging(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with MANAGE_SERVER permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -90,7 +92,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
     }
 
-	private void retrieveAuditLoggingChannel(SlashCommandInteractionEvent event) {
+	private void retrieveAuditLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with MANAGE_SERVER permissions should be able to use this command
         Member callerMember = event.getMember();

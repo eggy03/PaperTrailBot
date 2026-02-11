@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
@@ -17,7 +18,7 @@ import java.util.Objects;
 public class ServerStatCommandListener extends ListenerAdapter{
 	
 	@Override
-	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+	public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 		
 		if(event.getName().equals("stats")) {
 			

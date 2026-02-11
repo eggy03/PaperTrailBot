@@ -3,6 +3,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.event.guild;
 import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -12,7 +13,6 @@ import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTime
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostCountEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostTierEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jspecify.annotations.NonNull;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -23,6 +23,7 @@ import java.util.concurrent.Executor;
 // Experimental
 public class GuildBoostEventListener extends ListenerAdapter {
 
+    @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
     private final Executor vThreadPool;
 

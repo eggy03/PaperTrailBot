@@ -3,6 +3,7 @@ package io.github.eggy03.papertrail.bot.listeners.message.setup;
 import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -18,10 +19,11 @@ import java.util.Optional;
 
 public class MessageLogSetupCommandListener extends ListenerAdapter {
 
+    @NonNull
     private static final MessageLogRegistrationClient client = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
 
 	@Override
-	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+	public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
         if(!event.getName().equals("messagelog")){
             return;
@@ -50,7 +52,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 		}
 	}
 
-	private void setMessageLogging(SlashCommandInteractionEvent event) {
+	private void setMessageLogging(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -89,7 +91,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 
     }
 	
-	private void retrieveMessageLoggingChannel(SlashCommandInteractionEvent event) {
+	private void retrieveMessageLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -129,7 +131,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
         });
 	}
 	
-	private void unsetMessageLogging(SlashCommandInteractionEvent event) {
+	private void unsetMessageLogging(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
         Member callerMember = event.getMember();

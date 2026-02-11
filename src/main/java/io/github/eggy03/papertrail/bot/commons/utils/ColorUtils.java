@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.commons.utils;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.IllegalFormatException;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
 @UtilityClass
 public class ColorUtils {
 
-	public static String formatToHex(Object colorValueInteger) {
+	public static String formatToHex(@Nullable Object colorValueInteger) {
 		
 		if(colorValueInteger==null)
 			return "N/A";
@@ -25,7 +26,9 @@ public class ColorUtils {
 
     // gradient is returned as a hash map in the following structure
     // {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
-	public static String formatGradientColorSystemToHex(Object gradientMap) {
+	public static String formatGradientColorSystemToHex(@Nullable Object gradientMap) {
+
+		if(gradientMap==null) return "N/A";
 
         if(gradientMap instanceof Map<?, ?> colorMap){
 

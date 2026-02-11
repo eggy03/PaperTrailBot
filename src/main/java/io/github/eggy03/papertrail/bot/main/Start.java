@@ -14,6 +14,7 @@ import io.github.eggy03.papertrail.bot.listeners.message.setup.MessageLogSetupCo
 import io.github.eggy03.papertrail.bot.listeners.misc.BotSetupInstructionCommandListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.ServerStatCommandListener;
+import lombok.NonNull;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.concurrent.Executors;
 public class Start {
 
 	// All I/O blocking operations run inside the vThreadPool
-	private static final Executor vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
+	private static final @NonNull Executor vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
 
 	public static void main(String[] args) throws IOException {
 
@@ -57,7 +58,7 @@ public class Start {
 	
 	static class PingHandler implements HttpHandler {
         @Override
-        public void handle(HttpExchange exchange) throws IOException {
+        public void handle(@NonNull HttpExchange exchange) throws IOException {
         	 exchange.sendResponseHeaders(200, -1);
         }
     }

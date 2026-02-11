@@ -6,6 +6,7 @@ import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogContentEntity;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -15,7 +16,6 @@ import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -26,7 +26,9 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class MessageLogListener extends ListenerAdapter {
 
+    @NonNull
     private static final MessageLogRegistrationClient registrationClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
+    @NonNull
     private static final MessageLogContentClient contentClient = new MessageLogContentClient(EnvConfig.get("API_URL"));
 
     private final Executor vThreadPool;
@@ -36,7 +38,7 @@ public class MessageLogListener extends ListenerAdapter {
 	}
 
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
+	public void onMessageReceived(@NonNull MessageReceivedEvent event) {
 
 		// if the author is a bot or system, don't log
 		if(event.getAuthor().isBot() || event.getAuthor().isSystem()) {
@@ -64,7 +66,7 @@ public class MessageLogListener extends ListenerAdapter {
 	}
 	
 	@Override
-	public void onMessageUpdate(MessageUpdateEvent event) {
+	public void onMessageUpdate(@NonNull MessageUpdateEvent event) {
 
 		if(event.getAuthor().isBot() || event.getAuthor().isSystem()) {
 			return;
@@ -129,7 +131,7 @@ public class MessageLogListener extends ListenerAdapter {
 	}
 	
 	@Override
-	public void onMessageDelete(@NotNull MessageDeleteEvent event) {
+	public void onMessageDelete(@NonNull MessageDeleteEvent event) {
 
 		vThreadPool.execute(()-> {
 

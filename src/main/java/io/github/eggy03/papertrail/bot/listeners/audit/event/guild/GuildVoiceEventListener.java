@@ -3,6 +3,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.event.guild;
 import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -21,6 +22,7 @@ import java.util.concurrent.Executor;
 // this event is logged in the same channel where the audit log events are logged
 public class GuildVoiceEventListener extends ListenerAdapter {
 
+    @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 	private final Executor vThreadPool;
 

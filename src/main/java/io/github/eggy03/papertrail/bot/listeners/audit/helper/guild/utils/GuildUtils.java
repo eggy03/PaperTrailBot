@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @UtilityClass
 public class GuildUtils {
 
+    @NonNull
     public static final String NOT_AVAILABLE = "N/A";
 
     // GUILD UTILS

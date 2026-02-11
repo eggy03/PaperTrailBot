@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -12,7 +13,7 @@ import java.time.Instant;
 public class BotSetupInstructionCommandListener extends ListenerAdapter {
 	
 	@Override
-	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+	public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
 		if (event.getName().equals("setup")) {
 			

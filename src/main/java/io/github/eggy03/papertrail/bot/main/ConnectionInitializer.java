@@ -3,6 +3,7 @@ package io.github.eggy03.papertrail.bot.main;
 import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.misc.ActivityUpdateListener;
 import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
@@ -19,7 +20,7 @@ public class ConnectionInitializer {
 
     // returns the manager that manages multiple shards (instances) of the bot
     // Manages multiple shards (instances) of the bot
-	private final ShardManager manager;
+	private final @NonNull ShardManager manager;
 		
 	public ConnectionInitializer() {
 		

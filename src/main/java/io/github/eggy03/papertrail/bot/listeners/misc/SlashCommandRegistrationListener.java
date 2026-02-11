@@ -1,12 +1,12 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
+import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.jetbrains.annotations.NotNull;
 
 /*
  * Registers all the slash commands places throughout the code
@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class SlashCommandRegistrationListener extends ListenerAdapter {
 
 	@Override
-	public void onReady(@NotNull ReadyEvent event) {
+	public void onReady(@NonNull ReadyEvent event) {
 		setAuditLogCommands(event.getJDA());
 	}
 
-	private void setAuditLogCommands(JDA jda) {
+	private void setAuditLogCommands(@NonNull JDA jda) {
 
         CommandData auditLog = Commands.slash("auditlog", "manage audit log options")
                 .addSubcommands(new SubcommandData("set", "set audit log channel here"))

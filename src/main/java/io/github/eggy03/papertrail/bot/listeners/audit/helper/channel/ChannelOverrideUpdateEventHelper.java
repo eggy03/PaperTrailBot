@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel;
 
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils.ChannelUtils;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -19,7 +20,7 @@ import java.awt.Color;
 @Slf4j
 public class ChannelOverrideUpdateEventHelper {
 
-    public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+    public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
 
         AuditLogEntry ale = event.getEntry();
 

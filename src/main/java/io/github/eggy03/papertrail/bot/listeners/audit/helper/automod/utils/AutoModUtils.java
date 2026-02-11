@@ -1,15 +1,18 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.automod.utils;
 
 import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.automod.AutoModEventType;
 import net.dv8tion.jda.api.entities.automod.AutoModTriggerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+
 @UtilityClass
 public class AutoModUtils {
 
+    @NonNull
     public static final String NOT_AVAILABLE = "N/A";
 
     // AUTO MOD UTILS

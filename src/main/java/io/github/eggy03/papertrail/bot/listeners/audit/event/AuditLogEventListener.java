@@ -61,6 +61,7 @@ import io.github.eggy03.papertrail.bot.listeners.audit.helper.webhook.WebhookRem
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.webhook.WebhookUpdateEventHelper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -75,6 +76,8 @@ import java.util.concurrent.Executor;
 public class AuditLogEventListener extends ListenerAdapter {
 
     private final Executor vThreadPool;
+
+    @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 
     public AuditLogEventListener(Executor vThreadPool) {
@@ -90,7 +93,7 @@ public class AuditLogEventListener extends ListenerAdapter {
         });
     }
 
-    private void auditLogParser(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+    private void auditLogParser(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
         AuditLogEntry ale = event.getEntry();
         ActionType action = ale.getType();
         switch (action) {

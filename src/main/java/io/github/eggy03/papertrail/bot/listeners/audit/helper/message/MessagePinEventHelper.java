@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.message;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -17,7 +18,7 @@ public class MessagePinEventHelper {
 
     // this audit log event does not expose anything other than the target of the event who sent the message
     // nothing about the person who pinned it or the message itself
-    public static void format(GuildAuditLogEntryCreateEvent event, String channelIdToSendTo) {
+    public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
 
         AuditLogEntry ale = event.getEntry();
 

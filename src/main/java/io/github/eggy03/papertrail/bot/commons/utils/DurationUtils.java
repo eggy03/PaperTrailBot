@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.commons.utils;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -10,9 +11,9 @@ import java.time.format.DateTimeParseException;
 @UtilityClass
 public class DurationUtils {
 
-	public static String formatSeconds(Object seconds) {
+	public static String formatSeconds(@Nullable Object seconds) {
 		if (seconds == null) {
-			return "ERROR: Value Returned Null";
+			return "N/A";
 		}
 		
 		try {
@@ -43,9 +44,9 @@ public class DurationUtils {
 		
 	}
 	
-	public static String formatMinutes(Object minutes) {
+	public static String formatMinutes(@Nullable Object minutes) {
 		if (minutes == null) {
-			return "ERROR: Value Returned Null";
+			return "N/A";
 		}
 		try {
 			long minutesLong = Long.parseLong(minutes.toString());
@@ -65,11 +66,12 @@ public class DurationUtils {
 		
 	}
 	
-	public static String isoToLocalTimeCounter(Object isoTime) {
+	public static String isoToLocalTimeCounter(@Nullable Object isoTime) {
+
+		if(isoTime==null) return "N/A";
+
 		String isoTimeString = String.valueOf(isoTime);
-		if(isoTimeString==null || isoTimeString.equals("null") || isoTimeString.isBlank()) {
-			return "N/A";
-		}
+		if(isoTimeString.trim().isEmpty()) return "N/A";
 		
 		try {
 			OffsetDateTime odt = OffsetDateTime.parse(isoTimeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
