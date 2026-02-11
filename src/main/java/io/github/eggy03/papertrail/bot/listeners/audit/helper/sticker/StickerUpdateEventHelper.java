@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
@@ -24,9 +25,12 @@ public class StickerUpdateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
+        GuildSticker sticker = event.getGuild().getStickerById(ale.getTargetId());
+        String mentionableSticker = (sticker != null ? sticker.getName() : ale.getTargetId());
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Sticker Update Event");
-        eb.setDescription("ℹ️ The following sticker was updated by: " + mentionableExecutor);
+        eb.setDescription("ℹ️ The following sticker: " + mentionableSticker + " was updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
