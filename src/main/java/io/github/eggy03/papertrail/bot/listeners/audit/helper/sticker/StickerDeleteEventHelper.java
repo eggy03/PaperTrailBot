@@ -44,7 +44,8 @@ public class StickerDeleteEventHelper {
                     eb.addField("Sticker ID", "╰┈➤" + oldValue, false);
                     eb.addField("Sticker Link", "╰┈➤" + StickerUtils.resolveStickerUrl(event, oldValue), false);
                 }
-                case "tags" -> eb.addField("Related Emoji", "╰┈➤" + oldValue, false);
+                case "tags" ->
+                        eb.addField("Related Emoji", "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, oldValue), false);
                 case "description" -> eb.addField("Description", "╰┈➤" + oldValue, false);
                 case "name" -> eb.addField("Sticker Name", "╰┈➤" + oldValue, false);
 

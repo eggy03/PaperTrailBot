@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.sticker;
 
+import io.github.eggy03.papertrail.bot.listeners.audit.helper.sticker.utils.StickerUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +42,8 @@ public class StickerUpdateEventHelper {
                     // skip
                 }
                 case "tags" -> {
-                    eb.addField("Old Related Emoji", "╰┈➤" + oldValue, true);
-                    eb.addField("New Related Emoji", "╰┈➤" + newValue, true);
+                    eb.addField("Old Related Emoji", "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, oldValue), true);
+                    eb.addField("New Related Emoji", "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, newValue), true);
                     eb.addBlankField(true);
                 }
                 case "description" -> {
