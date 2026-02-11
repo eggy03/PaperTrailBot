@@ -3,6 +3,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.channel.utils;
 import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 
 @UtilityClass
+@Slf4j
 public class ChannelUtils {
 
     public static final String FALLBACK_STRING = "N/A";
@@ -98,8 +100,10 @@ public class ChannelUtils {
     @NotNull
     public static String autoResolveMemberOrRole(@Nullable Object memberOrRoleId, @NonNull GenericGuildEvent event) {
 
-        if (memberOrRoleId == null)
+        if (memberOrRoleId == null) {
+            log.debug("null member/role id");
             return FALLBACK_STRING;
+        }
 
         Member mb = event.getGuild().getMemberById(String.valueOf(memberOrRoleId));
         Role r = event.getGuild().getRoleById(String.valueOf(memberOrRoleId));
@@ -110,6 +114,7 @@ public class ChannelUtils {
             return r.getAsMention();
         }
 
+        log.debug("ID doesn't belong to a member or a role, value: {}", memberOrRoleId);
         return String.valueOf(memberOrRoleId);
     }
 }

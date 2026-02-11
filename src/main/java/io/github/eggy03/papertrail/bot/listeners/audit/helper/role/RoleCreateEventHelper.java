@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
@@ -13,7 +12,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.awt.Color;
-import java.util.Map;
 
 @UtilityClass
 @Slf4j
@@ -54,39 +52,12 @@ public class RoleCreateEventHelper {
                      * and delegates them to ROLE_UPDATE event
                      */
                 }
-
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
-
             }
-
         });
-        for (Map.Entry<String, AuditLogChange> changes : ale.getChanges().entrySet()) {
-
-            String change = changes.getKey();
-            Object oldValue = changes.getValue().getOldValue();
-            Object newValue = changes.getValue().getNewValue();
-
-            switch (change) {
-
-                case "name":
-                    eb.addField("🏷️ Role Name", "╰┈➤" + newValue, false);
-                    break;
-
-                /*
-                 * discord for some reason shows the following to be default/null even
-                 * when you set them during the creation of the role itself
-                 * and delegates them to ROLE_UPDATE event
-                 */
-                case "colors", "hoist", "color", "permissions", "mentionable":
-                    break;
-
-                default:
-                    eb.addField(change, "from " + oldValue + " to " + newValue, false);
-            }
-        }
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
