@@ -60,7 +60,7 @@ public class StickerUtils {
 
         } catch (NumberFormatException e) {
             log.debug("value is not numeric, treating as Unicode (value={}, guild={})", emojiIdString, event.getGuild().getId());
-            return String.valueOf(emojiIdObject);
+            return emojiIdString;
         }
 
     }

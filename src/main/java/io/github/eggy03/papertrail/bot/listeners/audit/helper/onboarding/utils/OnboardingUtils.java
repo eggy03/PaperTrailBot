@@ -2,6 +2,7 @@ package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.utils;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.jetbrains.annotations.NotNull;
@@ -10,33 +11,34 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @UtilityClass
+@Slf4j
 public class OnboardingUtils {
+
+    public static final String FALLBACK_STRING = "N/A";
 
     @NotNull
     public static String formatMode(@Nullable Object value) {
-        if (value == null) return "N/A";
+        if (value == null) {
+            log.debug("format mode value was null");
+            return FALLBACK_STRING;
+        }
 
         return switch (String.valueOf(value)) {
             case "1" -> "Advanced Mode";
             case "0" -> "Regular Mode";
-            default -> "N/A";
+            default -> {
+                log.debug("unrecognized value: {}", value);
+                yield "Unrecognized Mode: " + value;
+            }
         };
     }
 
     @NotNull
-    public static String formatStatus(@Nullable Object value) {
-        if (value == null)
-            return "N/A";
-
-        if (Boolean.TRUE.equals(value))
-            return "Enabled";
-
-        return "Disabled";
-    }
-
-    @NotNull
     public static String resolveChannelsFromList(@NonNull Guild guild, @Nullable Object value) {
-        if (value == null) return "No Resolvable Channel IDs";
+        if (value == null) {
+            log.debug("channel list was null");
+            return FALLBACK_STRING;
+        }
 
         StringBuilder sb = new StringBuilder();
         if (value instanceof List<?> channelIdList) {
@@ -46,6 +48,7 @@ public class OnboardingUtils {
             });
         }
 
-        return sb.toString();
+        log.debug("channel list was not an instance of a list, value: {}", value);
+        return sb.toString().trim();
     }
 }

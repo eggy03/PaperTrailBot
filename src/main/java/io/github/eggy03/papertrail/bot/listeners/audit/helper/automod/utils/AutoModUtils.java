@@ -13,14 +13,13 @@ import org.jetbrains.annotations.Nullable;
 public class AutoModUtils {
 
     @NonNull
-    public static final String NOT_AVAILABLE = "N/A";
+    public static final String FALLBACK_STRING = "N/A";
 
-    // AUTO MOD UTILS
     @NotNull
     public static String autoModEventTypeResolver(@Nullable Object autoModEventTypeInteger) {
         Integer eventTypeInt = NumberParseUtils.parseInt(autoModEventTypeInteger);
         if (eventTypeInt == null) {
-            return NOT_AVAILABLE;
+            return FALLBACK_STRING;
         }
 
         return AutoModEventType.fromKey(eventTypeInt).name();
@@ -29,7 +28,7 @@ public class AutoModUtils {
     public static String autoModTriggerTypeResolver(@Nullable Object autoModTriggerTypeInteger) {
         Integer triggerTypeInt = NumberParseUtils.parseInt(autoModTriggerTypeInteger);
         if (triggerTypeInt == null)
-            return NOT_AVAILABLE;
+            return FALLBACK_STRING;
 
 
         return AutoModTriggerType.fromKey(triggerTypeInt).name();

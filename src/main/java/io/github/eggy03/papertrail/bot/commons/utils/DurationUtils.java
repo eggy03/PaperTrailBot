@@ -13,10 +13,12 @@ import java.time.format.DateTimeParseException;
 @Slf4j
 public class DurationUtils {
 
+    private static final String FALLBACK_STRING = "N/A";
+
     public static String formatSeconds(@Nullable Object seconds) {
         if (seconds == null) {
-            log.debug("seconds value is null");
-            return "N/A";
+            log.debug("seconds value is null (caller={})", StackWalkerUtils.getCallHierarchy());
+            return FALLBACK_STRING;
         }
 
         try {
@@ -41,7 +43,7 @@ public class DurationUtils {
 
             return sb.toString().trim();
         } catch (NumberFormatException e) {
-            log.debug("failed to parse seconds from value={}", seconds);
+            log.debug("failed to parse seconds from value={} (caller={})", seconds, StackWalkerUtils.getCallHierarchy());
             return String.valueOf(seconds);
         }
 
@@ -50,8 +52,8 @@ public class DurationUtils {
 
     public static String formatMinutes(@Nullable Object minutes) {
         if (minutes == null) {
-            log.debug("minutes value is null");
-            return "N/A";
+            log.debug("minutes value is null (caller={})", StackWalkerUtils.getCallHierarchy());
+            return FALLBACK_STRING;
         }
         try {
             long minutesLong = Long.parseLong(minutes.toString());
@@ -65,7 +67,7 @@ public class DurationUtils {
             if (hours > 0) sb.append(hours).append("h ");
             return sb.toString().trim();
         } catch (NumberFormatException e) {
-            log.debug("failed to parse minutes from value={}", minutes);
+            log.debug("failed to parse minutes from value={} (caller={})", minutes, StackWalkerUtils.getCallHierarchy());
             return String.valueOf(minutes);
         }
 
@@ -75,14 +77,14 @@ public class DurationUtils {
     public static String isoToLocalTimeCounter(@Nullable Object isoTime) {
 
         if (isoTime == null) {
-            log.debug("iso time is null");
-            return "N/A";
+            log.debug("iso time is null (caller={})", StackWalkerUtils.getCallHierarchy());
+            return FALLBACK_STRING;
         }
 
         String isoTimeString = String.valueOf(isoTime);
         if (isoTimeString.trim().isEmpty()) {
-            log.debug("iso time is blank");
-            return "N/A";
+            log.debug("iso time is blank (caller={})", StackWalkerUtils.getCallHierarchy());
+            return FALLBACK_STRING;
         }
 
         try {
@@ -90,7 +92,7 @@ public class DurationUtils {
             long unixTimestamp = odt.toEpochSecond();
             return "<t:" + unixTimestamp + ":f>";
         } catch (DateTimeParseException e) {
-            log.debug("failed to parse ISO_OFFSET_DATE_TIME from value={}", isoTimeString);
+            log.debug("failed to parse ISO_OFFSET_DATE_TIME from value={} (caller={})", isoTimeString, StackWalkerUtils.getCallHierarchy());
             return String.valueOf(isoTime);
         }
 

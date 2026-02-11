@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class GuildUtils {
 
     @NonNull
-    public static final String NOT_AVAILABLE = "N/A";
+    public static final String FALLBACK_STRING = "N/A";
 
     // GUILD UTILS
     @NotNull
@@ -27,7 +27,7 @@ public class GuildUtils {
             case 2 -> "MEDIUM (Registered on Discord for more than 5 minutes";
             case 3 -> "HIGH (Must be a member of the server for longer than 10 minutes)";
             case 4 -> "VERY_HIGH (Must have a verified phone number)";
-            case null -> NOT_AVAILABLE;
+            case null -> FALLBACK_STRING;
             default -> "Unknown";
         };
 
@@ -37,7 +37,7 @@ public class GuildUtils {
     public static String resolveGuildModActionMFALevel(@Nullable Object mfaLevelInteger) {
         Integer mfaLevel = NumberParseUtils.parseInt(mfaLevelInteger);
         if (mfaLevel == null)
-            return NOT_AVAILABLE;
+            return FALLBACK_STRING;
 
         return Guild.MFALevel.fromKey(mfaLevel).name();
 
@@ -47,7 +47,7 @@ public class GuildUtils {
     public static String resolveGuildDefaultMessageNotificationLevel(@Nullable Object notificationLevelInteger) {
         Integer notificationLevel = NumberParseUtils.parseInt(notificationLevelInteger);
         if (notificationLevel == null)
-            return NOT_AVAILABLE;
+            return FALLBACK_STRING;
 
         return Guild.NotificationLevel.fromKey(notificationLevel).name();
 
@@ -57,7 +57,7 @@ public class GuildUtils {
     public static String resolveExplicitContentFilterLevel(@Nullable Object explicitContentFilterLevelInteger) {
         Integer ecfLevel = NumberParseUtils.parseInt(explicitContentFilterLevelInteger);
         if (ecfLevel == null)
-            return NOT_AVAILABLE;
+            return FALLBACK_STRING;
 
         return Guild.ExplicitContentLevel.fromKey(ecfLevel).getDescription();
     }
@@ -67,7 +67,7 @@ public class GuildUtils {
         Integer systemChannelFlagsInteger = NumberParseUtils.parseInt(systemChannelFlagsIntegerObject);
 
         if (systemChannelFlagsInteger == null)
-            return NOT_AVAILABLE;
+            return FALLBACK_STRING;
 
         if (systemChannelFlagsInteger == 0)
             return "No Flags Suppressed";
@@ -83,12 +83,12 @@ public class GuildUtils {
         return systemChannelFlags.toString().trim();
     }
 
-    // MISC
+    // MISC GUILD UTILS (BROADER COVERAGE)
     @NotNull
     public static String resolveMentionableChannel(Object channelId, @NonNull GenericGuildEvent event) {
         Long channelIdLong = NumberParseUtils.parseLong(channelId);
         if (channelIdLong == null)
-            return NOT_AVAILABLE;
+            return FALLBACK_STRING;
 
         GuildChannel channel = event.getGuild().getGuildChannelById(channelIdLong);
         return channel != null ? channel.getAsMention() : channelIdLong.toString();

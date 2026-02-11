@@ -16,14 +16,14 @@ public class NumberParseUtils {
     public static Long parseLong(@Nullable Object possibleLongValue) {
 
         if (possibleLongValue == null) {
-            log.debug("long value is null");
+            log.debug("long value is null (caller={})", StackWalkerUtils.getCallHierarchy());
             return null;
         }
 
         try {
             return Long.parseLong(String.valueOf(possibleLongValue));
         } catch (NumberFormatException e) {
-            log.debug("failed to parse long from value={}", possibleLongValue);
+            log.debug("failed to parse long from value={} (caller={})", possibleLongValue, StackWalkerUtils.getCallHierarchy());
             return null;
         }
     }
@@ -32,13 +32,13 @@ public class NumberParseUtils {
     public static Integer parseInt(@Nullable Object possibleIntegerValue) {
 
         if (possibleIntegerValue == null) {
-            log.debug("int value is null");
+            log.debug("int value is null (caller={})", StackWalkerUtils.getCallHierarchy());
             return null;
         }
         try {
             return Integer.parseInt(String.valueOf(possibleIntegerValue));
         } catch (NumberFormatException e) {
-            log.debug("failed to parse int from value={}", possibleIntegerValue);
+            log.debug("failed to parse int from value={} (caller={})", possibleIntegerValue, StackWalkerUtils.getCallHierarchy());
             return null;
         }
     }
@@ -47,7 +47,7 @@ public class NumberParseUtils {
     public static Double parseDouble(@Nullable Object possibleDoubleValue, int roundingDigits, @NonNull RoundingMode roundingMode) {
 
         if (possibleDoubleValue == null) {
-            log.debug("double value is null");
+            log.debug("double value is null (caller={})", StackWalkerUtils.getCallHierarchy());
             return null;
         }
 
@@ -55,7 +55,8 @@ public class NumberParseUtils {
             double doubleValue = Double.parseDouble(String.valueOf(possibleDoubleValue));
             return BigDecimal.valueOf(doubleValue).setScale(roundingDigits, roundingMode).doubleValue();
         } catch (NumberFormatException e) {
-            log.debug("failed to parse double from value={}, roundingDigits={}, roundingMode={}", possibleDoubleValue, roundingDigits, roundingMode);
+            log.debug("failed to parse double from value={}, roundingDigits={}, roundingMode={} (caller={})"
+                    , possibleDoubleValue, roundingDigits, roundingMode, StackWalkerUtils.getCallHierarchy());
             return null;
         }
     }

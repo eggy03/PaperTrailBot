@@ -16,13 +16,14 @@ import java.util.EnumSet;
 @UtilityClass
 public class ChannelUtils {
 
-    // CHANNEL UTILS
+    public static final String FALLBACK_STRING = "N/A";
+    
     @NotNull
     public static String resolveChannelType(@Nullable Object channelTypeInteger) {
 
         Integer channelType = NumberParseUtils.parseInt(channelTypeInteger);
         if (channelType == null)
-            return "Channel Type cannot be parsed: " + channelTypeInteger;
+            return FALLBACK_STRING;
 
         return ChannelType.fromId(channelType).name();
     }
@@ -31,7 +32,7 @@ public class ChannelUtils {
     public static String resolveVoiceChannelUserLimit(@Nullable Object limitNumber) {
         Integer userLimit = NumberParseUtils.parseInt(limitNumber);
         if (userLimit == null)
-            return "User Limit cannot be parsed";
+            return FALLBACK_STRING;
 
         return userLimit == 0 ? "Unlimited" : userLimit.toString();
     }
@@ -40,7 +41,7 @@ public class ChannelUtils {
     public static String resolveVoiceChannelBitrate(@Nullable Object bitrateInteger) {
         Integer bitrate = NumberParseUtils.parseInt(bitrateInteger);
         if (bitrate == null)
-            return "Voice Channel Bitrate cannot be parsed";
+            return FALLBACK_STRING;
 
         return (bitrate / 1000) + " kbps";
     }
@@ -53,7 +54,7 @@ public class ChannelUtils {
         return switch (videoQuality) {
             case 1 -> "Auto";
             case 2 -> "720p/full";
-            case null -> "Video Quality cannot be parsed";
+            case null -> FALLBACK_STRING;
             default -> "Unknown Quality Mode: " + videoQuality;
         };
     }
@@ -66,7 +67,7 @@ public class ChannelUtils {
         return switch (targetType) {
             case 0 -> "Role";
             case 1 -> "Member/Application";
-            case null -> "Target Type cannot be parsed";
+            case null -> FALLBACK_STRING;
             default -> "Unknown Type: " + targetType;
         };
 
@@ -77,7 +78,7 @@ public class ChannelUtils {
 
         Long permissionValue = NumberParseUtils.parseLong(permissionValueLong);
         if (permissionValue == null)
-            return "Permission Value cannot be parsed";
+            return FALLBACK_STRING;
 
         if (permissionValue == 0)
             return "Permissions synced with category";
@@ -98,7 +99,7 @@ public class ChannelUtils {
     public static String autoResolveMemberOrRole(@Nullable Object memberOrRoleId, @NonNull GenericGuildEvent event) {
 
         if (memberOrRoleId == null)
-            return "Member/Role ID cannot be parsed";
+            return FALLBACK_STRING;
 
         Member mb = event.getGuild().getMemberById(String.valueOf(memberOrRoleId));
         Role r = event.getGuild().getRoleById(String.valueOf(memberOrRoleId));

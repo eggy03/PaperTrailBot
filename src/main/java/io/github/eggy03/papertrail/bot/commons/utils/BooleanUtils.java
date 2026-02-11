@@ -9,12 +9,14 @@ import org.jetbrains.annotations.Nullable;
 @Slf4j
 public class BooleanUtils {
 
+    private static final String FALLBACK_STRING = "N/A";
+
     @NotNull
     public static String formatToEmoji(@Nullable Object booleanValueObject) {
 
         if (booleanValueObject == null) {
-            log.debug("boolean value for formatting to emoji is null");
-            return "N/A";
+            log.debug("boolean value for formatting to emoji is null (caller={})", StackWalkerUtils.getCallHierarchy());
+            return FALLBACK_STRING;
         }
 
         if (Boolean.TRUE.equals(booleanValueObject))
@@ -27,8 +29,8 @@ public class BooleanUtils {
     public static String formatToYesOrNo(@Nullable Object booleanValueObject) {
 
         if (booleanValueObject == null) {
-            log.debug("boolean value for formatting to yes/no is null");
-            return "N/A";
+            log.debug("boolean value for formatting to yes/no is null (caller={})", StackWalkerUtils.getCallHierarchy());
+            return FALLBACK_STRING;
         }
 
 
@@ -41,8 +43,8 @@ public class BooleanUtils {
     @NotNull
     public static String formatToEnabledOrDisabled(@Nullable Object booleanValueObject) {
         if (booleanValueObject == null) {
-            log.debug("boolean value for formatting to enabled/disabled is null");
-            return "N/A";
+            log.debug("boolean value for formatting to enabled/disabled is null (caller={})", StackWalkerUtils.getCallHierarchy());
+            return FALLBACK_STRING;
         }
 
         if (Boolean.TRUE.equals(booleanValueObject))
