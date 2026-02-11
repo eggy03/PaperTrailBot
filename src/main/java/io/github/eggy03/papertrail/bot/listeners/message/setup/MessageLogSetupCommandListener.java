@@ -22,37 +22,37 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
     @NonNull
     private static final MessageLogRegistrationClient client = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
 
-	@Override
-	public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
+    @Override
+    public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
-        if(!event.getName().equals("messagelog")){
+        if (!event.getName().equals("messagelog")) {
             return;
         }
 
-        if(event.getSubcommandName()==null) {
+        if (event.getSubcommandName() == null) {
             return;
         }
-			
-		switch(event.getSubcommandName()) {
-		
-		case "set":
-			setMessageLogging(event);
-			break;
-			
-		case "view":
-			retrieveMessageLoggingChannel(event);
-			break;
-			
-		case "remove":
-			unsetMessageLogging(event);
-			break;
-			
-		default:
-			break;
-		}
-	}
 
-	private void setMessageLogging(@NonNull SlashCommandInteractionEvent event) {
+        switch (event.getSubcommandName()) {
+
+            case "set":
+                setMessageLogging(event);
+                break;
+
+            case "view":
+                retrieveMessageLoggingChannel(event);
+                break;
+
+            case "remove":
+                unsetMessageLogging(event);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void setMessageLogging(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -76,7 +76,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
         eb.setTitle("Message Log Registration");
 
         if (success) {
-            eb.addField("✅ Channel Registration Success","╰┈➤"+"All edited and deleted messages will be logged here", false);
+            eb.addField("✅ Channel Registration Success", "╰┈➤" + "All edited and deleted messages will be logged here", false);
             eb.setColor(Color.GREEN);
 
             MessageEmbed mb = eb.build();
@@ -90,8 +90,8 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
         }
 
     }
-	
-	private void retrieveMessageLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
+
+    private void retrieveMessageLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -117,21 +117,21 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Message Log Configuration");
             eb.setColor(Color.CYAN);
-            eb.addField("✅ Channel Registration Check", "╰┈➤"+(registeredChannel!=null ? registeredChannel.getAsMention() : registeredChannelId)+ " is found to be registered as the message log channel", false);
+            eb.addField("✅ Channel Registration Check", "╰┈➤" + (registeredChannel != null ? registeredChannel.getAsMention() : registeredChannelId) + " is found to be registered as the message log channel", false);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
 
         }, () -> {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Message Log Configuration");
-            eb.addField("⚠️ Channel Registration Check", "╰┈➤"+"No channel has been registered for message logs", false);
+            eb.addField("⚠️ Channel Registration Check", "╰┈➤" + "No channel has been registered for message logs", false);
             eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
         });
-	}
-	
-	private void unsetMessageLogging(@NonNull SlashCommandInteractionEvent event) {
+    }
+
+    private void unsetMessageLogging(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with ADMINISTRATOR permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -160,7 +160,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
         } else {
-            eb.addField("❌ Channel Removal Failure", "╰┈➤"+"Channel could not be unset.\nThis may be because no channel has been registered in this guild yet.", false);
+            eb.addField("❌ Channel Removal Failure", "╰┈➤" + "Channel could not be unset.\nThis may be because no channel has been registered in this guild yet.", false);
             eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
 

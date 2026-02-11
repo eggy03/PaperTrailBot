@@ -26,7 +26,7 @@ public class StageInstanceUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Update Event");
-        eb.setDescription("ℹ️ A stage instance was updated by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ A stage instance was updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -37,15 +37,15 @@ public class StageInstanceUpdateEventHelper {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
-            switch(changeKey) {
+            switch (changeKey) {
                 case "topic" -> {
-                    eb.addField("Old Stage Topic", "╰┈➤"+oldValue, true);
-                    eb.addField("New Stage Topic", "╰┈➤"+newValue, true);
+                    eb.addField("Old Stage Topic", "╰┈➤" + oldValue, true);
+                    eb.addField("New Stage Topic", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "privacy_level" -> {
-                    eb.addField("Old Stage Privacy", "╰┈➤"+ StageUtils.resolveStagePrivacyLevel(oldValue), true);
-                    eb.addField("New Stage Privacy", "╰┈➤"+ StageUtils.resolveStagePrivacyLevel(newValue), true);
+                    eb.addField("Old Stage Privacy", "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), true);
+                    eb.addField("New Stage Privacy", "╰┈➤" + StageUtils.resolveStagePrivacyLevel(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -56,17 +56,17 @@ public class StageInstanceUpdateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

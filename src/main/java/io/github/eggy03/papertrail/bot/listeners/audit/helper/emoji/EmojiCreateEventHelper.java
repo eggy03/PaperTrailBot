@@ -25,7 +25,7 @@ public class EmojiCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Emoji Create Event");
-        eb.setDescription("ℹ️ The following emoji was created by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following emoji was created by: " + mentionableExecutor);
         eb.setColor(Color.GREEN);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -45,17 +45,17 @@ public class EmojiCreateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

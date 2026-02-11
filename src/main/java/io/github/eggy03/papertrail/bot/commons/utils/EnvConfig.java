@@ -7,16 +7,16 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class EnvConfig {
 
-	@NonNull
-	private static final Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
+    @NonNull
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
 
-	public static String get(String key) {
-		
-		String value = dotenv.get(key);
-		if (value != null) {
-			return value;
-		}
-		
-		return System.getenv(key);
-	}
+    public static String get(String key) {
+
+        String value = dotenv.get(key);
+        if (value != null) {
+            return value;
+        }
+
+        return System.getenv(key);
+    }
 }

@@ -22,16 +22,16 @@ public class KickEventHelper {
 
         User moderator = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableModerator = (moderator != null ? moderator.getAsMention() : ale.getUserId());
-        String reasonForKick = ale.getReason()==null ? "No Reason Provided" : ale.getReason();
+        String reasonForKick = ale.getReason() == null ? "No Reason Provided" : ale.getReason();
 
         // A REST Action is required here because kicked members are not cached
         event.getJDA().retrieveUserById(ale.getTargetId()).queue(kickedUser -> {
 
-            String mentionableKickedUser = kickedUser!=null ? kickedUser.getAsMention() : ale.getTargetId();
+            String mentionableKickedUser = kickedUser != null ? kickedUser.getAsMention() : ale.getTargetId();
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Kick Event");
-            eb.setDescription("ℹ️ The following member was kicked by: "+mentionableModerator);
+            eb.setDescription("ℹ️ The following member was kicked by: " + mentionableModerator);
             eb.setColor(Color.ORANGE);
 
             eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -44,13 +44,13 @@ public class KickEventHelper {
             eb.setTimestamp(ale.getTimeCreated());
 
             MessageEmbed mb = eb.build();
-            if(!mb.isSendable()){
+            if (!mb.isSendable()) {
                 log.warn("Embed is empty or too long (current length: {}).", eb.length());
                 return;
             }
 
             TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-            if(sendingChannel!=null && sendingChannel.canTalk()) {
+            if (sendingChannel != null && sendingChannel.canTalk()) {
                 sendingChannel.sendMessageEmbeds(mb).queue();
             }
         });

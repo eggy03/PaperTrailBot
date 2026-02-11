@@ -33,65 +33,65 @@ public class ThreadCreateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         ThreadChannel targetThread = event.getGuild().getThreadChannelById(ale.getTargetId());
-        String mentionableTargetThread = (targetThread !=null ? targetThread.getAsMention() : ale.getTargetId());
+        String mentionableTargetThread = (targetThread != null ? targetThread.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A thread has been created");
+        eb.setDescription("👤 **By**: " + mentionableExecutor + "\nℹ️ A thread has been created");
         eb.setColor(Color.GREEN);
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        for (Map.Entry<String, AuditLogChange> changes : ale.getChanges().entrySet()) {
             String change = changes.getKey();
             Object oldValue = changes.getValue().getOldValue();
             Object newValue = changes.getValue().getNewValue();
 
-            switch(change) {
+            switch (change) {
                 case "locked":
-                    eb.addField("🔒 Locked", "╰┈➤"+ BooleanUtils.formatToEmoji(newValue), false);
+                    eb.addField("🔒 Locked", "╰┈➤" + BooleanUtils.formatToEmoji(newValue), false);
                     break;
 
                 case "auto_archive_duration":
-                    eb.addField("🕒 Auto Archive Duration", "╰┈➤"+ DurationUtils.formatMinutes(newValue), false);
+                    eb.addField("🕒 Auto Archive Duration", "╰┈➤" + DurationUtils.formatMinutes(newValue), false);
                     break;
 
                 case "rate_limit_per_user":
-                    eb.addField("🐌 Slowmode Limit", "╰┈➤"+ DurationUtils.formatSeconds(newValue), false);
+                    eb.addField("🐌 Slowmode Limit", "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
                     break;
 
-                    // TODO make threadutils for resolving thread types
+                // TODO make threadutils for resolving thread types
                 case "type":
-                    eb.addField("📁 Thread Type", "╰┈➤"+ ChannelUtils.resolveChannelType(newValue), false);
+                    eb.addField("📁 Thread Type", "╰┈➤" + ChannelUtils.resolveChannelType(newValue), false);
                     break;
 
                 case "archived":
-                    eb.addField("🗄️ Archived", "╰┈➤"+ BooleanUtils.formatToEmoji(newValue), false);
+                    eb.addField("🗄️ Archived", "╰┈➤" + BooleanUtils.formatToEmoji(newValue), false);
                     break;
 
                 case "flags":
-                    eb.addField("🚩 Flags", "╰┈➤"+newValue, false);
+                    eb.addField("🚩 Flags", "╰┈➤" + newValue, false);
                     break;
 
                 case "name":
-                    eb.addField("🏷️ Thread Name", "╰┈➤"+newValue, false);
+                    eb.addField("🏷️ Thread Name", "╰┈➤" + newValue, false);
                     break;
 
                 default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                    eb.addField(change, "from " + oldValue + " to " + newValue, false);
             }
 
         }
-        eb.addField("🧵 Target Thread", "╰┈➤"+mentionableTargetThread, false);
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.addField("🧵 Target Thread", "╰┈➤" + mentionableTargetThread, false);
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

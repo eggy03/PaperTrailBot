@@ -32,7 +32,7 @@ public class StickerUpdateEventHelper {
 
         GuildSticker targetSticker = event.getGuild().getStickerById(ale.getTargetId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ The following sticker was updated");
+        eb.setDescription("👤 **By**: " + mentionableExecutor + "\nℹ️ The following sticker was updated");
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -41,45 +41,45 @@ public class StickerUpdateEventHelper {
         eb.addField("🏷️ Target Sticker Name", Objects.requireNonNull(targetSticker).getName(), false);
         eb.addField("🔗 Target Sticker Url", targetSticker.getIconUrl(), false);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        for (Map.Entry<String, AuditLogChange> changes : ale.getChanges().entrySet()) {
 
             String change = changes.getKey();
             Object oldValue = changes.getValue().getOldValue();
             Object newValue = changes.getValue().getNewValue();
 
-            switch(change) {
+            switch (change) {
 
                 case "format_type", "type", "asset", "available", "guild_id", "id":
                     break;
 
                 case "tags":
-                    eb.addField("ℹ️ Related Emoji", "╰┈➤"+"from "+oldValue+" to "+newValue, false);
+                    eb.addField("ℹ️ Related Emoji", "╰┈➤" + "from " + oldValue + " to " + newValue, false);
                     break;
 
                 case "description":
-                    eb.addField("📝 Description", "╰┈➤"+"from `"+oldValue+"` to `"+newValue+"`", false);
+                    eb.addField("📝 Description", "╰┈➤" + "from `" + oldValue + "` to `" + newValue + "`", false);
                     break;
 
                 case "name":
-                    eb.addField("🏷️ Sticker Name", "╰┈➤"+"from `"+oldValue+"` to `"+newValue+"`", false);
+                    eb.addField("🏷️ Sticker Name", "╰┈➤" + "from `" + oldValue + "` to `" + newValue + "`", false);
                     break;
 
                 default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                    eb.addField(change, "from " + oldValue + " to " + newValue, false);
             }
         }
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

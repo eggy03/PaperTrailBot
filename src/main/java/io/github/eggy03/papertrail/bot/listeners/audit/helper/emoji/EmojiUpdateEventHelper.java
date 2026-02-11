@@ -26,7 +26,7 @@ public class EmojiUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Emoji Update Event");
-        eb.setDescription("ℹ️ The following emoji was updated by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following emoji was updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -38,25 +38,25 @@ public class EmojiUpdateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             if (changeKey.equals("name")) {
-                eb.addField("Emoji Name Updated", "╰┈➤"+"From "+oldValue+" to "+newValue, false);
-                eb.addField("Target Emoji", "╰┈➤"+"<:"+newValue+":"+ale.getTargetId()+">", false);
+                eb.addField("Emoji Name Updated", "╰┈➤" + "From " + oldValue + " to " + newValue, false);
+                eb.addField("Target Emoji", "╰┈➤" + "<:" + newValue + ":" + ale.getTargetId() + ">", false);
             } else {
                 eb.addField("Unimplemented Change Key", changeKey, false);
                 log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

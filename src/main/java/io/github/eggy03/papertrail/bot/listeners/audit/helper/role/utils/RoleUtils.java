@@ -13,12 +13,12 @@ import java.util.EnumSet;
 public class RoleUtils {
 
     @NotNull
-    public static String resolveRolePermissions (@Nullable Object permissionsValue, @NonNull String emoji) {
+    public static String resolveRolePermissions(@Nullable Object permissionsValue, @NonNull String emoji) {
         Long permissionLong = NumberParseUtils.parseLong(permissionsValue);
-        if(permissionLong==null)
+        if (permissionLong == null)
             return "Permission cannot be parsed";
 
-        if(permissionLong==0)
+        if (permissionLong == 0)
             return "No Permissions set";
 
         StringBuilder permissions = new StringBuilder();

@@ -8,33 +8,33 @@ import org.jetbrains.annotations.Nullable;
 public class BooleanUtils {
 
     @NotNull
-    public static String formatToEmoji (@Nullable Object value) {
-        if(value==null)
+    public static String formatToEmoji(@Nullable Object value) {
+        if (value == null)
             return "N/A";
 
-        if(Boolean.TRUE.equals(value))
+        if (Boolean.TRUE.equals(value))
             return "✅";
 
         return "❌";
     }
 
     @NotNull
-    public static String formatToYesOrNo (@Nullable Object value) {
-        if(value==null)
+    public static String formatToYesOrNo(@Nullable Object value) {
+        if (value == null)
             return "N/A";
 
-        if(Boolean.TRUE.equals(value))
+        if (Boolean.TRUE.equals(value))
             return "Yes";
 
         return "No";
     }
 
     @NotNull
-    public static String formatToEnabledOrDisabled (@Nullable Object value) {
-        if(value==null)
+    public static String formatToEnabledOrDisabled(@Nullable Object value) {
+        if (value == null)
             return "N/A";
 
-        if(Boolean.TRUE.equals(value))
+        if (Boolean.TRUE.equals(value))
             return "Enabled";
 
         return "Disabled";

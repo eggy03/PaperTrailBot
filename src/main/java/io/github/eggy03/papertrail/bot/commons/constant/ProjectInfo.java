@@ -6,12 +6,12 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ProjectInfo {
 
-	@NonNull
-	public static final String APPNAME = "PaperTrail";
+    @NonNull
+    public static final String APPNAME = "PaperTrail";
 
-	@NonNull
-	public static final String VERSION = "v2.5.0";
+    @NonNull
+    public static final String VERSION = "v2.5.0";
 
-	@NonNull
-	public static final String PROJECT_ISSUE_LINK="https://github.com/eggy03/PaperTrailBot/issues";
+    @NonNull
+    public static final String PROJECT_ISSUE_LINK = "https://github.com/eggy03/PaperTrailBot/issues";
 }

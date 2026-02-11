@@ -26,25 +26,25 @@ public class GenericAuditLogEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Generic Event");
-        eb.setDescription("An un-implemented action event has been triggered by: "+mentionableExecutor);
+        eb.setDescription("An un-implemented action event has been triggered by: " + mentionableExecutor);
         eb.setColor(Color.LIGHT_GRAY);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
-            eb.addField(changeKey, "OLD_VALUE: "+changeValue.getOldValue(), false);
-            eb.addField(changeKey, "NEW_VALUE: "+changeValue.getNewValue(), false);
+            eb.addField(changeKey, "OLD_VALUE: " + changeValue.getOldValue(), false);
+            eb.addField(changeKey, "NEW_VALUE: " + changeValue.getNewValue(), false);
         });
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

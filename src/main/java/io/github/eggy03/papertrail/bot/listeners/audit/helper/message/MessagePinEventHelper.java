@@ -28,23 +28,23 @@ public class MessagePinEventHelper {
         User target = ale.getJDA().getUserById(ale.getTargetId());
         String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("**A message from **: "+ mentionableTarget +" was pinned");
+        eb.setDescription("**A message from **: " + mentionableTarget + " was pinned");
         eb.setColor(Color.PINK);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

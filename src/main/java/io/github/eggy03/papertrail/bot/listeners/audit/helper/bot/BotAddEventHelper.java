@@ -24,29 +24,29 @@ public class BotAddEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         User target = ale.getJDA().getUserById(ale.getTargetIdLong());
-        String mentionableTarget = (target !=null ? target.getAsMention() : ale.getTargetId());
+        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Bot Add Event");
-        eb.setDescription("ℹ️ A bot was added by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ A bot was added by: " + mentionableExecutor);
         eb.setColor(Color.CYAN);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        eb.addField("Bot Added: ", "╰┈➤"+mentionableTarget, false);
+        eb.addField("Bot Added: ", "╰┈➤" + mentionableTarget, false);
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

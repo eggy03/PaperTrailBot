@@ -13,12 +13,12 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
  */
 public class SlashCommandRegistrationListener extends ListenerAdapter {
 
-	@Override
-	public void onReady(@NonNull ReadyEvent event) {
-		setAuditLogCommands(event.getJDA());
-	}
+    @Override
+    public void onReady(@NonNull ReadyEvent event) {
+        setAuditLogCommands(event.getJDA());
+    }
 
-	private void setAuditLogCommands(@NonNull JDA jda) {
+    private void setAuditLogCommands(@NonNull JDA jda) {
 
         CommandData auditLog = Commands.slash("auditlog", "manage audit log options")
                 .addSubcommands(new SubcommandData("set", "set audit log channel here"))
@@ -29,17 +29,17 @@ public class SlashCommandRegistrationListener extends ListenerAdapter {
                 .addSubcommands(new SubcommandData("set", "set message log channel here"))
                 .addSubcommands(new SubcommandData("view", "view message log channel"))
                 .addSubcommands(new SubcommandData("remove", "unset message log channel"));
-		
-		CommandData serverStats = Commands.slash("stats",
-				"Provides Server Statistics");
 
-		CommandData setup = Commands.slash("setup", "Provides a guide on setting up the bot");
+        CommandData serverStats = Commands.slash("stats",
+                "Provides Server Statistics");
 
-		jda.updateCommands()
-				.addCommands(auditLog,
+        CommandData setup = Commands.slash("setup", "Provides a guide on setting up the bot");
+
+        jda.updateCommands()
+                .addCommands(auditLog,
                         messageLog,
-						serverStats,
-						setup)
-				.queue();
-	}
+                        serverStats,
+                        setup)
+                .queue();
+    }
 }

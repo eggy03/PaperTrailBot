@@ -26,7 +26,7 @@ public class StageInstanceCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Create Event");
-        eb.setDescription("ℹ️ A stage instance was created by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ A stage instance was created by: " + mentionableExecutor);
         eb.setColor(Color.GREEN);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -36,10 +36,11 @@ public class StageInstanceCreateEventHelper {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
-            switch(changeKey) {
-                case "topic" -> eb.addField("Stage Topic", "╰┈➤"+newValue, false);
+            switch (changeKey) {
+                case "topic" -> eb.addField("Stage Topic", "╰┈➤" + newValue, false);
 
-                case "privacy_level" -> eb.addField("Stage Privacy", "╰┈➤"+ StageUtils.resolveStagePrivacyLevel(newValue), false);
+                case "privacy_level" ->
+                        eb.addField("Stage Privacy", "╰┈➤" + StageUtils.resolveStagePrivacyLevel(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -48,17 +49,17 @@ public class StageInstanceCreateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

@@ -11,11 +11,11 @@ import java.math.RoundingMode;
 public class SoundboardUtils {
 
     @NotNull
-    public static String resolveVolumePercentage (@Nullable Object decimalVolume) {
+    public static String resolveVolumePercentage(@Nullable Object decimalVolume) {
         Double volume = NumberParseUtils.parseDouble(decimalVolume, 4, RoundingMode.HALF_UP);
-        if(volume==null)
+        if (volume == null)
             return "N/A";
 
-        return (volume * 100)+"%";
+        return (volume * 100) + "%";
     }
 }

@@ -17,7 +17,7 @@ import java.awt.Color;
 @Slf4j
 public class AutoModerationRuleUpdateEventHelper {
 
-    public static void format (@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
+    public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
 
         AuditLogEntry ale = event.getEntry();
 
@@ -27,7 +27,7 @@ public class AutoModerationRuleUpdateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following AutoMod rule was updated by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following AutoMod rule was updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -35,21 +35,21 @@ public class AutoModerationRuleUpdateEventHelper {
 
         // add name of the rule which got updated
         AutoModRule rule = ale.getGuild().retrieveAutoModRuleById(ale.getTargetId()).complete();
-        eb.addField("AutoMod Rule Name ", "╰┈➤"+rule.getName(), false);
+        eb.addField("AutoMod Rule Name ", "╰┈➤" + rule.getName(), false);
 
         eb.addField("Additional Info", "For more info on trigger metadata, actions, exempt roles and channel changes, visit Safety Setup in your server", false);
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

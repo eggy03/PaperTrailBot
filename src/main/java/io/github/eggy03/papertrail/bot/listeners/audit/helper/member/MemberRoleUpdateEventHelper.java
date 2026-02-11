@@ -26,27 +26,29 @@ public class MemberRoleUpdateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         User target = ale.getJDA().getUserById(ale.getTargetIdLong());
-        String mentionableTarget = (target !=null ? target.getAsMention() : ale.getTargetId());
+        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry  | Member Role Update");
-        eb.setDescription("ℹ️ The following member had their role(s) updated by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following member had their role(s) updated by: " + mentionableExecutor);
         eb.setThumbnail(Objects.requireNonNull(event.getGuild().getMemberById(ale.getTargetIdLong())).getEffectiveAvatarUrl());
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        eb.addField("\uD83C\uDFF7️️ Target Member", "╰┈➤"+mentionableTarget, false);
+        eb.addField("\uD83C\uDFF7️️ Target Member", "╰┈➤" + mentionableTarget, false);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "$add" -> eb.addField("✅ Role(s) Added", "╰┈➤"+ MemberUtils.parseRoleListMap(event, newValue), false);
+                case "$add" ->
+                        eb.addField("✅ Role(s) Added", "╰┈➤" + MemberUtils.parseRoleListMap(event, newValue), false);
 
-                case "$remove" -> eb.addField("❌ Role(s) Removed", "╰┈➤"+MemberUtils.parseRoleListMap(event, newValue), false);
+                case "$remove" ->
+                        eb.addField("❌ Role(s) Removed", "╰┈➤" + MemberUtils.parseRoleListMap(event, newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -55,17 +57,17 @@ public class MemberRoleUpdateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

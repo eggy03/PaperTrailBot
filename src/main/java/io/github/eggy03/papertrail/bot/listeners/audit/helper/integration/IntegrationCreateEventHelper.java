@@ -25,7 +25,7 @@ public class IntegrationCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Integration Create Event");
-        eb.setDescription("ℹ️ The following integration was created by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following integration was created by: " + mentionableExecutor);
         eb.setColor(Color.PINK);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -36,9 +36,9 @@ public class IntegrationCreateEventHelper {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
-            switch(changeKey) {
-                case "type" -> eb.addField("Integration Type","╰┈➤"+newValue, false);
-                case "name" -> eb.addField("Integration Name", "╰┈➤"+newValue, false);
+            switch (changeKey) {
+                case "type" -> eb.addField("Integration Type", "╰┈➤" + newValue, false);
+                case "name" -> eb.addField("Integration Name", "╰┈➤" + newValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -47,17 +47,17 @@ public class IntegrationCreateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(eb.build()).queue();
         }
     }

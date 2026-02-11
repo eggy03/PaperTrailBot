@@ -26,7 +26,7 @@ public class AutoModerationFlagToChannelEventHelper {
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
         String mentionableTargetUser = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("Auto-mod has flagged a message sent by: "+mentionableTargetUser);
+        eb.setDescription("Auto-mod has flagged a message sent by: " + mentionableTargetUser);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -34,17 +34,17 @@ public class AutoModerationFlagToChannelEventHelper {
 
         eb.addField("Info", "For more info, check the channel where auto-mod is set to send events", false);
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

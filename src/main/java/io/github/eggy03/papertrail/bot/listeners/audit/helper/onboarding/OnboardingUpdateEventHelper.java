@@ -40,7 +40,7 @@ public class OnboardingUpdateEventHelper {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
-            switch (changeKey){
+            switch (changeKey) {
                 case "enabled" -> {
                     eb.addField("Old Onboarding Status", OnboardingUtils.formatStatus(oldValue), false);
                     eb.addField("New Onboarding Status", OnboardingUtils.formatStatus(newValue), true);
@@ -51,13 +51,14 @@ public class OnboardingUpdateEventHelper {
                     eb.addField("New Onboarding Mode", OnboardingUtils.formatMode(newValue), true);
                 }
 
-                case "default_channel_ids" ->{
+                case "default_channel_ids" -> {
                     eb.addField("Old Default Channels", OnboardingUtils.resolveChannelsFromList(guild, oldValue), false);
                     eb.addField("New Default Channels", OnboardingUtils.resolveChannelsFromList(guild, newValue), false);
                 }
 
                 // triggered also when prompts are deleted/created besides the default of update
-                case "prompts" -> eb.addField("Prompt Updates", "Overall Pre-join/Post-join questions may have been updated.\n Review changes manually.", false);
+                case "prompts" ->
+                        eb.addField("Prompt Updates", "Overall Pre-join/Post-join questions may have been updated.\n Review changes manually.", false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -67,17 +68,17 @@ public class OnboardingUpdateEventHelper {
 
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

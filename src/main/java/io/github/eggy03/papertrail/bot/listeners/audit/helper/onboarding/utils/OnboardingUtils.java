@@ -14,7 +14,7 @@ public class OnboardingUtils {
 
     @NotNull
     public static String formatMode(@Nullable Object value) {
-        if(value==null) return "N/A";
+        if (value == null) return "N/A";
 
         return switch (String.valueOf(value)) {
             case "1" -> "Advanced Mode";
@@ -25,10 +25,10 @@ public class OnboardingUtils {
 
     @NotNull
     public static String formatStatus(@Nullable Object value) {
-        if(value==null)
+        if (value == null)
             return "N/A";
 
-        if(Boolean.TRUE.equals(value))
+        if (Boolean.TRUE.equals(value))
             return "Enabled";
 
         return "Disabled";
@@ -36,13 +36,13 @@ public class OnboardingUtils {
 
     @NotNull
     public static String resolveChannelsFromList(@NonNull Guild guild, @Nullable Object value) {
-        if(value == null) return "No Resolvable Channel IDs";
+        if (value == null) return "No Resolvable Channel IDs";
 
         StringBuilder sb = new StringBuilder();
-        if(value instanceof List<?> channelIdList) {
+        if (value instanceof List<?> channelIdList) {
             channelIdList.forEach(channelId -> {
                 GuildChannel channel = guild.getGuildChannelById((String) channelId);
-                sb.append(channel!=null ? channel.getAsMention() : channelId).append(" ");
+                sb.append(channel != null ? channel.getAsMention() : channelId).append(" ");
             });
         }
 

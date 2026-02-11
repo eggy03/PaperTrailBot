@@ -37,15 +37,18 @@ public class ScheduledEventCreateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "entity_type" -> eb.addField("Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(newValue), false);
+                case "entity_type" ->
+                        eb.addField("Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(newValue), false);
                 case "name" -> eb.addField("Event Name", "╰┈➤" + newValue, false);
                 case "description" -> eb.addField("Event Description", "╰┈➤" + newValue, false);
-                case "status" -> eb.addField("Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(newValue), false);
+                case "status" ->
+                        eb.addField("Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(newValue), false);
                 case "location" -> eb.addField("Event Location", "╰┈➤" + newValue, false);
                 case "privacy_level", "image_hash", "channel_id" -> {
                     // skip
                 }
-                case "recurrence_rule" -> eb.addField("Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
+                case "recurrence_rule" ->
+                        eb.addField("Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

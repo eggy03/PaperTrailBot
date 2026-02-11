@@ -25,11 +25,11 @@ public class UnbanEventHelper {
 
         event.getJDA().retrieveUserById(ale.getTargetId()).queue(unbannedUser -> {
 
-            String mentionableUnbannedUser = unbannedUser!=null ? unbannedUser.getAsMention() : ale.getTargetId();
+            String mentionableUnbannedUser = unbannedUser != null ? unbannedUser.getAsMention() : ale.getTargetId();
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Member Unban Event");
-            eb.setDescription("ℹ️ The following user was un-banned by: "+mentionableModerator);
+            eb.setDescription("ℹ️ The following user was un-banned by: " + mentionableModerator);
             eb.setColor(Color.GREEN);
 
             eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -41,13 +41,13 @@ public class UnbanEventHelper {
             eb.setTimestamp(ale.getTimeCreated());
 
             MessageEmbed mb = eb.build();
-            if(!mb.isSendable()){
+            if (!mb.isSendable()) {
                 log.warn("Embed is empty or too long (current length: {}).", eb.length());
                 return;
             }
 
             TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-            if(sendingChannel!=null && sendingChannel.canTalk()) {
+            if (sendingChannel != null && sendingChannel.canTalk()) {
                 sendingChannel.sendMessageEmbeds(mb).queue();
             }
         });

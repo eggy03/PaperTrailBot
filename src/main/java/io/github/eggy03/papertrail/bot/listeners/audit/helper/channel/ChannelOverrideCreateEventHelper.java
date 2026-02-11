@@ -26,11 +26,11 @@ public class ChannelOverrideCreateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         GuildChannel targetChannel = event.getGuild().getGuildChannelById(ale.getTargetId());
-        String mentionableTargetChannel = (targetChannel !=null ? targetChannel.getAsMention() : ale.getTargetId());
+        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Channel Override Create");
-        eb.setDescription("ℹ️ The following channel overrides were created by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following channel overrides were created by: " + mentionableExecutor);
         eb.setColor(Color.GREEN);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -42,14 +42,18 @@ public class ChannelOverrideCreateEventHelper {
 
             switch (changeKey) {
 
-                case "type" -> eb.addField("Override Type", "╰┈➤"+ ChannelUtils.resolveChannelOverrideTargetType(newValue), false);
+                case "type" ->
+                        eb.addField("Override Type", "╰┈➤" + ChannelUtils.resolveChannelOverrideTargetType(newValue), false);
 
-                case "deny" -> eb.addField("Denied Permissions", ChannelUtils.resolveChannelOverridePermissions(newValue, "❌"), false);
-                case "allow" -> eb.addField("Allowed Permissions", ChannelUtils.resolveChannelOverridePermissions(newValue, "✅"), false);
+                case "deny" ->
+                        eb.addField("Denied Permissions", ChannelUtils.resolveChannelOverridePermissions(newValue, "❌"), false);
+                case "allow" ->
+                        eb.addField("Allowed Permissions", ChannelUtils.resolveChannelOverridePermissions(newValue, "✅"), false);
 
                 // id exposes the member/role id which for which the channel permissions are overridden
                 // only one member/role permission id is fetched per loop
-                case "id" -> eb.addField("Target", "╰┈➤"+ChannelUtils.autoResolveMemberOrRole(newValue, event), false);
+                case "id" ->
+                        eb.addField("Target", "╰┈➤" + ChannelUtils.autoResolveMemberOrRole(newValue, event), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -60,19 +64,19 @@ public class ChannelOverrideCreateEventHelper {
 
         // add the target channel whose permissions were overridden
         // exposed via ALE's TargetID
-        eb.addField("Target Channel", "╰┈➤"+mentionableTargetChannel, false);
+        eb.addField("Target Channel", "╰┈➤" + mentionableTargetChannel, false);
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

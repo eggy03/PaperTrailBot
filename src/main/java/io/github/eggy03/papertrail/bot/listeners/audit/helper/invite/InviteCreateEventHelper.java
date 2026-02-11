@@ -31,37 +31,38 @@ public class InviteCreateEventHelper {
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        ale.getChanges().forEach((changeKey, changeValue)-> {
+        ale.getChanges().forEach((changeKey, changeValue) -> {
 
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
 
-                case "code" -> eb.addField("Invite Code", "╰┈➤"+newValue, false);
+                case "code" -> eb.addField("Invite Code", "╰┈➤" + newValue, false);
 
                 case "inviter_id" -> {
                     User inviter = ale.getJDA().getUserById(ale.getUserIdLong());
                     String mentionableInviter = (inviter != null ? inviter.getAsMention() : ale.getUserId());
-                    eb.addField("Invite Created By", "╰┈➤"+ mentionableInviter, false);
+                    eb.addField("Invite Created By", "╰┈➤" + mentionableInviter, false);
                 }
 
-                case "temporary" -> eb.addField("Temporary Invite", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), false);
+                case "temporary" ->
+                        eb.addField("Temporary Invite", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "max_uses" -> {
                     int maxUses = Integer.parseInt(String.valueOf(newValue));
-                    eb.addField("Max Uses", "╰┈➤"+(maxUses == 0 ? "Unlimited" : String.valueOf(maxUses)), false);
+                    eb.addField("Max Uses", "╰┈➤" + (maxUses == 0 ? "Unlimited" : String.valueOf(maxUses)), false);
                 }
 
                 case "uses", "flags" -> {
                     // ignore
                 }
 
-                case "max_age" -> eb.addField("Expires After", "╰┈➤"+ DurationUtils.formatSeconds(newValue), false);
+                case "max_age" -> eb.addField("Expires After", "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
 
                 case "channel_id" -> {
                     GuildChannel channel = ale.getGuild().getGuildChannelById(String.valueOf(newValue));
-                    eb.addField("Invite Channel", "╰┈➤"+(channel != null ? channel.getAsMention() : "`"+newValue+"`"), false);
+                    eb.addField("Invite Channel", "╰┈➤" + (channel != null ? channel.getAsMention() : "`" + newValue + "`"), false);
                 }
 
                 default -> {
@@ -72,17 +73,17 @@ public class InviteCreateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
 

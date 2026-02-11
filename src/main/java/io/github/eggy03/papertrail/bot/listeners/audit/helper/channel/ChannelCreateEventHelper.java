@@ -28,37 +28,40 @@ public class ChannelCreateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         GuildChannel targetChannel = ale.getGuild().getGuildChannelById(ale.getTargetId());
-        String mentionableTargetChannel = (targetChannel !=null ? targetChannel.getAsMention() : ale.getTargetId());
+        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Channel Create Event");
 
-        eb.setDescription("ℹ️ The following channel was created by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following channel was created by: " + mentionableExecutor);
         eb.setColor(Color.GREEN);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        ale.getChanges().forEach((changeKey, changeValue)-> {
+        ale.getChanges().forEach((changeKey, changeValue) -> {
 
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "user_limit" -> eb.addField("User Limit", "╰┈➤"+ ChannelUtils.resolveVoiceChannelUserLimit(newValue), false);
+                case "user_limit" ->
+                        eb.addField("User Limit", "╰┈➤" + ChannelUtils.resolveVoiceChannelUserLimit(newValue), false);
 
-                case "rate_limit_per_user" -> eb.addField("Slow Mode", "╰┈➤"+ DurationUtils.formatSeconds(newValue), false);
+                case "rate_limit_per_user" ->
+                        eb.addField("Slow Mode", "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
 
-                case "type" -> eb.addField("Channel Type", "╰┈➤"+ ChannelUtils.resolveChannelType(newValue), false);
+                case "type" -> eb.addField("Channel Type", "╰┈➤" + ChannelUtils.resolveChannelType(newValue), false);
 
-                case "nsfw" -> eb.addField("Is NSFW", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), false);
+                case "nsfw" -> eb.addField("Is NSFW", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "name" -> {
-                    eb.addField("Channel Name", "╰┈➤"+newValue, false);
-                    eb.addField("Channel Mention", "╰┈➤"+mentionableTargetChannel, true);
+                    eb.addField("Channel Name", "╰┈➤" + newValue, false);
+                    eb.addField("Channel Mention", "╰┈➤" + mentionableTargetChannel, true);
                 }
 
-                case "bitrate" -> eb.addField("Voice Channel Bitrate", "╰┈➤"+ ChannelUtils.resolveVoiceChannelBitrate(newValue), false);
+                case "bitrate" ->
+                        eb.addField("Voice Channel Bitrate", "╰┈➤" + ChannelUtils.resolveVoiceChannelBitrate(newValue), false);
 
                 case "permission_overwrites", "flags", "template", "available_tags" -> {
                     // the first two are for all types of channels and may stay empty during creation events
@@ -73,17 +76,17 @@ public class ChannelCreateEventHelper {
         });
 
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

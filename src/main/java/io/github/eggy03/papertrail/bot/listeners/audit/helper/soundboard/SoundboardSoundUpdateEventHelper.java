@@ -26,7 +26,7 @@ public class SoundboardSoundUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Soundboard Sound Update Event");
-        eb.setDescription("ℹ️ A sound item in the soundboard was updated by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ A sound item in the soundboard was updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -38,27 +38,27 @@ public class SoundboardSoundUpdateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "user_id", "sound_id", "id", "guild_id", "available" ->{
+                case "user_id", "sound_id", "id", "guild_id", "available" -> {
                     // skip
                 }
                 case "volume" -> {
-                    eb.addField("Old Volume", "╰┈➤"+SoundboardUtils.resolveVolumePercentage(oldValue), true);
-                    eb.addField("New Volume", "╰┈➤"+SoundboardUtils.resolveVolumePercentage(newValue), true);
+                    eb.addField("Old Volume", "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), true);
+                    eb.addField("New Volume", "╰┈➤" + SoundboardUtils.resolveVolumePercentage(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "emoji_name" -> {
-                    eb.addField("Old Related Emoji", "╰┈➤"+oldValue, true);
-                    eb.addField("New Related Emoji", "╰┈➤"+newValue, true);
+                    eb.addField("Old Related Emoji", "╰┈➤" + oldValue, true);
+                    eb.addField("New Related Emoji", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "emoji_id" -> {
-                    eb.addField("Old Related Emoji ID", "╰┈➤"+oldValue, true);
-                    eb.addField("New Related Emoji ID", "╰┈➤"+newValue, true);
+                    eb.addField("Old Related Emoji ID", "╰┈➤" + oldValue, true);
+                    eb.addField("New Related Emoji ID", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "name" -> {
-                    eb.addField("Old Sound Item Name", "╰┈➤"+oldValue, true);
-                    eb.addField("New Sound Item Name", "╰┈➤"+newValue, true);
+                    eb.addField("Old Sound Item Name", "╰┈➤" + oldValue, true);
+                    eb.addField("New Sound Item Name", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 default -> {
@@ -68,17 +68,17 @@ public class SoundboardSoundUpdateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

@@ -17,21 +17,21 @@ import java.util.concurrent.Executor;
 @RequiredArgsConstructor
 public class SelfKickListener extends ListenerAdapter {
 
-	@NonNull
-	private static final AuditLogRegistrationClient alClient = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+    @NonNull
+    private static final AuditLogRegistrationClient alClient = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 
-	@NonNull
-	private static final MessageLogRegistrationClient mlClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
+    @NonNull
+    private static final MessageLogRegistrationClient mlClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
 
-	private final Executor vThreadPool;
+    private final Executor vThreadPool;
 
-	@Override
-	public void onGuildLeave(@NonNull GuildLeaveEvent event) {
+    @Override
+    public void onGuildLeave(@NonNull GuildLeaveEvent event) {
 
-		Guild leftGuild = event.getGuild();
-		vThreadPool.execute(()->{
-			alClient.deleteRegisteredGuild(leftGuild.getId());
-			mlClient.deleteRegisteredGuild(leftGuild.getId());
-		});
-	}
+        Guild leftGuild = event.getGuild();
+        vThreadPool.execute(() -> {
+            alClient.deleteRegisteredGuild(leftGuild.getId());
+            mlClient.deleteRegisteredGuild(leftGuild.getId());
+        });
+    }
 }

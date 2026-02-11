@@ -21,45 +21,46 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
 /*
  * The main class of the bot
  */
 public class Start {
 
-	// All I/O blocking operations run inside the vThreadPool
-	private static final @NonNull Executor vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
+    // All I/O blocking operations run inside the vThreadPool
+    private static final @NonNull Executor vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
 
-	public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-		ConnectionInitializer ci = new ConnectionInitializer();
-		ShardManager manager = ci.getManager();
+        ConnectionInitializer ci = new ConnectionInitializer();
+        ShardManager manager = ci.getManager();
 
-		manager.addEventListener(new AuditLogSetupCommandListener());
-		manager.addEventListener(new AuditLogEventListener(vThreadPool));
+        manager.addEventListener(new AuditLogSetupCommandListener());
+        manager.addEventListener(new AuditLogEventListener(vThreadPool));
 
-		manager.addEventListener(new MessageLogSetupCommandListener());
-		manager.addEventListener(new MessageLogListener(vThreadPool));
+        manager.addEventListener(new MessageLogSetupCommandListener());
+        manager.addEventListener(new MessageLogListener(vThreadPool));
 
-		manager.addEventListener(new GuildVoiceEventListener(vThreadPool));
-		manager.addEventListener(new GuildMemberJoinAndLeaveEventListener(vThreadPool));
-		manager.addEventListener(new GuildPollEventListener(vThreadPool));
-		manager.addEventListener(new GuildBoostEventListener(vThreadPool));
-		manager.addEventListener(new SelfKickListener(vThreadPool));
+        manager.addEventListener(new GuildVoiceEventListener(vThreadPool));
+        manager.addEventListener(new GuildMemberJoinAndLeaveEventListener(vThreadPool));
+        manager.addEventListener(new GuildPollEventListener(vThreadPool));
+        manager.addEventListener(new GuildBoostEventListener(vThreadPool));
+        manager.addEventListener(new SelfKickListener(vThreadPool));
 
-		manager.addEventListener(new ServerStatCommandListener());
-		manager.addEventListener(new BotSetupInstructionCommandListener());
+        manager.addEventListener(new ServerStatCommandListener());
+        manager.addEventListener(new BotSetupInstructionCommandListener());
 
         // Custom health check endpoint
-		HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/ping", new PingHandler());
         server.setExecutor(null); // creates a default executor
         server.start();
-	}
-	
-	static class PingHandler implements HttpHandler {
+    }
+
+    static class PingHandler implements HttpHandler {
         @Override
         public void handle(@NonNull HttpExchange exchange) throws IOException {
-        	 exchange.sendResponseHeaders(200, -1);
+            exchange.sendResponseHeaders(200, -1);
         }
     }
 

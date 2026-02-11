@@ -32,6 +32,6 @@ public class AutoModUtils {
             return NOT_AVAILABLE;
 
 
-       return AutoModTriggerType.fromKey(triggerTypeInt).name();
+        return AutoModTriggerType.fromKey(triggerTypeInt).name();
     }
 }

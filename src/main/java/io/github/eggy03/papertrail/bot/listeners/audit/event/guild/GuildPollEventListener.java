@@ -28,14 +28,14 @@ public class GuildPollEventListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NonNull MessageReceivedEvent event) {
 
-        if(!event.isFromGuild())
+        if (!event.isFromGuild())
             return;
 
         MessagePoll messagePoll = event.getMessage().getPoll();
-        if(messagePoll==null)
+        if (messagePoll == null)
             return;
 
-        vThreadPool.execute(()-> {
+        vThreadPool.execute(() -> {
 
             // guild poll events are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
@@ -50,12 +50,12 @@ public class GuildPollEventListener extends ListenerAdapter {
                         .append("*Answer: * ")
                         .append(answer.getText())
                         .append(" *Emoji: * ")
-                        .append(answer.getEmoji()==null ? "N/A" : answer.getEmoji().getFormatted())
+                        .append(answer.getEmoji() == null ? "N/A" : answer.getEmoji().getFormatted())
                         .append(System.lineSeparator())
                 );
 
-                String expiryTime = messagePoll.getTimeExpiresAt()!=null ?
-                        "<t:" +messagePoll.getTimeExpiresAt().toEpochSecond()+ ":f>" :
+                String expiryTime = messagePoll.getTimeExpiresAt() != null ?
+                        "<t:" + messagePoll.getTimeExpiresAt().toEpochSecond() + ":f>" :
                         "N/A";
 
 
@@ -76,7 +76,7 @@ public class GuildPollEventListener extends ListenerAdapter {
                 MessageEmbed mb = eb.build();
 
                 TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
-                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                if (sendingChannel != null && sendingChannel.canTalk()) {
                     sendingChannel.sendMessageEmbeds(mb).queue();
                 }
 

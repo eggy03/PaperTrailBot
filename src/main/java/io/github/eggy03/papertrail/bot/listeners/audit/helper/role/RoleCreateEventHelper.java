@@ -27,17 +27,17 @@ public class RoleCreateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         Role targetRole = ale.getJDA().getRoleById(ale.getTargetId());
-        String mentionableTargetRole = (targetRole !=null ? targetRole.getAsMention() : ale.getTargetId());
+        String mentionableTargetRole = (targetRole != null ? targetRole.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Create Event");
-        eb.setDescription("The following role was created by: "+mentionableExecutor);
+        eb.setDescription("The following role was created by: " + mentionableExecutor);
         eb.setColor(Color.GREEN);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        eb.addField("Target Role", "╰┈➤"+mentionableTargetRole, false);
+        eb.addField("Target Role", "╰┈➤" + mentionableTargetRole, false);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -46,10 +46,10 @@ public class RoleCreateEventHelper {
 
             switch (changeKey) {
 
-                case "name" -> eb.addField("Role Name", "╰┈➤"+newValue, false);
+                case "name" -> eb.addField("Role Name", "╰┈➤" + newValue, false);
 
                 case "colors", "hoist", "color", "permissions", "mentionable" -> {
-                     /* discord for some reason shows the following to be default/null even
+                    /* discord for some reason shows the following to be default/null even
                      * when you set them during the creation of the role itself
                      * and delegates them to ROLE_UPDATE event
                      */
@@ -63,16 +63,16 @@ public class RoleCreateEventHelper {
             }
 
         });
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        for (Map.Entry<String, AuditLogChange> changes : ale.getChanges().entrySet()) {
 
             String change = changes.getKey();
             Object oldValue = changes.getValue().getOldValue();
             Object newValue = changes.getValue().getNewValue();
 
-            switch(change) {
+            switch (change) {
 
                 case "name":
-                    eb.addField("🏷️ Role Name", "╰┈➤"+newValue, false);
+                    eb.addField("🏷️ Role Name", "╰┈➤" + newValue, false);
                     break;
 
                 /*
@@ -84,21 +84,21 @@ public class RoleCreateEventHelper {
                     break;
 
                 default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                    eb.addField(change, "from " + oldValue + " to " + newValue, false);
             }
         }
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

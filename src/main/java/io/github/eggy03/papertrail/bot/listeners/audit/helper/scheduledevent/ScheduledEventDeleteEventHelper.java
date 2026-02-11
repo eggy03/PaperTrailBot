@@ -26,7 +26,7 @@ public class ScheduledEventDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Scheduled Event Delete Event");
-        eb.setDescription("ℹ️ A scheduled event has been deleted by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ A scheduled event has been deleted by: " + mentionableExecutor);
         eb.setColor(Color.RED);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -37,15 +37,18 @@ public class ScheduledEventDeleteEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "entity_type" -> eb.addField("Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), false);
+                case "entity_type" ->
+                        eb.addField("Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), false);
                 case "name" -> eb.addField("Event Name", "╰┈➤" + oldValue, false);
                 case "description" -> eb.addField("Event Description", "╰┈➤" + oldValue, false);
-                case "status" -> eb.addField("Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), false);
+                case "status" ->
+                        eb.addField("Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), false);
                 case "location" -> eb.addField("Event Location", "╰┈➤" + oldValue, false);
                 case "privacy_level", "image_hash", "channel_id" -> {
                     // skip
                 }
-                case "recurrence_rule" -> eb.addField("Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
+                case "recurrence_rule" ->
+                        eb.addField("Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
@@ -53,17 +56,17 @@ public class ScheduledEventDeleteEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

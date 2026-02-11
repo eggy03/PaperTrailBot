@@ -28,17 +28,17 @@ public class RoleUpdateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         Role targetRole = ale.getJDA().getRoleById(ale.getTargetId());
-        String mentionableTargetRole = (targetRole !=null ? targetRole.getAsMention() : ale.getTargetId());
+        String mentionableTargetRole = (targetRole != null ? targetRole.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Update Event");
-        eb.setDescription("ℹ️ The following role was updated by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following role was updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        eb.addField("Target Role", "╰┈➤"+mentionableTargetRole, false);
+        eb.addField("Target Role", "╰┈➤" + mentionableTargetRole, false);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -48,20 +48,20 @@ public class RoleUpdateEventHelper {
             switch (changeKey) {
 
                 case "name" -> {
-                    eb.addField("Old Role Name", "╰┈➤"+oldValue, true);
-                    eb.addField("New Role Name", "╰┈➤"+newValue, true);
+                    eb.addField("Old Role Name", "╰┈➤" + oldValue, true);
+                    eb.addField("New Role Name", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
 
                 case "hoist" -> {
-                    eb.addField("Old Display Separately", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), true);
-                    eb.addField("New Display Separately", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), true);
+                    eb.addField("Old Display Separately", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField("New Display Separately", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "color" -> {
-                    eb.addField("Old Color", "╰┈➤"+ ColorUtils.formatToHex(oldValue), true);
-                    eb.addField("New Color", "╰┈➤"+ ColorUtils.formatToHex(newValue), true);
+                    eb.addField("Old Color", "╰┈➤" + ColorUtils.formatToHex(oldValue), true);
+                    eb.addField("New Color", "╰┈➤" + ColorUtils.formatToHex(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -72,8 +72,8 @@ public class RoleUpdateEventHelper {
                 }
 
                 case "mentionable" -> {
-                    eb.addField("Old Mentionable", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), true);
-                    eb.addField("New Mentionable", "╰┈➤"+ BooleanUtils.formatToYesOrNo(newValue), true);
+                    eb.addField("Old Mentionable", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField("New Mentionable", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
 
@@ -91,17 +91,17 @@ public class RoleUpdateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

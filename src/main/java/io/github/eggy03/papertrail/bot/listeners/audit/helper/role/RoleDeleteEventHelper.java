@@ -29,7 +29,7 @@ public class RoleDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Delete Event");
-        eb.setDescription("ℹ️ The following role was deleted by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following role was deleted by: " + mentionableExecutor);
         eb.setColor(Color.RED);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -41,17 +41,20 @@ public class RoleDeleteEventHelper {
 
             switch (changeKey) {
 
-                case "name"-> eb.addField("Role Name", "╰┈➤"+oldValue, false);
+                case "name" -> eb.addField("Role Name", "╰┈➤" + oldValue, false);
 
-                case "hoist"-> eb.addField("Display Separately", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), false);
+                case "hoist" ->
+                        eb.addField("Display Separately", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "color" -> eb.addField("Color", "╰┈➤"+ ColorUtils.formatToHex(oldValue), false);
+                case "color" -> eb.addField("Color", "╰┈➤" + ColorUtils.formatToHex(oldValue), false);
 
-                case "permissions"-> eb.addField("Role Permissions", RoleUtils.resolveRolePermissions(oldValue, "✅"), false);
+                case "permissions" ->
+                        eb.addField("Role Permissions", RoleUtils.resolveRolePermissions(oldValue, "✅"), false);
 
-                case "mentionable"-> eb.addField("Mentionable", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), false);
+                case "mentionable" -> eb.addField("Mentionable", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "colors" -> eb.addField("Gradient Color System", ColorUtils.formatGradientColorSystemToHex(oldValue), false);
+                case "colors" ->
+                        eb.addField("Gradient Color System", ColorUtils.formatGradientColorSystemToHex(oldValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -60,19 +63,19 @@ public class RoleDeleteEventHelper {
             }
 
         });
-        eb.addField("🆔 Deleted Role ID", "╰┈➤"+ale.getTargetId(), false);
+        eb.addField("🆔 Deleted Role ID", "╰┈➤" + ale.getTargetId(), false);
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

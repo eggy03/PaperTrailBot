@@ -13,10 +13,10 @@ public class StageUtils {
     public static String resolveStagePrivacyLevel(@Nullable Object stagePrivacyLevelInteger) {
         Integer privacyLevel = NumberParseUtils.parseInt(stagePrivacyLevelInteger);
 
-        if(privacyLevel==null) return "N/A";
+        if (privacyLevel == null) return "N/A";
 
         //JDA removed this, and it technically shouldn't happen either since all stages are GUILD_ONLY now
-        if(privacyLevel==1) return "PUBLIC (Deprecated)";
+        if (privacyLevel == 1) return "PUBLIC (Deprecated)";
 
         return StageInstance.PrivacyLevel.fromKey(privacyLevel).name();
     }

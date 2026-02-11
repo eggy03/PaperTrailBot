@@ -28,35 +28,36 @@ public class InviteDeleteEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following invite has been deleted by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following invite has been deleted by: " + mentionableExecutor);
         eb.setColor(Color.BLUE);
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        ale.getChanges().forEach((changeKey, changeValue)-> {
+        ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
 
-                case "code" -> eb.addField("Deleted Invite Code", "╰┈➤"+oldValue, false);
+                case "code" -> eb.addField("Deleted Invite Code", "╰┈➤" + oldValue, false);
 
                 case "inviter_id" -> {
                     User inviter = ale.getJDA().getUserById(String.valueOf(oldValue));
-                    eb.addField("Invite Originally Created By", "╰┈➤"+(inviter != null ? inviter.getAsMention() : "`Unknown`"), false);
+                    eb.addField("Invite Originally Created By", "╰┈➤" + (inviter != null ? inviter.getAsMention() : "`Unknown`"), false);
                 }
 
-                case "temporary" -> eb.addField("Temporary Invite", "╰┈➤"+ BooleanUtils.formatToYesOrNo(oldValue), false);
+                case "temporary" ->
+                        eb.addField("Temporary Invite", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
                 case "max_uses", "flags", "max_age" -> {
                     // ignore
                 }
 
-                case "uses" -> eb.addField("Number of times the invite was used", "╰┈➤"+oldValue, false);
+                case "uses" -> eb.addField("Number of times the invite was used", "╰┈➤" + oldValue, false);
 
                 case "channel_id" -> {
                     Channel channel = ale.getGuild().getGuildChannelById(String.valueOf(oldValue));
-                    eb.addField("Invite Channel", "╰┈➤"+(channel != null ? channel.getAsMention() : "`"+oldValue+"`"), false);
+                    eb.addField("Invite Channel", "╰┈➤" + (channel != null ? channel.getAsMention() : "`" + oldValue + "`"), false);
                 }
 
                 default -> {
@@ -67,17 +68,17 @@ public class InviteDeleteEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

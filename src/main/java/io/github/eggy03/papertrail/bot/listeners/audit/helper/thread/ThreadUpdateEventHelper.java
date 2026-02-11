@@ -22,9 +22,9 @@ import java.util.Map;
 @Slf4j
 public class ThreadUpdateEventHelper {
 
-   public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
+    public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
 
-       AuditLogEntry ale = event.getEntry();
+        AuditLogEntry ale = event.getEntry();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Thread Update Event");
@@ -33,81 +33,81 @@ public class ThreadUpdateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         ThreadChannel targetThread = event.getGuild().getThreadChannelById(ale.getTargetId());
-        String mentionableTargetThread = (targetThread !=null ? targetThread.getAsMention() : ale.getTargetId());
+        String mentionableTargetThread = (targetThread != null ? targetThread.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A thread has been updated");
+        eb.setDescription("👤 **By**: " + mentionableExecutor + "\nℹ️ A thread has been updated");
         eb.setColor(Color.YELLOW);
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
         eb.addBlankField(true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        for (Map.Entry<String, AuditLogChange> changes : ale.getChanges().entrySet()) {
             String change = changes.getKey();
             Object oldValue = changes.getValue().getOldValue();
             Object newValue = changes.getValue().getNewValue();
 
-            switch(change) {
+            switch (change) {
                 case "locked":
-                    eb.addField("🔒 Old Lock Status", "╰┈➤"+ BooleanUtils.formatToEmoji(oldValue), true);
-                    eb.addField("🔒 New Lock Status", "╰┈➤"+ BooleanUtils.formatToEmoji(newValue), true);
+                    eb.addField("🔒 Old Lock Status", "╰┈➤" + BooleanUtils.formatToEmoji(oldValue), true);
+                    eb.addField("🔒 New Lock Status", "╰┈➤" + BooleanUtils.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 
                 case "auto_archive_duration":
-                    eb.addField("🕒 Old Auto Archive Duration", "╰┈➤"+ DurationUtils.formatMinutes(oldValue), true);
-                    eb.addField("🕒 New Auto Archive Duration", "╰┈➤"+ DurationUtils.formatMinutes(newValue), true);
+                    eb.addField("🕒 Old Auto Archive Duration", "╰┈➤" + DurationUtils.formatMinutes(oldValue), true);
+                    eb.addField("🕒 New Auto Archive Duration", "╰┈➤" + DurationUtils.formatMinutes(newValue), true);
                     eb.addBlankField(true);
                     break;
 
                 case "rate_limit_per_user":
-                    eb.addField("🐌 Old Slowmode Limit", "╰┈➤"+ DurationUtils.formatSeconds(oldValue), true);
-                    eb.addField("🐌 New Slowmode Limit", "╰┈➤"+ DurationUtils.formatSeconds(newValue), true);
+                    eb.addField("🐌 Old Slowmode Limit", "╰┈➤" + DurationUtils.formatSeconds(oldValue), true);
+                    eb.addField("🐌 New Slowmode Limit", "╰┈➤" + DurationUtils.formatSeconds(newValue), true);
                     eb.addBlankField(true);
                     break;
 
-                    // TODO make threadutils
+                // TODO make threadutils
                 case "type":
-                    eb.addField("📁 Old Thread Type", "╰┈➤"+ChannelUtils.resolveChannelType(oldValue), true);
-                    eb.addField("📁 New Thread Type", "╰┈➤"+ChannelUtils.resolveChannelType(newValue), true);
+                    eb.addField("📁 Old Thread Type", "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), true);
+                    eb.addField("📁 New Thread Type", "╰┈➤" + ChannelUtils.resolveChannelType(newValue), true);
                     eb.addBlankField(true);
                     break;
 
                 case "archived":
-                    eb.addField("🗄️ Old Archive Status", "╰┈➤"+ BooleanUtils.formatToEmoji(oldValue), true);
-                    eb.addField("🗄️ New Archive Status", "╰┈➤"+ BooleanUtils.formatToEmoji(newValue), true);
+                    eb.addField("🗄️ Old Archive Status", "╰┈➤" + BooleanUtils.formatToEmoji(oldValue), true);
+                    eb.addField("🗄️ New Archive Status", "╰┈➤" + BooleanUtils.formatToEmoji(newValue), true);
                     eb.addBlankField(true);
                     break;
 
                 case "flags":
-                    eb.addField("🚩 Old Flag Value", "╰┈➤"+oldValue, true);
-                    eb.addField("🚩 New Flag Value", "╰┈➤"+newValue, true);
+                    eb.addField("🚩 Old Flag Value", "╰┈➤" + oldValue, true);
+                    eb.addField("🚩 New Flag Value", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                     break;
 
                 case "name":
-                    eb.addField("🏷️ Old Thread Name", "╰┈➤"+oldValue, true);
-                    eb.addField("🏷️ New Thread Name", "╰┈➤"+newValue, true);
+                    eb.addField("🏷️ Old Thread Name", "╰┈➤" + oldValue, true);
+                    eb.addField("🏷️ New Thread Name", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                     break;
 
                 default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                    eb.addField(change, "from " + oldValue + " to " + newValue, false);
             }
 
         }
-        eb.addField("🧵 Target Thread", "╰┈➤"+mentionableTargetThread, false);
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.addField("🧵 Target Thread", "╰┈➤" + mentionableTargetThread, false);
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
-       MessageEmbed mb = eb.build();
-       if(!mb.isSendable()){
-           log.warn("Embed is empty or too long (current length: {}).", eb.length());
-           return;
-       }
+        MessageEmbed mb = eb.build();
+        if (!mb.isSendable()) {
+            log.warn("Embed is empty or too long (current length: {}).", eb.length());
+            return;
+        }
 
-       TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-       if(sendingChannel!=null && sendingChannel.canTalk()) {
-           sendingChannel.sendMessageEmbeds(mb).queue();
-       }
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if (sendingChannel != null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(mb).queue();
+        }
     }
 }

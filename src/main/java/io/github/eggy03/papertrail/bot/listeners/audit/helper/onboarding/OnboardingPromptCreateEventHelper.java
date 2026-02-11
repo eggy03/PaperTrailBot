@@ -38,8 +38,9 @@ public class OnboardingPromptCreateEventHelper {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
-            switch (changeKey){
-                case "single_select" -> eb.addField("Single Selection Mode", BooleanUtils.formatToYesOrNo(newValue), false);
+            switch (changeKey) {
+                case "single_select" ->
+                        eb.addField("Single Selection Mode", BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "required" -> eb.addField("Required", BooleanUtils.formatToYesOrNo(newValue), false);
 
@@ -51,7 +52,8 @@ public class OnboardingPromptCreateEventHelper {
 
                 case "options" -> eb.addField("Question Options", "Review the options in Onboarding Settings", false);
 
-                case "in_onboarding" -> eb.addField("Is a Pre-Join Question", BooleanUtils.formatToYesOrNo(newValue), false);
+                case "in_onboarding" ->
+                        eb.addField("Is a Pre-Join Question", BooleanUtils.formatToYesOrNo(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -61,17 +63,17 @@ public class OnboardingPromptCreateEventHelper {
 
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

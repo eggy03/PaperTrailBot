@@ -54,23 +54,31 @@ public class GuildUpdateEventHelper {
 
                 case "preferred_locale" -> eb.addField("Preferred Locale Set To", String.valueOf(newValue), false);
 
-                case "afk_channel_id" -> eb.addField("AFK Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                case "afk_channel_id" ->
+                        eb.addField("AFK Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
 
-                case "default_message_notifications" -> eb.addField("Default Message Notifications Update", GuildUtils.resolveGuildDefaultMessageNotificationLevel(newValue), false);
+                case "default_message_notifications" ->
+                        eb.addField("Default Message Notifications Update", GuildUtils.resolveGuildDefaultMessageNotificationLevel(newValue), false);
 
-                case "afk_timeout" -> eb.addField("AFK Channel Timeout Change", DurationUtils.formatSeconds(newValue), false);
+                case "afk_timeout" ->
+                        eb.addField("AFK Channel Timeout Change", DurationUtils.formatSeconds(newValue), false);
 
-                case "system_channel_id" -> eb.addField("Community Updates Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                case "system_channel_id" ->
+                        eb.addField("Community Updates Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
 
                 case "widget_enabled" -> eb.addField("Widget Enabled", BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "widget_channel_id" -> eb.addField("Widget Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                case "widget_channel_id" ->
+                        eb.addField("Widget Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
 
-                case "premium_progress_bar_enabled" -> eb.addField("Server Boost Progress Bar Enabled", BooleanUtils.formatToYesOrNo(newValue), false);
+                case "premium_progress_bar_enabled" ->
+                        eb.addField("Server Boost Progress Bar Enabled", BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "mfa_level" -> eb.addField("MFA Requirement Set To", GuildUtils.resolveGuildModActionMFALevel(newValue), false);
+                case "mfa_level" ->
+                        eb.addField("MFA Requirement Set To", GuildUtils.resolveGuildModActionMFALevel(newValue), false);
 
-                case "verification_level" -> eb.addField("Verification Level Set To", GuildUtils.resolveGuildVerificationLevel(newValue), false);
+                case "verification_level" ->
+                        eb.addField("Verification Level Set To", GuildUtils.resolveGuildVerificationLevel(newValue), false);
 
                 case "owner_id" -> {
                     User oldOwner = ale.getJDA().getUserById(String.valueOf(oldValue));
@@ -81,13 +89,17 @@ public class GuildUpdateEventHelper {
                     eb.addField("New Owner", mentionableNewOwner, false);
                 }
 
-                case "public_updates_channel_id" -> eb.addField("Announcements Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                case "public_updates_channel_id" ->
+                        eb.addField("Announcements Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
 
-                case "rules_channel_id" -> eb.addField("Rules Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                case "rules_channel_id" ->
+                        eb.addField("Rules Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
 
-                case "system_channel_flags" -> eb.addField("System Channel Flags", GuildUtils.resolveSystemChannelFlags(newValue), false);
+                case "system_channel_flags" ->
+                        eb.addField("System Channel Flags", GuildUtils.resolveSystemChannelFlags(newValue), false);
 
-                case "explicit_content_filter" -> eb.addField("Explicit Content Filter", GuildUtils.resolveExplicitContentFilterLevel(newValue), false);
+                case "explicit_content_filter" ->
+                        eb.addField("Explicit Content Filter", GuildUtils.resolveExplicitContentFilterLevel(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -100,13 +112,13 @@ public class GuildUpdateEventHelper {
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

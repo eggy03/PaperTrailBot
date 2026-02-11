@@ -26,13 +26,13 @@ public class SoundboardSoundDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Soundboard Sound Create Event");
-        eb.setDescription("ℹ️ A sound item was deleted from the soundboard by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ A sound item was deleted from the soundboard by: " + mentionableExecutor);
         eb.setColor(Color.RED);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        ale.getChanges().forEach((changeKey, changeValue)-> {
+        ale.getChanges().forEach((changeKey, changeValue) -> {
 
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
@@ -42,13 +42,14 @@ public class SoundboardSoundDeleteEventHelper {
                 case "user_id", "sound_id", "id", "guild_id", "available" -> {
                     // skip
                 }
-                case "volume" -> eb.addField("Volume", "╰┈➤"+ SoundboardUtils.resolveVolumePercentage(oldValue), false);
+                case "volume" ->
+                        eb.addField("Volume", "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), false);
 
-                case "emoji_name" -> eb.addField("Related Emoji", "╰┈➤"+oldValue, false);
+                case "emoji_name" -> eb.addField("Related Emoji", "╰┈➤" + oldValue, false);
 
-                case "emoji_id" -> eb.addField("Related Emoji ID", "╰┈➤"+oldValue, false);
+                case "emoji_id" -> eb.addField("Related Emoji ID", "╰┈➤" + oldValue, false);
 
-                case "name" -> eb.addField("Sound Item Name", "╰┈➤"+oldValue, false);
+                case "name" -> eb.addField("Sound Item Name", "╰┈➤" + oldValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -57,17 +58,17 @@ public class SoundboardSoundDeleteEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

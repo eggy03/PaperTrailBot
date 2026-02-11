@@ -26,14 +26,14 @@ public class GuildVoiceEventListener extends ListenerAdapter {
 
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
-	private final Executor vThreadPool;
+    private final Executor vThreadPool;
 
-	@Override
-	public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+    @Override
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
 
-		vThreadPool.execute(()->{
+        vThreadPool.execute(() -> {
 
-			// guild voice events are mapped to audit log table
+            // guild voice events are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
             Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
             response.ifPresent(success -> {
@@ -47,25 +47,25 @@ public class GuildVoiceEventListener extends ListenerAdapter {
                 AudioChannel left = event.getOldValue(); // can be null if user joined for first time
                 AudioChannel joined = event.getNewValue(); // can be null if user left
 
-                if(left==null && joined!=null) {
+                if (left == null && joined != null) {
                     // User has joined a vc
                     eb.setDescription("A Member has joined a voice channel");
                     eb.setColor(Color.GREEN);
-                    eb.addField("✅ Member Joined", "╰┈➤"+member.getAsMention()+" joined the voice channel "+joined.getAsMention(), false);
+                    eb.addField("✅ Member Joined", "╰┈➤" + member.getAsMention() + " joined the voice channel " + joined.getAsMention(), false);
                 }
 
                 if (left != null && joined != null) {
                     // Moved from one channel to another
                     eb.setDescription("A Member has switched voice channels");
                     eb.setColor(Color.YELLOW);
-                    eb.addField("🔄 Member Switched Channels", "╰┈➤"+member.getAsMention()+" joined the switched from channel "+left.getAsMention()+ " to "+joined.getAsMention(), false);
+                    eb.addField("🔄 Member Switched Channels", "╰┈➤" + member.getAsMention() + " joined the switched from channel " + left.getAsMention() + " to " + joined.getAsMention(), false);
                 }
 
-                if (left!=null && joined==null) {
+                if (left != null && joined == null) {
                     // User disconnected voluntarily (or was disconnected by a moderator)
                     eb.setDescription("A Member has left a voice channel");
                     eb.setColor(Color.RED);
-                    eb.addField("❌ Member Left A Voice Channel", "╰┈➤"+member.getAsMention()+" left the voice channel "+left.getAsMention(), false);
+                    eb.addField("❌ Member Left A Voice Channel", "╰┈➤" + member.getAsMention() + " left the voice channel " + left.getAsMention(), false);
                 }
 
                 eb.setFooter("Voice Activity Detection");
@@ -74,11 +74,11 @@ public class GuildVoiceEventListener extends ListenerAdapter {
                 MessageEmbed mb = eb.build();
 
                 TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
-                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                if (sendingChannel != null && sendingChannel.canTalk()) {
                     sendingChannel.sendMessageEmbeds(mb).queue();
                 }
             });
 
-		});
-	}
+        });
+    }
 }

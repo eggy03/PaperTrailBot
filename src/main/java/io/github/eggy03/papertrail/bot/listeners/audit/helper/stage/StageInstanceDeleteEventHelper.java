@@ -26,7 +26,7 @@ public class StageInstanceDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Delete Event");
-        eb.setDescription("ℹ️ A stage instance was deleted by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ A stage instance was deleted by: " + mentionableExecutor);
         eb.setColor(Color.RED);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -36,10 +36,11 @@ public class StageInstanceDeleteEventHelper {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
-            switch(changeKey) {
-                case "topic" -> eb.addField("Stage Topic", "╰┈➤"+oldValue, false);
+            switch (changeKey) {
+                case "topic" -> eb.addField("Stage Topic", "╰┈➤" + oldValue, false);
 
-                case "privacy_level" -> eb.addField("Stage Privacy", "╰┈➤"+ StageUtils.resolveStagePrivacyLevel(oldValue), false);
+                case "privacy_level" ->
+                        eb.addField("Stage Privacy", "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -47,17 +48,17 @@ public class StageInstanceDeleteEventHelper {
                 }
             }
         });
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

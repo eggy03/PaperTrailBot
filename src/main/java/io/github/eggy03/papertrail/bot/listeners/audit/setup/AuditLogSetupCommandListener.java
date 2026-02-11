@@ -22,38 +22,38 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 
-	@Override
-	public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
+    @Override
+    public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
-        if(!event.getName().equals("auditlog")){
+        if (!event.getName().equals("auditlog")) {
             return;
         }
 
-        if(event.getSubcommandName()==null) {
+        if (event.getSubcommandName() == null) {
             return;
         }
 
-		switch(event.getSubcommandName()) {
+        switch (event.getSubcommandName()) {
 
-		case "set":
-			setAuditLogging(event);
-			break;
+            case "set":
+                setAuditLogging(event);
+                break;
 
-		case "view":
-			retrieveAuditLoggingChannel(event);
-			break;
+            case "view":
+                retrieveAuditLoggingChannel(event);
+                break;
 
-		case "remove":
-			unsetAuditLogging(event);
-			break;
+            case "remove":
+                unsetAuditLogging(event);
+                break;
 
-		default:
-			break;
-		}
-	}
+            default:
+                break;
+        }
+    }
 
 
-	private void setAuditLogging(@NonNull SlashCommandInteractionEvent event) {
+    private void setAuditLogging(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with MANAGE_SERVER permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -92,7 +92,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
     }
 
-	private void retrieveAuditLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
+    private void retrieveAuditLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with MANAGE_SERVER permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -104,39 +104,39 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
         }
 
         if (!callerMember.hasPermission(Permission.MANAGE_SERVER)) {
-			event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
-			return;
-		}
-		
+            event.reply("❌ You don't have the permission required to use this command.").setEphemeral(true).queue();
+            return;
+        }
 
-		// Call the API to retrieve the registered channel
+
+        // Call the API to retrieve the registered channel
         Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(callerGuild.getId());
 
-		// if there is no channel_id for the given guild_id returned by the API, then inform
-		// the user of the same, else link the channel that has been registered
+        // if there is no channel_id for the given guild_id returned by the API, then inform
+        // the user of the same, else link the channel that has been registered
         response.ifPresentOrElse(success -> {
 
             String registeredChannelId = success.getChannelId();
-            GuildChannel registeredChannel =  event.getJDA().getGuildChannelById(registeredChannelId);
+            GuildChannel registeredChannel = event.getJDA().getGuildChannelById(registeredChannelId);
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
             eb.setColor(Color.CYAN);
-            eb.addField("✅ Channel Registration Check", "╰┈➤"+(registeredChannel!=null ? registeredChannel.getAsMention() : registeredChannelId)+ " is found to be registered as the audit log channel", false);
+            eb.addField("✅ Channel Registration Check", "╰┈➤" + (registeredChannel != null ? registeredChannel.getAsMention() : registeredChannelId) + " is found to be registered as the audit log channel", false);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
 
         }, () -> {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("📝 Audit Log Configuration");
-            eb.addField("⚠️ Channel Registration Check", "╰┈➤"+"No channel has been registered for audit logs", false);
+            eb.addField("⚠️ Channel Registration Check", "╰┈➤" + "No channel has been registered for audit logs", false);
             eb.setColor(Color.YELLOW);
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
         });
-	}
+    }
 
-	private void unsetAuditLogging(SlashCommandInteractionEvent event) {
+    private void unsetAuditLogging(SlashCommandInteractionEvent event) {
 
         // Only members in a guild with MANAGE_SERVER permissions should be able to use this command
         Member callerMember = event.getMember();
@@ -159,18 +159,18 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
         eb.setTitle("📝 Audit Log Configuration");
 
         if (success) {
-            eb.addField("✅ Channel Removal", "╰┈➤"+"Channel successfully unset", false);
+            eb.addField("✅ Channel Removal", "╰┈➤" + "Channel successfully unset", false);
             eb.setColor(Color.GREEN);
 
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
         } else {
-            eb.addField("❌ Channel Removal Failure", "╰┈➤"+"Channel could not be unset.\nThis may be because no channel has been registered in this guild yet.", false);
+            eb.addField("❌ Channel Removal Failure", "╰┈➤" + "Channel could not be unset.\nThis may be because no channel has been registered in this guild yet.", false);
             eb.setColor(Color.YELLOW);
 
             MessageEmbed mb = eb.build();
             event.replyEmbeds(mb).setEphemeral(false).queue();
         }
 
-	}
+    }
 }

@@ -38,7 +38,7 @@ public class OnboardingPromptUpdateEventHelper {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
-            switch (changeKey){
+            switch (changeKey) {
                 case "single_select" -> {
                     eb.addField("Old Single Selection Mode", BooleanUtils.formatToYesOrNo(oldValue), false);
                     eb.addField("New Single Selection Mode", BooleanUtils.formatToYesOrNo(newValue), false);
@@ -58,7 +58,8 @@ public class OnboardingPromptUpdateEventHelper {
                     eb.addField("New Question Title", String.valueOf(newValue), false);
                 }
 
-                case "options" -> eb.addField("Question Options", "Review the changed options in Onboarding Settings", false);
+                case "options" ->
+                        eb.addField("Question Options", "Review the changed options in Onboarding Settings", false);
 
                 case "in_onboarding" -> {
                     eb.addField("Was a Pre-Join Question", BooleanUtils.formatToYesOrNo(oldValue), false);
@@ -72,17 +73,17 @@ public class OnboardingPromptUpdateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

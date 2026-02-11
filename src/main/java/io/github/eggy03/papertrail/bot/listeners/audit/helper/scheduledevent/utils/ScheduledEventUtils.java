@@ -12,7 +12,7 @@ import java.util.Map;
 public class ScheduledEventUtils {
 
     @NotNull
-    public static String resolveEventType (@Nullable Object eventTypeInteger) {
+    public static String resolveEventType(@Nullable Object eventTypeInteger) {
 
         Integer eventType = NumberParseUtils.parseInt(eventTypeInteger);
         if (eventType == null)
@@ -23,7 +23,7 @@ public class ScheduledEventUtils {
     }
 
     @NotNull
-    public static String resolveStatusType (@Nullable Object eventTypeInteger) {
+    public static String resolveStatusType(@Nullable Object eventTypeInteger) {
         Integer eventType = NumberParseUtils.parseInt(eventTypeInteger);
         if (eventType == null)
             return "N/A";
@@ -34,11 +34,11 @@ public class ScheduledEventUtils {
     @NotNull
     public static String resolveRecurrenceRules(@Nullable Object recurrenceRuleStructure) {
 
-        if(recurrenceRuleStructure==null)
+        if (recurrenceRuleStructure == null)
             return "N/A";
 
         StringBuilder stringBuilder = new StringBuilder();
-        if(recurrenceRuleStructure instanceof Map<?,?> recurrenceRuleMap) {
+        if (recurrenceRuleStructure instanceof Map<?, ?> recurrenceRuleMap) {
 
             stringBuilder
                     .append("**_Start Time of Interval_**")

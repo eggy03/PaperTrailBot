@@ -30,13 +30,13 @@ public class NumberParseUtils {
     }
 
     @Nullable
-    public static Double parseDouble (@Nullable Object possibleDoubleValue, int roundingDigits, RoundingMode roundingMode) {
-        if(possibleDoubleValue==null) return null;
+    public static Double parseDouble(@Nullable Object possibleDoubleValue, int roundingDigits, RoundingMode roundingMode) {
+        if (possibleDoubleValue == null) return null;
 
         try {
             double doubleValue = Double.parseDouble(String.valueOf(possibleDoubleValue));
             return BigDecimal.valueOf(doubleValue).setScale(roundingDigits, roundingMode).doubleValue();
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return null;
         }
     }

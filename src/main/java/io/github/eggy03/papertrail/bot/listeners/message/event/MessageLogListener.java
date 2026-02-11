@@ -35,19 +35,19 @@ public class MessageLogListener extends ListenerAdapter {
 
     private final Executor vThreadPool;
 
-	@Override
-	public void onMessageReceived(@NonNull MessageReceivedEvent event) {
+    @Override
+    public void onMessageReceived(@NonNull MessageReceivedEvent event) {
 
-		// if the author is a bot or system, don't log
-		if(event.getAuthor().isBot() || event.getAuthor().isSystem()) {
-			return;
-		}
-		// don't register non-textual contents
-		if(event.getMessage().getContentRaw().isEmpty()) {
-			return;
-		}
+        // if the author is a bot or system, don't log
+        if (event.getAuthor().isBot() || event.getAuthor().isSystem()) {
+            return;
+        }
+        // don't register non-textual contents
+        if (event.getMessage().getContentRaw().isEmpty()) {
+            return;
+        }
 
-		vThreadPool.execute(()-> {
+        vThreadPool.execute(() -> {
 
             // get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
@@ -60,17 +60,17 @@ public class MessageLogListener extends ListenerAdapter {
 
                 contentClient.logMessage(messageId, messageContent, authorId);
             });
-		});
-	}
-	
-	@Override
-	public void onMessageUpdate(@NonNull MessageUpdateEvent event) {
+        });
+    }
 
-		if(event.getAuthor().isBot() || event.getAuthor().isSystem()) {
-			return;
-		}
+    @Override
+    public void onMessageUpdate(@NonNull MessageUpdateEvent event) {
 
-		vThreadPool.execute(()->{
+        if (event.getAuthor().isBot() || event.getAuthor().isSystem()) {
+            return;
+        }
+
+        vThreadPool.execute(() -> {
 
             // Get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
@@ -93,7 +93,7 @@ public class MessageLogListener extends ListenerAdapter {
 
                     // Ignore events where the message content wasn't edited (e.g., pin, embed resolve, thread creates and updates)
                     // This is required since MessageUpdateEvent is triggered in case of pins and embed resolves with no change to content
-                    if(updatedMessage.equals(oldMessage)) {
+                    if (updatedMessage.equals(oldMessage)) {
                         return;
                     }
 
@@ -104,7 +104,7 @@ public class MessageLogListener extends ListenerAdapter {
 
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setTitle("📝 Message Edit Event");
-                    eb.setDescription("A message sent by "+event.getAuthor().getAsMention()+" has been edited in: "+event.getJumpUrl());
+                    eb.setDescription("A message sent by " + event.getAuthor().getAsMention() + " has been edited in: " + event.getJumpUrl());
                     eb.setColor(Color.YELLOW);
 
                     oldMessageSplits.forEach(split -> eb.addField("Old Message", split, false));
@@ -117,7 +117,7 @@ public class MessageLogListener extends ListenerAdapter {
 
                     // send the old and updated message to the registered channel
                     TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-                    if(sendingChannel!=null && sendingChannel.canTalk()) {
+                    if (sendingChannel != null && sendingChannel.canTalk()) {
                         sendingChannel.sendMessageEmbeds(mb).queue();
                     }
 
@@ -125,13 +125,13 @@ public class MessageLogListener extends ListenerAdapter {
                     contentClient.updateMessage(messageId, updatedMessage, event.getAuthor().getId());
                 });
             });
-		});
-	}
-	
-	@Override
-	public void onMessageDelete(@NonNull MessageDeleteEvent event) {
+        });
+    }
 
-		vThreadPool.execute(()-> {
+    @Override
+    public void onMessageDelete(@NonNull MessageDeleteEvent event) {
+
+        vThreadPool.execute(() -> {
 
             // Get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
@@ -154,17 +154,17 @@ public class MessageLogListener extends ListenerAdapter {
                     String deletedMessageAuthorId = contentEntity.getAuthorId();
 
                     User author = event.getJDA().getUserById(deletedMessageAuthorId);
-                    String mentionableAuthor = (author !=null ? author.getAsMention() : deletedMessageAuthorId);
+                    String mentionableAuthor = (author != null ? author.getAsMention() : deletedMessageAuthorId);
 
                     // Splitting is required because each field in an embed can display only up-to 1024 characters
                     List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(deletedMessage);
 
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setTitle("🗑️ Message Delete Event");
-                    eb.setDescription("A message sent by "+mentionableAuthor+" has been deleted from "+ event.getChannel().getAsMention());
+                    eb.setDescription("A message sent by " + mentionableAuthor + " has been deleted from " + event.getChannel().getAsMention());
                     eb.setColor(Color.RED);
 
-                    deletedMessageSplits.forEach(split-> eb.addField("Deleted Message", split, false));
+                    deletedMessageSplits.forEach(split -> eb.addField("Deleted Message", split, false));
 
                     eb.setFooter(event.getGuild().getName());
                     eb.setTimestamp(Instant.now());
@@ -173,7 +173,7 @@ public class MessageLogListener extends ListenerAdapter {
                     MessageEmbed mb = eb.build();
 
                     TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-                    if(sendingChannel!=null && sendingChannel.canTalk()) {
+                    if (sendingChannel != null && sendingChannel.canTalk()) {
                         sendingChannel.sendMessageEmbeds(mb).queue();
                     }
 
@@ -181,6 +181,6 @@ public class MessageLogListener extends ListenerAdapter {
                     contentClient.deleteMessage(messageId);
                 });
             });
-		});
-	}
+        });
+    }
 }

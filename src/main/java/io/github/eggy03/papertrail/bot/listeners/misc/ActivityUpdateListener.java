@@ -10,30 +10,30 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import org.jetbrains.annotations.NotNull;
 
 /*
- * This class updates the number of servers the bot is in 
+ * This class updates the number of servers the bot is in
  */
 @RequiredArgsConstructor
 public class ActivityUpdateListener extends ListenerAdapter {
 
-	private final ShardManager manager;
+    private final ShardManager manager;
 
-	@Override
-	public void onReady(@NotNull ReadyEvent event) { // update on cold start
-		updateActivity();
-	}
+    @Override
+    public void onReady(@NotNull ReadyEvent event) { // update on cold start
+        updateActivity();
+    }
 
-	@Override
-	public void onGuildJoin(@NotNull GuildJoinEvent event) { // update on guild join
-		updateActivity();
-	}
+    @Override
+    public void onGuildJoin(@NotNull GuildJoinEvent event) { // update on guild join
+        updateActivity();
+    }
 
-	@Override
-	public void onGuildLeave(@NotNull GuildLeaveEvent event) { // update on guild leave
-		updateActivity();
-	}
+    @Override
+    public void onGuildLeave(@NotNull GuildLeaveEvent event) { // update on guild leave
+        updateActivity();
+    }
 
-	private void updateActivity() {
-		manager.setActivity(Activity.customStatus("Monitoring In: "+manager.getGuildCache().size() + " Servers"));
-	}
+    private void updateActivity() {
+        manager.setActivity(Activity.customStatus("Monitoring In: " + manager.getGuildCache().size() + " Servers"));
+    }
 
 }

@@ -26,7 +26,7 @@ public class ScheduledEventUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Scheduled Event Update Event");
-        eb.setDescription("ℹ️ The following scheduled event was updated by: "+mentionableExecutor);
+        eb.setDescription("ℹ️ The following scheduled event was updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
@@ -38,24 +38,24 @@ public class ScheduledEventUpdateEventHelper {
 
             switch (changeKey) {
                 case "entity_type" -> {
-                    eb.addField("Old Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(oldValue), false);
-                    eb.addField("New Event Type", "╰┈➤"+ScheduledEventUtils.resolveEventType(newValue), false);
+                    eb.addField("Old Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), false);
+                    eb.addField("New Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(newValue), false);
                 }
                 case "name" -> {
-                    eb.addField("Old Event Name", "╰┈➤"+oldValue, false);
-                    eb.addField("New Event Name","╰┈➤"+newValue, false);
+                    eb.addField("Old Event Name", "╰┈➤" + oldValue, false);
+                    eb.addField("New Event Name", "╰┈➤" + newValue, false);
                 }
                 case "description" -> {
-                    eb.addField("Old Event Description", "╰┈➤"+oldValue, false);
-                    eb.addField("New Event Description", "╰┈➤"+newValue, false);
+                    eb.addField("Old Event Description", "╰┈➤" + oldValue, false);
+                    eb.addField("New Event Description", "╰┈➤" + newValue, false);
                 }
                 case "status" -> {
-                    eb.addField("Old Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(oldValue), false);
-                    eb.addField("New Event Status", "╰┈➤"+ScheduledEventUtils.resolveStatusType(newValue), false);
+                    eb.addField("Old Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), false);
+                    eb.addField("New Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(newValue), false);
                 }
                 case "location" -> {
-                    eb.addField("Event Location", "╰┈➤"+oldValue, false);
-                    eb.addField("Event Location", "╰┈➤"+newValue, false);
+                    eb.addField("Event Location", "╰┈➤" + oldValue, false);
+                    eb.addField("Event Location", "╰┈➤" + newValue, false);
                 }
                 case "privacy_level" -> eb.addField("Privacy", "╰┈➤Event privacy has been updated", false);
                 case "image_hash" -> eb.addField("Image", "╰┈➤Event Image has been updated", false);
@@ -72,17 +72,17 @@ public class ScheduledEventUpdateEventHelper {
             }
         });
 
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }

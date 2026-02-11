@@ -30,13 +30,13 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
-	private final Executor vThreadPool;
+    private final Executor vThreadPool;
 
-	@Override
-	public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
 
-		vThreadPool.execute(()->{
-			// guild member join and leave events are mapped to audit log table
+        vThreadPool.execute(() -> {
+            // guild member join and leave events are mapped to audit log table
             // Call the API and see if the event came from a registered Guild
             Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
             response.ifPresent(success -> {
@@ -48,15 +48,15 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setTitle("🛬 Member Join Event");
-                eb.setDescription("A Member has joined "+guild.getName());
+                eb.setDescription("A Member has joined " + guild.getName());
                 eb.setColor(Color.GREEN);
 
-                eb.addField("🏷️ Member Name", "╰┈➤"+user.getName(), false);
+                eb.addField("🏷️ Member Name", "╰┈➤" + user.getName(), false);
                 eb.setThumbnail(user.getEffectiveAvatarUrl());
-                eb.addField("ℹ️ Member Mention", "╰┈➤"+user.getAsMention(), false);
-                eb.addField("🆔 Member ID", "╰┈➤"+user.getId(), false);
-                eb.addField("📅 Account Created", "╰┈➤"+ DurationUtils.isoToLocalTimeCounter(user.getTimeCreated()), false);
-                eb.addField("🤖 Bot Account", "╰┈➤"+ BooleanUtils.formatToYesOrNo(user.isBot()), false);
+                eb.addField("ℹ️ Member Mention", "╰┈➤" + user.getAsMention(), false);
+                eb.addField("🆔 Member ID", "╰┈➤" + user.getId(), false);
+                eb.addField("📅 Account Created", "╰┈➤" + DurationUtils.isoToLocalTimeCounter(user.getTimeCreated()), false);
+                eb.addField("🤖 Bot Account", "╰┈➤" + BooleanUtils.formatToYesOrNo(user.isBot()), false);
 
                 eb.setFooter("Member Join Detection");
                 eb.setTimestamp(Instant.now());
@@ -64,17 +64,17 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
                 MessageEmbed mb = eb.build();
 
                 TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
-                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                if (sendingChannel != null && sendingChannel.canTalk()) {
                     sendingChannel.sendMessageEmbeds(mb).queue();
                 }
             });
-		});
-	}
+        });
+    }
 
-	@Override
-	public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+    @Override
+    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
 
-		vThreadPool.execute(() -> {
+        vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
             Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
             response.ifPresent(success -> {
@@ -87,23 +87,23 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
                 String memberJoinDate = "Member Not Cached";
                 boolean memberJoinDateTrustable = false;
-                if(member!=null){
-                    memberJoinDate = "<t:" +member.getTimeJoined().toEpochSecond()+ ":f>";
+                if (member != null) {
+                    memberJoinDate = "<t:" + member.getTimeJoined().toEpochSecond() + ":f>";
                     memberJoinDateTrustable = member.hasTimeJoined();
                 }
-                String memberLeaveDate = "<t:" +Instant.now().getEpochSecond()+ ":f>";
+                String memberLeaveDate = "<t:" + Instant.now().getEpochSecond() + ":f>";
 
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setTitle("🛫 Member Leave Event");
-                eb.setDescription("A Member has left "+guild.getName());
+                eb.setDescription("A Member has left " + guild.getName());
                 eb.setColor(Color.RED);
 
-                eb.addField("🏷️ Member Name", "╰┈➤"+user.getName(), false);
+                eb.addField("🏷️ Member Name", "╰┈➤" + user.getName(), false);
                 eb.setThumbnail(user.getEffectiveAvatarUrl());
-                eb.addField("🆔 Member ID", "╰┈➤"+user.getId(), false);
-                eb.addField("⌛ Member Joined The Server On","╰┈➤"+memberJoinDate, false);
-                eb.addField("⌛ Member Left The Server On","╰┈➤"+memberLeaveDate, false);
-                eb.addField("⌛ Member Join Date Validity", memberJoinDateTrustable ? "╰┈➤Valid" : "╰┈➤Invalid" , false);
+                eb.addField("🆔 Member ID", "╰┈➤" + user.getId(), false);
+                eb.addField("⌛ Member Joined The Server On", "╰┈➤" + memberJoinDate, false);
+                eb.addField("⌛ Member Left The Server On", "╰┈➤" + memberLeaveDate, false);
+                eb.addField("⌛ Member Join Date Validity", memberJoinDateTrustable ? "╰┈➤Valid" : "╰┈➤Invalid", false);
 
                 eb.setFooter("If the member was loaded via lazy loading, join date will be identical to the guild creation date.");
                 eb.setTimestamp(Instant.now());
@@ -111,12 +111,12 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
                 MessageEmbed mb = eb.build();
 
                 TextChannel sendingChannel = event.getGuild().getTextChannelById(registeredChannelId);
-                if(sendingChannel!=null && sendingChannel.canTalk()) {
+                if (sendingChannel != null && sendingChannel.canTalk()) {
                     sendingChannel.sendMessageEmbeds(mb).queue();
                 }
             });
 
-		});
-	}
+        });
+    }
 
 }

@@ -77,10 +77,9 @@ import java.util.concurrent.Executor;
 @RequiredArgsConstructor
 public class AuditLogEventListener extends ListenerAdapter {
 
-    private final Executor vThreadPool;
-
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+    private final Executor vThreadPool;
 
     @Override
     public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
@@ -96,9 +95,12 @@ public class AuditLogEventListener extends ListenerAdapter {
         ActionType action = ale.getType();
         switch (action) {
 
-            case AUTO_MODERATION_FLAG_TO_CHANNEL -> AutoModerationFlagToChannelEventHelper.format(event, channelIdToSendTo);
-            case AUTO_MODERATION_MEMBER_TIMEOUT -> AutoModerationMemberTimeoutEventHelper.format(event, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_BLOCK_MESSAGE -> AutoModerationRuleBlockMessageEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_FLAG_TO_CHANNEL ->
+                    AutoModerationFlagToChannelEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_MEMBER_TIMEOUT ->
+                    AutoModerationMemberTimeoutEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_BLOCK_MESSAGE ->
+                    AutoModerationRuleBlockMessageEventHelper.format(event, channelIdToSendTo);
             case AUTO_MODERATION_RULE_CREATE -> AutoModerationRuleCreateEventHelper.format(event, channelIdToSendTo);
             case AUTO_MODERATION_RULE_UPDATE -> AutoModerationRuleUpdateEventHelper.format(event, channelIdToSendTo);
             case AUTO_MODERATION_RULE_DELETE -> AutoModerationRuleDeleteEventHelper.format(event, channelIdToSendTo);

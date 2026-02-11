@@ -18,7 +18,7 @@ public class MemberUtils {
     @NotNull
     public static String parseRoleListMap(@NonNull GenericGuildEvent event, @Nullable Object roleObject) {
 
-        if(roleObject==null) return "N/A";
+        if (roleObject == null) return "N/A";
 
         if (roleObject instanceof List<?> roleList) {
             StringBuilder roleString = new StringBuilder();
@@ -26,7 +26,7 @@ public class MemberUtils {
                 if (o instanceof Map<?, ?> roleMap && roleMap.containsKey("id")) {
                     String roleId = (String) roleMap.get("id");
                     Role role = event.getGuild().getRoleById(roleId);
-                    roleString.append(role!=null ? role.getAsMention() : roleMap.get("name")).append(" ");
+                    roleString.append(role != null ? role.getAsMention() : roleMap.get("name")).append(" ");
                 }
             });
             return roleString.toString().trim();

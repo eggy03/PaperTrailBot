@@ -29,52 +29,52 @@ public class WebhookUpdateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: "+mentionableExecutor+"\nℹ️ A webhook has been updated");
+        eb.setDescription("👤 **By**: " + mentionableExecutor + "\nℹ️ A webhook has been updated");
         eb.setColor(Color.YELLOW);
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
-        for(Map.Entry<String, AuditLogChange> changes: ale.getChanges().entrySet()) {
+        for (Map.Entry<String, AuditLogChange> changes : ale.getChanges().entrySet()) {
             String change = changes.getKey();
             Object oldValue = changes.getValue().getOldValue();
             Object newValue = changes.getValue().getNewValue();
 
-            switch(change) {
+            switch (change) {
                 case "type":
                     eb.addField("📡 Webhook Type", "╰┈➤ " + newValue, false);
                     break;
 
                 case "avatar_hash":
-                    eb.addField("🖼️ Avatar Hash", "╰┈➤"+"from `"+oldValue+"` to `"+newValue+"`", false);
+                    eb.addField("🖼️ Avatar Hash", "╰┈➤" + "from `" + oldValue + "` to `" + newValue + "`", false);
                     break;
 
                 case "channel_id":
                     GuildChannel targetChannel = event.getGuild().getGuildChannelById(String.valueOf(newValue));
-                    String mentionableTargetChannel = (targetChannel !=null ? targetChannel.getAsMention() : String.valueOf(newValue));
-                    eb.addField("💬 New Channel", "╰┈➤"+mentionableTargetChannel, false);
+                    String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : String.valueOf(newValue));
+                    eb.addField("💬 New Channel", "╰┈➤" + mentionableTargetChannel, false);
                     break;
 
                 case "name":
-                    eb.addField("🏷️ Webhook Name", "╰┈➤"+"from "+oldValue+" to "+newValue, false);
+                    eb.addField("🏷️ Webhook Name", "╰┈➤" + "from " + oldValue + " to " + newValue, false);
                     break;
 
 
                 default:
-                    eb.addField(change, "from "+oldValue+" to "+newValue, false);
+                    eb.addField(change, "from " + oldValue + " to " + newValue, false);
             }
 
         }
-        eb.setFooter("Audit Log Entry ID: "+ale.getId());
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
         MessageEmbed mb = eb.build();
-        if(!mb.isSendable()){
+        if (!mb.isSendable()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if(sendingChannel!=null && sendingChannel.canTalk()) {
+        if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
     }
