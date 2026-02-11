@@ -1,12 +1,10 @@
 package io.github.eggy03.papertrail.bot.commons.constant;
 
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class ProjectInfo {
-	
-	private ProjectInfo() {
-		throw new IllegalStateException("Utility Class");
-	}
 
 	@NonNull
 	public static final String APPNAME = "PaperTrail";
