@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.commons.utils;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -9,10 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @UtilityClass
+@Slf4j
 public class DurationUtils {
 
     public static String formatSeconds(@Nullable Object seconds) {
         if (seconds == null) {
+            log.debug("seconds value is null");
             return "N/A";
         }
 
@@ -38,7 +41,8 @@ public class DurationUtils {
 
             return sb.toString().trim();
         } catch (NumberFormatException e) {
-            return "Duration Cannot Be Parsed";
+            log.debug("failed to parse seconds from value={}", seconds);
+            return String.valueOf(seconds);
         }
 
 
@@ -46,6 +50,7 @@ public class DurationUtils {
 
     public static String formatMinutes(@Nullable Object minutes) {
         if (minutes == null) {
+            log.debug("minutes value is null");
             return "N/A";
         }
         try {
@@ -60,7 +65,8 @@ public class DurationUtils {
             if (hours > 0) sb.append(hours).append("h ");
             return sb.toString().trim();
         } catch (NumberFormatException e) {
-            return "Duration Cannot Be Parsed";
+            log.debug("failed to parse minutes from value={}", minutes);
+            return String.valueOf(minutes);
         }
 
 
@@ -68,17 +74,24 @@ public class DurationUtils {
 
     public static String isoToLocalTimeCounter(@Nullable Object isoTime) {
 
-        if (isoTime == null) return "N/A";
+        if (isoTime == null) {
+            log.debug("iso time is null");
+            return "N/A";
+        }
 
         String isoTimeString = String.valueOf(isoTime);
-        if (isoTimeString.trim().isEmpty()) return "N/A";
+        if (isoTimeString.trim().isEmpty()) {
+            log.debug("iso time is blank");
+            return "N/A";
+        }
 
         try {
             OffsetDateTime odt = OffsetDateTime.parse(isoTimeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             long unixTimestamp = odt.toEpochSecond();
             return "<t:" + unixTimestamp + ":f>";
         } catch (DateTimeParseException e) {
-            return "Could Not Parse Date And Time";
+            log.debug("failed to parse ISO_OFFSET_DATE_TIME from value={}", isoTimeString);
+            return String.valueOf(isoTime);
         }
 
     }

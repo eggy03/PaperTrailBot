@@ -1,26 +1,32 @@
 package io.github.eggy03.papertrail.bot.commons.utils;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.IllegalFormatException;
 import java.util.Map;
 
 @UtilityClass
+@Slf4j
 public class ColorUtils {
 
     public static String formatToHex(@Nullable Object colorValueInteger) {
 
-        if (colorValueInteger == null)
+        if (colorValueInteger == null) {
+            log.debug("colorValueInteger is null");
             return "N/A";
+        }
 
         try {
             int color = Integer.parseInt(String.valueOf(colorValueInteger));
             return String.format("#%06X", color);
         } catch (NumberFormatException e) {
-            return "No Parsable Color Integer Detected";
+            log.debug("failed to parse color integer from value={}", colorValueInteger);
+            return String.valueOf(colorValueInteger);
         } catch (IllegalFormatException e) {
-            return "Cannot parse color to hex";
+            log.debug("failed to format color integer to hex, value={}", colorValueInteger);
+            return String.valueOf(colorValueInteger);
         }
     }
 
@@ -29,6 +35,7 @@ public class ColorUtils {
     public static String formatGradientColorSystemToHex(@Nullable Object gradientMap) {
 
         if (gradientMap == null) {
+            log.debug("color gradient map is null");
             return "N/A";
         }
 
@@ -41,6 +48,7 @@ public class ColorUtils {
             return primaryColor + System.lineSeparator() + secondaryColor + System.lineSeparator() + tertiaryColor;
         }
 
+        log.debug("gradient value is not a Map, value={}", gradientMap);
         return "N/A";
     }
 }
