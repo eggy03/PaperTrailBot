@@ -28,7 +28,9 @@ public class ColorUtils {
     // {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
 	public static String formatGradientColorSystemToHex(@Nullable Object gradientMap) {
 
-		if(gradientMap==null) return "N/A";
+		if(gradientMap==null) {
+			return "N/A";
+		}
 
         if(gradientMap instanceof Map<?, ?> colorMap){
 
@@ -40,6 +42,5 @@ public class ColorUtils {
         }
 
 		return "N/A";
-
 	}
 }
