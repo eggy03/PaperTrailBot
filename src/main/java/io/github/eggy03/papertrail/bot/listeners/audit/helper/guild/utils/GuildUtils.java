@@ -10,6 +10,11 @@ import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/*
+ * See {@link io.github.eggy03.papertrail.bot.commons.utils.StackWalkerUtils}
+ * and other utilities in the util package
+ * to know why logging isn't needed in some of the methods here
+ */
 @UtilityClass
 public class GuildUtils {
 

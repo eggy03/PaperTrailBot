@@ -9,6 +9,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+/*
+ * See {@link io.github.eggy03.papertrail.bot.commons.utils.StackWalkerUtils}
+ * and other utilities in the util package
+ * to know why logging isn't needed in some of the methods here
+ */
 @UtilityClass
 @Slf4j
 public class ScheduledEventUtils {
