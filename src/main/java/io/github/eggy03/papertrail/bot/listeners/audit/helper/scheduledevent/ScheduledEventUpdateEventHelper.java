@@ -60,11 +60,8 @@ public class ScheduledEventUpdateEventHelper {
                 case "privacy_level" -> eb.addField("Privacy", "╰┈➤Event privacy has been updated", false);
                 case "image_hash" -> eb.addField("Image", "╰┈➤Event Image has been updated", false);
                 case "channel_id" -> eb.addField("Channel", "╰┈➤Event Channel has been updated", false);
+                case "recurrence_rule" -> eb.addField("Old Recurrence Rule", "Recurrence Rule has been updated", false);
 
-                case "recurrence_rule" -> {
-                    eb.addField("Old Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(oldValue), false);
-                    eb.addField("New Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
-                }
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

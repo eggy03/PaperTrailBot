@@ -35,7 +35,12 @@ public class ScheduledEventUtils {
         return ScheduledEvent.Status.fromKey(eventType).name();
     }
 
+
+    /**
+     * @deprecated
+     */
     @NotNull
+    @Deprecated(forRemoval = true)
     public static String resolveRecurrenceRules(@Nullable Object recurrenceRuleStructure) {
 
         if (recurrenceRuleStructure == null) {

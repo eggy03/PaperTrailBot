@@ -44,11 +44,9 @@ public class ScheduledEventCreateEventHelper {
                 case "status" ->
                         eb.addField("Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(newValue), false);
                 case "location" -> eb.addField("Event Location", "╰┈➤" + newValue, false);
-                case "privacy_level", "image_hash", "channel_id" -> {
+                case "privacy_level", "image_hash", "channel_id", "recurrence_rule" -> {
                     // skip
                 }
-                case "recurrence_rule" ->
-                        eb.addField("Recurrence Rule", ScheduledEventUtils.resolveRecurrenceRules(newValue), false);
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
