@@ -7,6 +7,7 @@ import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogContentEntity;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 
 @Slf4j
+@RequiredArgsConstructor
 public class MessageLogListener extends ListenerAdapter {
 
     @NonNull
@@ -32,10 +34,6 @@ public class MessageLogListener extends ListenerAdapter {
     private static final MessageLogContentClient contentClient = new MessageLogContentClient(EnvConfig.get("API_URL"));
 
     private final Executor vThreadPool;
-
-	public MessageLogListener(Executor vThreadPool) {
-		this.vThreadPool = vThreadPool;
-	}
 
 	@Override
 	public void onMessageReceived(@NonNull MessageReceivedEvent event) {

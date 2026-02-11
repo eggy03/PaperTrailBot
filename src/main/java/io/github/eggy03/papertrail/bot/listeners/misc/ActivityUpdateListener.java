@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
@@ -11,14 +12,11 @@ import org.jetbrains.annotations.NotNull;
 /*
  * This class updates the number of servers the bot is in 
  */
+@RequiredArgsConstructor
 public class ActivityUpdateListener extends ListenerAdapter {
 
 	private final ShardManager manager;
 
-	public ActivityUpdateListener(ShardManager manager) {
-		this.manager = manager;
-	}
-	
 	@Override
 	public void onReady(@NotNull ReadyEvent event) { // update on cold start
 		updateActivity();

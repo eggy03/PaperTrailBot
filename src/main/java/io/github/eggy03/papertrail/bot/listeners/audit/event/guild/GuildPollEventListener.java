@@ -4,6 +4,7 @@ import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -17,15 +18,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+@RequiredArgsConstructor
 public class GuildPollEventListener extends ListenerAdapter {
 
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
     private final Executor vThreadPool;
-
-    public GuildPollEventListener(Executor vThreadPool) {
-        this.vThreadPool = vThreadPool;
-    }
 
     @Override
     public void onMessageReceived(@NonNull MessageReceivedEvent event) {

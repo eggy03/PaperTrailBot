@@ -4,6 +4,7 @@ import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -20,16 +21,13 @@ import java.util.concurrent.Executor;
 
 // this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
 // this event is logged in the same channel where the audit log events are logged
+@RequiredArgsConstructor
 public class GuildVoiceEventListener extends ListenerAdapter {
 
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
 	private final Executor vThreadPool;
 
-	public GuildVoiceEventListener(Executor vThreadPool) {
-		this.vThreadPool = vThreadPool;
-	}
-	
 	@Override
 	public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
 

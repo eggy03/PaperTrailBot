@@ -4,6 +4,7 @@ import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -21,15 +22,12 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 
 // Experimental
+@RequiredArgsConstructor
 public class GuildBoostEventListener extends ListenerAdapter {
 
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
     private final Executor vThreadPool;
-
-    public GuildBoostEventListener(Executor vThreadPool) {
-        this.vThreadPool = vThreadPool;
-    }
 
     @Override
     public void onGuildUpdateBoostTier(@NonNull GuildUpdateBoostTierEvent event) {
