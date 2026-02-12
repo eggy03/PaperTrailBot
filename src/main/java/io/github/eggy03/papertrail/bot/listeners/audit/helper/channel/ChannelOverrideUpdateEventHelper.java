@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 
@@ -83,7 +84,8 @@ public class ChannelOverrideUpdateEventHelper {
     // ALE changes do not expose the id and type keys in case of override updates
     // therefore, this hacky method is required
     // IDK why channel override updates don't show this info
-    private static String getTargetRoleOrMember(AuditLogEntry ale, GuildAuditLogEntryCreateEvent event) {
+    @NotNull
+    private static String getTargetRoleOrMember(@NonNull AuditLogEntry ale, @NonNull GuildAuditLogEntryCreateEvent event) {
 
         String overriddenId = ale.getOptionByName("id"); // id of the member or role
         String overriddenType = ale.getOptionByName("type"); // type that determines if the ID is that of a role or a member

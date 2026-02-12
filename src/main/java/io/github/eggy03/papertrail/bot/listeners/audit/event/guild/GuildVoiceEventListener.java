@@ -26,6 +26,8 @@ public class GuildVoiceEventListener extends ListenerAdapter {
 
     @NonNull
     private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+
+    @NonNull
     private final Executor vThreadPool;
 
     @Override

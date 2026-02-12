@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.scheduledevent.utils;
 
 import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
@@ -18,6 +19,7 @@ import java.util.Map;
 @Slf4j
 public class ScheduledEventUtils {
 
+    @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
     @NotNull

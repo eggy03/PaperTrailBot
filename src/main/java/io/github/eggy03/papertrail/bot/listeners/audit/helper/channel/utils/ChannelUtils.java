@@ -23,6 +23,7 @@ import java.util.EnumSet;
 @Slf4j
 public class ChannelUtils {
 
+    @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
     /**

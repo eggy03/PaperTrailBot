@@ -136,7 +136,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
         });
     }
 
-    private void unsetAuditLogging(SlashCommandInteractionEvent event) {
+    private void unsetAuditLogging(@NonNull SlashCommandInteractionEvent event) {
 
         // Only members in a guild with MANAGE_SERVER permissions should be able to use this command
         Member callerMember = event.getMember();

@@ -14,6 +14,7 @@ import java.util.List;
 @Slf4j
 public class OnboardingUtils {
 
+    @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
     @NotNull

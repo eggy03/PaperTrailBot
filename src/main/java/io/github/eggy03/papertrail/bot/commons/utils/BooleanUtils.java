@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.commons.utils;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 @Slf4j
 public class BooleanUtils {
 
+    @NonNull
     private static final String FALLBACK_STRING = "N/A";
 
     @NotNull

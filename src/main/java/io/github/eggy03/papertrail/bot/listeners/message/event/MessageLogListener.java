@@ -32,7 +32,7 @@ public class MessageLogListener extends ListenerAdapter {
     private static final MessageLogRegistrationClient registrationClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
     @NonNull
     private static final MessageLogContentClient contentClient = new MessageLogContentClient(EnvConfig.get("API_URL"));
-
+    @NonNull
     private final Executor vThreadPool;
 
     @Override

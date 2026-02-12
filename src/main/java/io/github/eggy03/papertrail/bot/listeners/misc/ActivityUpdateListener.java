@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public class ActivityUpdateListener extends ListenerAdapter {
 
+    @NonNull
     private final ShardManager manager;
 
     @Override

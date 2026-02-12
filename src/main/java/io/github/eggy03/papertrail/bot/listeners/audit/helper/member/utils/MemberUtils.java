@@ -20,6 +20,7 @@ import java.util.Map;
 @Slf4j
 public class MemberUtils {
 
+    @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
     // Parses an array list of map of role objects supplied by JDA

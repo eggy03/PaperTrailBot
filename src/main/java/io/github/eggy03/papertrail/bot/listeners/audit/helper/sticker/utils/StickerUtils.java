@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @Slf4j
 public class StickerUtils {
 
+    @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
     @NotNull

@@ -30,6 +30,7 @@ public class AutoModUtils {
         return AutoModEventType.fromKey(eventTypeInt).name();
     }
 
+    @NotNull
     public static String autoModTriggerTypeResolver(@Nullable Object autoModTriggerTypeInteger) {
         Integer triggerTypeInt = NumberParseUtils.parseInt(autoModTriggerTypeInteger);
         if (triggerTypeInt == null)

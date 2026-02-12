@@ -23,6 +23,7 @@ public class SelfKickListener extends ListenerAdapter {
     @NonNull
     private static final MessageLogRegistrationClient mlClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
 
+    @NonNull
     private final Executor vThreadPool;
 
     @Override

@@ -21,6 +21,7 @@ import java.util.Map;
 @Slf4j
 public class RoleUtils {
 
+    @NonNull
     private static final String FALLBACK_STRING = "N/A";
 
     @NotNull
@@ -45,6 +46,7 @@ public class RoleUtils {
         return permissions.toString().trim();
     }
 
+    @NotNull
     public static String formatToHex(@Nullable Object colorValueInteger) {
 
         if (colorValueInteger == null) {
@@ -68,6 +70,7 @@ public class RoleUtils {
 
     // gradient is returned as a hash map in the following structure
     // {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
+    @NotNull
     public static String formatGradientToHex(@Nullable Object gradientMap) {
 
         if (gradientMap == null) {
