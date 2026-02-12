@@ -19,39 +19,47 @@ public class BotSetupInstructionCommandListener extends ListenerAdapter {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("🛠️ Setup Guide for " + ProjectInfo.APPNAME);
-            eb.setDescription("Welcome to **" + ProjectInfo.APPNAME + "**!\nHere's how to get started using the bot in your server.");
+            eb.setDescription("Follow the instructions below to set up the bot in your server.");
             eb.setColor(Color.decode("#38e8bc"));
 
-            eb.addField("1️⃣ Register Audit Log Channel",
-                    "- Use `/auditlog set` to **register the current channel** for receiving audit log updates.\n╰┈➤ User must have `Manage Server` permission.",
+            eb.addField("1️⃣ Set Audit Log Channel",
+                    "Use `/auditlog set` to **register this channel** for receiving audit log events.",
                     false);
 
-            eb.addField("2️⃣ View Registered Audit Log Channel",
-                    "- Use `/auditlog view` to **check which channel** is currently registered for audit logs.\nThis is helpful if you're unsure where the audit logs are going.\n╰┈➤ User must have `Manage Server` permission.",
+            eb.addField("2️⃣ View Audit Log Channel",
+                    "Use `/auditlog view` to **see which channel** is currently receiving audit logs.",
                     false);
 
-            eb.addField("3️⃣ Unregister Audit Log Channel",
-                    "- Use `/auditlog remove` to **unset the audit log channel** if you wish to stop logging or switch to another one.\n╰┈➤ User must have `Manage Server` permission.",
+            eb.addField("3️⃣ Remove Audit Log Channel",
+                    "Use `/auditlog remove` to **stop logging** events and remove the registered channel.",
+                    false);
+
+            eb.addField("🔒 Permissions",
+                    "These three commands require the **Administrator** permission.",
                     false);
 
             eb.addBlankField(false);
 
-            eb.addField("4️⃣ Register Message Log Channel",
-                    "- Use `/messagelog set` to **register the current channel** for receiving message logs.\n╰┈➤ User must have the `Administrator` permission.",
+            eb.addField("4️⃣ Set Message Log Channel",
+                    "Use `/messagelog set` to **register this channel** for receiving message logs.",
                     false);
 
-            eb.addField("5️⃣ View Registered Message Log Channel",
-                    "- Use `/messagelog view` to **check which channel** is currently registered for message logs.\nThis is helpful if you're unsure where the message logs are going.\n╰┈➤ User must have `Administrator` permission.",
+            eb.addField("5️⃣ View Message Log Channel",
+                    "Use `/messagelog view` to **see which channel** is currently receiving message logs.",
                     false);
 
-            eb.addField("6️⃣ Unregister Message Log Channel",
-                    "- Use `/messagelog remove` to **unset the message log channel** if you wish to stop logging or switch to another one.\n╰┈➤ User must have `Administrator` permission.",
+            eb.addField("6️⃣ Remove Message Log Channel",
+                    "Use `/messagelog remove` to **stop logging** messages and remove the registered channel.",
+                    false);
+
+            eb.addField("🔒 Permissions",
+                    "These three commands require the **Administrator** permission.",
                     false);
 
             eb.addBlankField(false);
 
             eb.addField("7️⃣ View Server Stats",
-                    "- Use `/stats` to **get useful server information** like member count, channel count, and more.",
+                    "Use `/stats` to **view useful server information**, including member count, channel count, and more.",
                     false);
 
             eb.addField("📬 Need help?", "Create an issue on [GitHub](" + ProjectInfo.PROJECT_ISSUE_LINK + ")", false);
@@ -63,4 +71,3 @@ public class BotSetupInstructionCommandListener extends ListenerAdapter {
         }
     }
 }
-

@@ -49,6 +49,7 @@ public class Start {
 
         manager.addEventListener(new ServerStatCommandListener());
         manager.addEventListener(new BotSetupInstructionCommandListener());
+        //manager.addEventListener(new SlashCommandRegistrationListener());
 
         // Custom health check endpoint
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
