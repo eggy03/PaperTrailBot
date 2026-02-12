@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding;
 
+import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.listeners.audit.helper.onboarding.utils.OnboardingUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -42,8 +43,8 @@ public class OnboardingUpdateEventHelper {
 
             switch (changeKey) {
                 case "enabled" -> {
-                    eb.addField("Old Onboarding Status", OnboardingUtils.formatStatus(oldValue), false);
-                    eb.addField("New Onboarding Status", OnboardingUtils.formatStatus(newValue), true);
+                    eb.addField("Old Onboarding Status", BooleanUtils.formatToEnabledOrDisabled(oldValue), false);
+                    eb.addField("New Onboarding Status", BooleanUtils.formatToEnabledOrDisabled(newValue), true);
                 }
 
                 case "mode" -> {
