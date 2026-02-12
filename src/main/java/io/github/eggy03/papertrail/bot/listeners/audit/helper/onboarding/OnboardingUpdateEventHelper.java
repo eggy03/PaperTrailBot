@@ -36,6 +36,7 @@ public class OnboardingUpdateEventHelper {
 
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
+        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -43,18 +44,21 @@ public class OnboardingUpdateEventHelper {
 
             switch (changeKey) {
                 case "enabled" -> {
-                    eb.addField("Old Onboarding Status", BooleanUtils.formatToEnabledOrDisabled(oldValue), false);
+                    eb.addField("Old Onboarding Status", BooleanUtils.formatToEnabledOrDisabled(oldValue), true);
                     eb.addField("New Onboarding Status", BooleanUtils.formatToEnabledOrDisabled(newValue), true);
+                    eb.addBlankField(true);
                 }
 
                 case "mode" -> {
-                    eb.addField("Old Onboarding Mode", OnboardingUtils.formatMode(oldValue), false);
+                    eb.addField("Old Onboarding Mode", OnboardingUtils.formatMode(oldValue), true);
                     eb.addField("New Onboarding Mode", OnboardingUtils.formatMode(newValue), true);
+                    eb.addBlankField(true);
                 }
 
                 case "default_channel_ids" -> {
-                    eb.addField("Old Default Channels", OnboardingUtils.resolveChannelsFromList(guild, oldValue), false);
-                    eb.addField("New Default Channels", OnboardingUtils.resolveChannelsFromList(guild, newValue), false);
+                    eb.addField("Old Default Channels", OnboardingUtils.resolveChannelsFromList(guild, oldValue), true);
+                    eb.addField("New Default Channels", OnboardingUtils.resolveChannelsFromList(guild, newValue), true);
+                    eb.addBlankField(true);
                 }
 
                 // triggered also when prompts are deleted/created besides the default of update
