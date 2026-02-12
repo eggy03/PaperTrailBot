@@ -24,7 +24,10 @@ import java.util.EnumSet;
 public class ChannelUtils {
 
     public static final String FALLBACK_STRING = "N/A";
-    
+
+    /**
+     * can also be used for threads
+     */
     @NotNull
     public static String resolveChannelType(@Nullable Object channelTypeInteger) {
 
