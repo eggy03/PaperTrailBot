@@ -24,7 +24,7 @@ public class ThreadUtils {
         Integer minuteInt = NumberParseUtils.parseInt(minutes);
 
         if (minuteInt == null)
-            return "N/A";
+            return FALLBACK_STRING;
 
         return ThreadChannel.AutoArchiveDuration.fromKey(minuteInt).name();
     }
