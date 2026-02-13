@@ -11,6 +11,7 @@ import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildP
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildVoiceEventListener;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.event.MessageLogListener;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.setup.MessageLogSetupCommandListener;
+import io.github.eggy03.papertrail.bot.listeners.misc.ActivityUpdateListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.BotSetupInstructionCommandListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.ServerStatCommandListener;
@@ -49,6 +50,8 @@ public class Start {
 
         manager.addEventListener(new ServerStatCommandListener());
         manager.addEventListener(new BotSetupInstructionCommandListener());
+        manager.addEventListener(new ActivityUpdateListener(manager));
+        // re-enable it only when adding/updating/deleting commands
         //manager.addEventListener(new SlashCommandRegistrationListener());
 
         // Custom health check endpoint

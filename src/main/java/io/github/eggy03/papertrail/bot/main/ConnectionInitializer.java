@@ -1,7 +1,6 @@
 package io.github.eggy03.papertrail.bot.main;
 
 import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
-import io.github.eggy03.papertrail.bot.listeners.misc.ActivityUpdateListener;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -52,9 +51,6 @@ public class ConnectionInitializer {
                 CacheFlag.SCHEDULED_EVENTS);
 
         manager = builder.build();
-        manager.addEventListener(new ActivityUpdateListener(manager));
-        //manager.addEventListener(new SlashCommandRegistrationListener());
-        // re-enable it only when adding/updating/deleting commands
     }
 
 }
