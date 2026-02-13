@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -20,15 +21,6 @@ public class GuildMemberRemoveEventHelper {
 
         Guild guild = event.getGuild();
         User user = event.getUser();
-        Member member = event.getMember();
-
-        String memberJoinDate = "Member Not Cached";
-        boolean memberJoinDateTrustable = false;
-        if (member != null) {
-            memberJoinDate = "<t:" + member.getTimeJoined().toEpochSecond() + ":f>";
-            memberJoinDateTrustable = member.hasTimeJoined();
-        }
-        String memberLeaveDate = "<t:" + Instant.now().getEpochSecond() + ":f>";
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("🛫 Member Leave Event");
@@ -38,11 +30,10 @@ public class GuildMemberRemoveEventHelper {
 
         eb.addField("🏷️ Member Name", "╰┈➤" + user.getName(), false);
         eb.addField("🆔 Member ID", "╰┈➤" + user.getId(), false);
-        eb.addField("⌛ Member Joined The Server On", "╰┈➤" + memberJoinDate, false);
-        eb.addField("⌛ Member Left The Server On", "╰┈➤" + memberLeaveDate, false);
-        eb.addField("⌛ Member Join Date Validity", memberJoinDateTrustable ? "╰┈➤Valid" : "╰┈➤Invalid", false);
+        eb.addField("⌛ Member Joined The Server On", "╰┈➤" + getMemberJoinDate(event), false);
+        eb.addField("⌛ Member Left The Server On", "╰┈➤" + getMemberLeaveDate(), false);
 
-        eb.setFooter("If the member was loaded via lazy loading, join date will be identical to the guild creation date.");
+        eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());
 
         MessageEmbed mb = eb.build();
@@ -51,5 +42,23 @@ public class GuildMemberRemoveEventHelper {
         if (sendingChannel != null && sendingChannel.canTalk()) {
             sendingChannel.sendMessageEmbeds(mb).queue();
         }
+    }
+
+    @NotNull
+    private static String getMemberJoinDate (@NonNull GuildMemberRemoveEvent event) {
+
+        Member member = event.getMember();
+        if(member==null)
+            return "Member not cached";
+
+        if (member.hasTimeJoined())
+            return "<t:" + member.getTimeJoined().toEpochSecond() + ":f>";
+
+        return "Unavailable";
+    }
+
+    @NotNull
+    private static String getMemberLeaveDate () {
+        return "<t:" + Instant.now().getEpochSecond() + ":f>";
     }
 }
