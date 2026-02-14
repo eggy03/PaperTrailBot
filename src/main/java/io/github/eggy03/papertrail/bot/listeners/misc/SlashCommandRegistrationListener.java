@@ -48,11 +48,13 @@ public class SlashCommandRegistrationListener extends ListenerAdapter {
                 .setContexts(InteractionContextType.GUILD)
                 .setDefaultPermissions(DefaultMemberPermissions.ENABLED);
 
+        CommandData debug = Commands
+                .slash("debug", "Provides debug info")
+                .setContexts(InteractionContextType.GUILD)
+                .setDefaultPermissions(DefaultMemberPermissions.ENABLED);
+
         jda.updateCommands()
-                .addCommands(auditLog,
-                        messageLog,
-                        serverStats,
-                        setup)
+                .addCommands(auditLog, messageLog, serverStats, setup, debug)
                 .queue();
     }
 }

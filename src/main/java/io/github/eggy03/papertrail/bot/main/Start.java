@@ -13,6 +13,7 @@ import io.github.eggy03.papertrail.bot.listeners.messagelog.event.MessageLogList
 import io.github.eggy03.papertrail.bot.listeners.messagelog.setup.MessageLogSetupCommandListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.ActivityUpdateListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.BotSetupInstructionCommandListener;
+import io.github.eggy03.papertrail.bot.listeners.misc.DebugListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.ServerStatCommandListener;
 import lombok.NonNull;
@@ -51,6 +52,7 @@ public class Start {
         manager.addEventListener(new ServerStatCommandListener());
         manager.addEventListener(new BotSetupInstructionCommandListener());
         manager.addEventListener(new ActivityUpdateListener(manager));
+        manager.addEventListener(new DebugListener());
         // re-enable it only when adding/updating/deleting commands
         //manager.addEventListener(new SlashCommandRegistrationListener());
 
