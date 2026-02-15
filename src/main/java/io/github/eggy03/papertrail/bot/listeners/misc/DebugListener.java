@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
+import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
 import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.HealthClient;
@@ -17,6 +18,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
+import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
@@ -47,9 +49,9 @@ public class DebugListener extends ListenerAdapter {
     }
 
     @NotNull
-    private static String formatPermissions(@NonNull EnumSet<Permission> guildOrChannelPermissions) {
+    private static String formatPermissions(@NonNull EnumSet<Permission> grantedGuildOrChannelPermissions) {
         // gets all the permissions granted to the bot in the server as a whole or a particular channel
-        EnumSet<Permission> grantedPermissions = EnumSet.copyOf(guildOrChannelPermissions);
+        EnumSet<Permission> grantedPermissions = EnumSet.copyOf(grantedGuildOrChannelPermissions);
         // this will
         // 1) REMOVE the UNNECESSARY GRANTED PERMISSIONS
         // 2) RETAIN those GRANTED PERMISSIONS that match with the RECOMMENDED ONES
@@ -80,35 +82,60 @@ public class DebugListener extends ListenerAdapter {
 
     @NotNull
     public static String getServerInfo(@NonNull Guild guild, @NonNull GuildChannel channel) {
-        return "Server Name: " + guild.getName() + System.lineSeparator() +
-                "Server ID: " + guild.getId() + System.lineSeparator() +
-                "Channel Name: " + channel.getName() + System.lineSeparator() +
-                "Channel ID: " + channel.getId();
+        return "Server Name: `" + guild.getName() + "`" + System.lineSeparator() +
+                "Server ID: `" + guild.getId() + "`" + System.lineSeparator() +
+                "Channel Name: `" + channel.getName() + "`" + System.lineSeparator() +
+                "Channel ID: `" + channel.getId() + "`";
     }
 
     @NotNull
     public static String getCallerInfo(@NonNull Member member) {
-        return "User Name: " + member.getUser().getGlobalName() + System.lineSeparator() +
-                "User ID: " + member.getId() + System.lineSeparator() +
-                "Is Administrator: " + BooleanUtils.formatToYesOrNo(member.hasPermission(Permission.ADMINISTRATOR));
+        return "User Name: `" + member.getUser().getGlobalName() + "`" + System.lineSeparator() +
+                "User ID: `" + member.getId() + System.lineSeparator() + "`" +
+                "Is Administrator: `" + BooleanUtils.formatToYesOrNo(member.hasPermission(Permission.ADMINISTRATOR)) + "`";
     }
 
     @NotNull
     public static String getBotInfo(@NonNull SlashCommandInteractionEvent event) {
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
-        return "Current Shard ID: " + shardInfo.getShardId() + System.lineSeparator() +
-                "Total Shards: " + shardInfo.getShardTotal();
+        return "Current Shard ID: `" + shardInfo.getShardId() + System.lineSeparator() + "`" +
+                "Total Shards: `" + shardInfo.getShardTotal() + "`";
     }
 
     @NotNull
     public static String getApiInfo() {
+        Optional<HealthEntity> apiHealthEntity = new HealthClient(EnvConfig.get("API_URL")).getHealth();
+        if (apiHealthEntity.isEmpty())
+            return "⚠️ API Unreachable";
+
         StringBuilder info = new StringBuilder();
 
-        Optional<HealthEntity> apiHealthEntity = new HealthClient(EnvConfig.get("API_URL")).getHealth();
-        apiHealthEntity.ifPresentOrElse(healthEntity ->
-                        info.append("Overall API Status: ").append(healthEntity.getStatus()),
-                () -> info.append("ERROR: API Server did not return any health information")
-        );
+        HealthEntity health = apiHealthEntity.get();
+        info.append("Overall API Status: ")
+                .append("`").append(health.getStatus()).append("`")
+                .append("\n");
+
+        HealthEntity.Components components = health.getComponents();
+        if (components == null) {
+            info.append("⚠️ Individual Component Data Unavailable");
+            return info.toString().trim();
+        }
+
+        HealthEntity.Components.Database database = components.getDb();
+        HealthEntity.Components.Redis redis = components.getRedis();
+        HealthEntity.Components.Ping ping = components.getPing();
+        HealthEntity.Components.Ssl ssl = components.getSsl();
+
+        String databaseStatus = database != null ? database.getStatus() : "⚠️`DB Component Not Found`";
+        String redisStatus = redis != null ? redis.getStatus() : "⚠️`Redis Component Not Found`";
+        String pingStatus = ping != null ? ping.getStatus() : "⚠️`Ping Component Not Found`";
+        String sslStatus = ssl != null ? ssl.getStatus() : "⚠️`SSL Component Not Found`";
+
+        info.append("Database: `").append(databaseStatus).append("`").append("\n")
+                .append("Redis: `").append(redisStatus).append("`").append("\n")
+                .append("Ping: `").append(pingStatus).append("`").append("\n")
+                .append("SSL: `").append(sslStatus).append("`");
+
         return info.toString().trim();
     }
 
@@ -139,6 +166,9 @@ public class DebugListener extends ListenerAdapter {
         eb.addField("User Info", getCallerInfo(member), true);
         eb.addField("Bot Info", getBotInfo(event), true);
         eb.addField("API Info", getApiInfo(), true);
+
+        eb.setFooter(ProjectInfo.APPNAME + " " + ProjectInfo.VERSION);
+        eb.setTimestamp(Instant.now());
 
         event.replyEmbeds(eb.build()).queue();
     }
