@@ -1,6 +1,9 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
+import io.github.eggy03.papertrail.sdk.client.HealthClient;
+import io.github.eggy03.papertrail.sdk.entity.HealthEntity;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -92,7 +96,20 @@ public class DebugListener extends ListenerAdapter {
     @NotNull
     public static String getBotInfo(@NonNull SlashCommandInteractionEvent event) {
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
-        return "Shard Info: " + shardInfo.getShardString();
+        return "Current Shard ID: " + shardInfo.getShardId() + System.lineSeparator() +
+                "Total Shards: " + shardInfo.getShardTotal();
+    }
+
+    @NotNull
+    public static String getApiInfo() {
+        StringBuilder info = new StringBuilder();
+
+        Optional<HealthEntity> apiHealthEntity = new HealthClient(EnvConfig.get("API_URL")).getHealth();
+        apiHealthEntity.ifPresentOrElse(healthEntity ->
+                        info.append("Overall API Status: ").append(healthEntity.getStatus()),
+                () -> info.append("ERROR: API Server did not return any health information")
+        );
+        return info.toString().trim();
     }
 
     @Override
@@ -120,8 +137,8 @@ public class DebugListener extends ListenerAdapter {
         eb.addField("Server Info", getServerInfo(guild, channel), true);
 
         eb.addField("User Info", getCallerInfo(member), true);
-        eb.addBlankField(true);
         eb.addField("Bot Info", getBotInfo(event), true);
+        eb.addField("API Info", getApiInfo(), true);
 
         event.replyEmbeds(eb.build()).queue();
     }
