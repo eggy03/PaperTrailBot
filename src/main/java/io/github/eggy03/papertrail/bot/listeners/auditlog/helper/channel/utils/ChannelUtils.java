@@ -92,7 +92,7 @@ public class ChannelUtils {
             return FALLBACK_STRING;
 
         if (permissionValue == 0)
-            return "Permissions synced with category";
+            return "╰┈➤Permissions synced with category";
 
         StringBuilder permissions = new StringBuilder();
         EnumSet<Permission> permissionEnumSet = Permission.getPermissions(permissionValue);
