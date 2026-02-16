@@ -1,9 +1,11 @@
 # Overview
-PaperTrail is a free and open-source, self-hostable, and privacy-friendly Discord bot designed to provide audit log data directly in a channel—without requiring users to navigate server settings each time.
+
+PaperTrail is a free and open-source, self-hostable, and privacy-friendly Discord bot
+designed to provide audit log data directly in a channel without requiring users to navigate server settings each time.
 
 Key Features:
 
-- Full audit log integration (supports over 50+ event types) and generic support for unknown types
+- Full audit log integration (supports over 72 event types) and generic support for unknown types
 - Message logging  (edit, delete)
 - Member activity tracking (joins, leaves, kicks, bans, updates)
 - Voice activity logging (join/leave, move)
