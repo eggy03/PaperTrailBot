@@ -107,9 +107,16 @@ public class ChannelUpdateEventHelper {
                     eb.addBlankField(true);
                 }
 
+                case "type" -> {
+                    eb.addField("Old Type", ChannelUtils.resolveChannelType(oldValue), true);
+                    eb.addField("New Type", ChannelUtils.resolveChannelType(newValue), true);
+                    eb.addBlankField(true);
+                }
+
                 case "available_tags" -> eb.addField("Tags", "╰┈➤The channel's tags were updated", false);
                 case "default_reaction_emoji" ->
                         eb.addField("Reaction Emoji", "╰┈➤Default reaction emoji was updated", false);
+                case "flags" -> eb.addField("Flags", "╰┈➤The channel's flags were updated", false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
