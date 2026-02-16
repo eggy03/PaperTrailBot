@@ -49,7 +49,7 @@ Each shard allows handling up-to 2500 guilds.
 Take a look at the following configuration examples to have a clearer picture of what values to put
 for your use-case
 
-**1 JVM Instance / 1-2500 Guilds / 1 Shard**
+**1: JVM Instance / 1-2500 Guilds / 1 Shard**
 
 If your bot is small or self-hosted for a limited number of servers, you only need one shard.
 This should be sufficient for the majority of self-host users
@@ -60,7 +60,7 @@ MIN_SHARD_ID=0
 MAX_SHARD_ID=0
 ```
 
-**1 JVM Instance /2500-5000 Guilds / 2 Shards**
+**2: JVM Instance /2500-5000 Guilds / 2 Shards**
 
 If your bot is in more than 2,500 servers, but you are still running a single JVM instance, you can increase the total
 shard count:
@@ -73,7 +73,7 @@ MAX_SHARD_ID=1
 
 Remember that each shard can only handle up to 2500 guilds so plan the total number shards accordingly
 
-**2 JVM Instances / 25000 Guilds / 10 Shards**
+**3: JVM Instances / 25000 Guilds / 10 Shards**
 
 If you scale your bot horizontally, you need to split the shards between them.
 
