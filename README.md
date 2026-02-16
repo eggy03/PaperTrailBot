@@ -9,7 +9,7 @@ Key Features:
 - Voice activity logging (join/leave, move)
 - Auto-deletion of logged messages after 30 days
 
-> 📎 Get it from here: https://discord.com/discovery/applications/1381658412550590475
+> Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
 
 > [!IMPORTANT]
@@ -19,8 +19,6 @@ Key Features:
 # Self-Hosting Guide
 > [!IMPORTANT]
 > Please note that this is only for advanced users who want to self-host this bot
-> 
-> A pre-hosted instance is already available: https://discord.com/discovery/applications/1381658412550590475
 >
 > It is recommended that you deploy the [Persistence API](https://github.com/Egg-03/PaperTrail-PersistenceAPI?tab=readme-ov-file#papertrail-persistenceapi) service before deploying the bot itself since the bot relies on the URL of the service to communicate
 
@@ -36,11 +34,64 @@ To read the guide on deploying the Persistence API Service, click [here](https:/
 
 You will need the following environment variables to run the bot:
 
-| Variable  | Description                                                                                               |
-|-----------|-----------------------------------------------------------------------------------------------------------|
-| `TOKEN`   | Discord application bot token (from the [Developer Portal](https://discord.com/developers/applications))  |
-| `API_URL` | Internal URL of the Persistence API (e.g., `http://persistence:8080`)                                     |
+| Variable       | Description                                                                                              |
+|----------------|----------------------------------------------------------------------------------------------------------|
+| `TOKEN`        | Discord application bot token (from the [Developer Portal](https://discord.com/developers/applications)) |
+| `API_URL`      | Internal URL of the Persistence API (e.g., `http://persistence:8080`)                                    |
+| `TOTAL_SHARDS` | The total number of shards (connections) your bot is using overall.                                      |
+| `MIN_SHARD_ID` | The first shard number this bot instance should handle.                                                  |
+| `MAX_SHARD_ID` | The last shard number this bot instance should handle.                                                   |
 
+Each shard allows handling up-to 2500 guilds.
+
+Take a look at the following configuration examples to have a clearer picture of what values to put
+for your use-case
+
+**1 JVM Instance / 1-2500 Guilds / 1 Shard**
+
+If your bot is small or self-hosted for a limited number of servers, you only need one shard.
+This should be sufficient for the majority of self-host users
+
+```dotenv
+TOTAL_SHARDS=1
+MIN_SHARD_ID=0
+MAX_SHARD_ID=0
+```
+
+**1 JVM Instance /2500-5000 Guilds / 2 Shards**
+
+If your bot is in more than 2,500 servers, but you are still running a single JVM instance, you can increase the total
+shard count:
+
+```dotenv
+TOTAL_SHARDS=2
+MIN_SHARD_ID=0
+MAX_SHARD_ID=1
+```
+
+Remember that each shard can only handle up to 2500 guilds so plan the total number shards accordingly
+
+**2 JVM Instances / 25000 Guilds / 10 Shards**
+
+If you scale your bot horizontally, you need to split the shards between them.
+
+Instance 1:
+
+```dotenv
+TOTAL_SHARDS=10
+MIN_SHARD_ID=0
+MAX_SHARD_ID=4
+```
+
+Instance 2:
+
+```dotenv
+TOTAL_SHARDS=10
+MIN_SHARD_ID=5
+MAX_SHARD_ID=9
+```
+
+Shard ID ranges must never overlap between running instances.
 ### Step 2: Deployment Options
 
 Fork this repository to your GitHub account, connect it to your preferred cloud platform, and configure your environment variables in the platform.
@@ -95,14 +146,7 @@ By using the official hosted instance or self-hosting it, you agree to the basic
 
 # License
 
-PaperTrail is licensed under the [Apache License 2.0](./LICENSE).
-
-You are free to:
-- Use, modify, and redistribute the code
-- Self-host or publicly host your own instance
-- Build on top of this bot for your own projects
-
-Just make sure to include proper attribution and comply with the [terms](https://www.apache.org/licenses/LICENSE-2.0).
+PaperTrail is licensed under the [MIT](./LICENSE).
 
 ---
 Feel free to contribute to this guide or raise issues on GitHub if you get stuck!
