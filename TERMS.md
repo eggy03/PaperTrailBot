@@ -1,6 +1,6 @@
 # Terms of Service
 
-_Last updated: February 02, 2026_
+_Last updated: February 16, 2026_
 
 Thank you for using **PaperTrail**, an open-source Discord audit and message logging bot.
 
