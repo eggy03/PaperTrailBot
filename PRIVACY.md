@@ -61,7 +61,7 @@ Information is only retained for the duration necessary to provide the bot's log
   Following this period, data is programmatically purged from our production databases.
 - **System Backups**: Data contained within database backups may persist for up to an additional 7 days beyond the
   standard retention period before being overwritten.
-- **Administrative Data**: Configuration settings (e.g., designated log channels) are retained as long as the bot
+- **Administrative Data**: Configuration settings (e.g. designated log channels) are retained as long as the bot
   remains authorized within the Discord Guild.
 
 ---
@@ -76,7 +76,8 @@ or misuse. This includes strict access controls, limited operator access, and in
 - Cloud Providers: We utilize `Northflank` for application hosting and `Aiven` for managed database services.
 - Encryption: While all collected data is stored in a readable format, our infrastructure providers employ encryption
   to protect data on the physical disk level. To know more, read their security
-  policies [Northflank](https://northflank.com/security), [Aiven](https://aiven.io/security-compliance)
+  policies of our providers [Northflank](https://northflank.com/security)
+  and [Aiven](https://aiven.io/security-compliance).
 
 **Access Control**
 
