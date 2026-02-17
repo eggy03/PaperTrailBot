@@ -21,11 +21,9 @@
         <papertrail.sdk.version>1.0.1</papertrail.sdk.version>
         <tinylog.version>2.7.0</tinylog.version>
         <dotenv.version>3.2.0</dotenv.version>
-        <commons-lang3.version>3.19.0</commons-lang3.version>
-        <jasypt.version>1.9.3</jasypt.version>
-        <bouncycastle.version>1.83</bouncycastle.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <spring.version>7.0.3</spring.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <spring.version>7.0.4</spring.version>
         <gson.version>2.13.2</gson.version>
         <lombok.version>1.18.42</lombok.version>
 
@@ -81,18 +79,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt</artifactId>
-            <version>${jasypt.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
-            <version>${bouncycastle.version}</version>
         </dependency>
 
         <dependency>
