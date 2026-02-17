@@ -20,6 +20,7 @@ import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.emoji.EmojiCrea
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.emoji.EmojiDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.emoji.EmojiUpdateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.generic.GenericAuditLogEventHelper;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.guild.GuildProfileUpdateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.guild.GuildUpdateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.homesettings.HomeSettingsCreateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.homesettings.HomeSettingsUpdateEventHelper;
@@ -136,6 +137,7 @@ public class AuditLogEventListener extends ListenerAdapter {
             case STICKER_DELETE -> StickerDeleteEventHelper.format(event, channelIdToSendTo);
 
             case GUILD_UPDATE -> GuildUpdateEventHelper.format(event, channelIdToSendTo);
+            case GUILD_PROFILE_UPDATE -> GuildProfileUpdateEventHelper.format(event, channelIdToSendTo);
 
             case INTEGRATION_CREATE -> IntegrationCreateEventHelper.format(event, channelIdToSendTo);
             case INTEGRATION_DELETE -> IntegrationDeleteEventHelper.format(event, channelIdToSendTo);
@@ -195,9 +197,8 @@ public class AuditLogEventListener extends ListenerAdapter {
 
             // except UNKNOWN, the rest have never been seen to be triggered
             case PRUNE, INTEGRATION_UPDATE,
-                 INVITE_UPDATE, ONBOARDING_CREATE, GUILD_PROFILE_UPDATE,
+                 INVITE_UPDATE, ONBOARDING_CREATE,
                  UNKNOWN -> GenericAuditLogEventHelper.format(event, channelIdToSendTo);
-
 
             default -> {
                 GenericAuditLogEventHelper.format(event, channelIdToSendTo);
