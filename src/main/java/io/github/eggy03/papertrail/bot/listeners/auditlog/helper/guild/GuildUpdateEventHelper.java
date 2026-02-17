@@ -41,65 +41,66 @@ public class GuildUpdateEventHelper {
 
             switch (changeKey) {
                 case "description" -> {
-                    eb.addField("Old Description", String.valueOf(oldValue), false);
-                    eb.addField("New Description", String.valueOf(newValue), false);
+                    eb.addField("Old Description", "╰┈➤" + oldValue, false);
+                    eb.addField("New Description", "╰┈➤" + newValue, false);
                 }
 
                 case "icon_hash" -> eb.addField("Icon Hash Change", "Guild Icon has been updated", false);
 
                 case "name" -> {
-                    eb.addField("Old Guild Name", String.valueOf(oldValue), false);
-                    eb.addField("New Guild Name", String.valueOf(newValue), false);
+                    eb.addField("Old Guild Name", "╰┈➤" + oldValue, false);
+                    eb.addField("New Guild Name", "╰┈➤" + newValue, false);
                 }
 
-                case "preferred_locale" -> eb.addField("Preferred Locale Set To", String.valueOf(newValue), false);
+                case "preferred_locale" -> eb.addField("Preferred Locale Set To", "╰┈➤" + newValue, false);
 
                 case "afk_channel_id" ->
-                        eb.addField("AFK Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                        eb.addField("AFK Channel Changed To", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
 
                 case "default_message_notifications" ->
-                        eb.addField("Default Message Notifications Update", GuildUtils.resolveGuildDefaultMessageNotificationLevel(newValue), false);
+                        eb.addField("Default Message Notifications Update", "╰┈➤" + GuildUtils.resolveGuildDefaultMessageNotificationLevel(newValue), false);
 
                 case "afk_timeout" ->
-                        eb.addField("AFK Channel Timeout Change", DurationUtils.formatSeconds(newValue), false);
+                        eb.addField("AFK Channel Timeout Change", "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
 
                 case "system_channel_id" ->
-                        eb.addField("Community Updates Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                        eb.addField("Community Updates Channel Changed To", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
 
-                case "widget_enabled" -> eb.addField("Widget Enabled", BooleanUtils.formatToYesOrNo(newValue), false);
+                case "widget_enabled" ->
+                        eb.addField("Widget Enabled", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "widget_channel_id" ->
-                        eb.addField("Widget Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                        eb.addField("Widget Channel Changed To", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
 
                 case "premium_progress_bar_enabled" ->
-                        eb.addField("Server Boost Progress Bar Enabled", BooleanUtils.formatToYesOrNo(newValue), false);
+                        eb.addField("Server Boost Progress Bar Enabled", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "mfa_level" ->
-                        eb.addField("MFA Requirement Set To", GuildUtils.resolveGuildModActionMFALevel(newValue), false);
+                        eb.addField("MFA Requirement Set To", "╰┈➤" + GuildUtils.resolveGuildModActionMFALevel(newValue), false);
 
                 case "verification_level" ->
-                        eb.addField("Verification Level Set To", GuildUtils.resolveGuildVerificationLevel(newValue), false);
+                        eb.addField("Verification Level Set To", "╰┈➤" + GuildUtils.resolveGuildVerificationLevel(newValue), false);
 
                 case "owner_id" -> {
                     User oldOwner = ale.getJDA().getUserById(String.valueOf(oldValue));
                     User newOwner = ale.getJDA().getUserById(String.valueOf(newValue));
                     String mentionableOldOwner = (oldOwner != null ? oldOwner.getAsMention() : String.valueOf(oldValue));
                     String mentionableNewOwner = (newOwner != null ? newOwner.getAsMention() : String.valueOf(newValue));
-                    eb.addField("Old Owner", mentionableOldOwner, false);
-                    eb.addField("New Owner", mentionableNewOwner, false);
+                    eb.addField("Old Owner", "╰┈➤" + mentionableOldOwner, false);
+                    eb.addField("New Owner", "╰┈➤" + mentionableNewOwner, false);
                 }
 
                 case "public_updates_channel_id" ->
-                        eb.addField("Announcements Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                        eb.addField("Announcements Channel Changed To", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
 
                 case "rules_channel_id" ->
-                        eb.addField("Rules Channel Changed To", GuildUtils.resolveMentionableChannel(newValue, event), false);
+                        eb.addField("Rules Channel Changed To", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
 
                 case "system_channel_flags" ->
-                        eb.addField("System Channel Flags", GuildUtils.resolveSystemChannelFlags(newValue), false);
+                        eb.addField("System Channel Flags", "╰┈➤" + GuildUtils.resolveSystemChannelFlags(newValue), false);
 
                 case "explicit_content_filter" ->
-                        eb.addField("Explicit Content Filter", GuildUtils.resolveExplicitContentFilterLevel(newValue), false);
+                        eb.addField("Explicit Content Filter", "╰┈➤" + GuildUtils.resolveExplicitContentFilterLevel(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

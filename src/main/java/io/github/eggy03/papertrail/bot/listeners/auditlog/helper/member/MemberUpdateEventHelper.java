@@ -63,12 +63,12 @@ public class MemberUpdateEventHelper {
                 case "nick" ->
                         eb.addField("Nickname Update", "╰┈➤" + resolveNickNameChanges(oldValue, newValue), false);
 
-                case "mute" -> eb.addField("Is Muted in VC", BooleanUtils.formatToYesOrNo(newValue), false);
+                case "mute" -> eb.addField("Is Muted in VC", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "deaf" -> eb.addField("Is Deafened in VC", BooleanUtils.formatToYesOrNo(newValue), false);
+                case "deaf" -> eb.addField("Is Deafened in VC", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "bypasses_verification" ->
-                        eb.addField("Bypass Verification", BooleanUtils.formatToEnabledOrDisabled(newValue), false);
+                        eb.addField("Bypass Verification", "╰┈➤" + BooleanUtils.formatToEnabledOrDisabled(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
