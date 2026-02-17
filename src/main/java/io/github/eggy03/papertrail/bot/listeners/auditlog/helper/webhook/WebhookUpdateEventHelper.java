@@ -22,14 +22,14 @@ public class WebhookUpdateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Webhook Update Event");
-
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("👤 **By**: " + mentionableExecutor + "\nℹ️ A webhook has been updated");
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Webhook Update Event");
+        eb.setDescription("ℹ️ A webhook has been updated by: " + mentionableExecutor);
         eb.setColor(Color.YELLOW);
+
         eb.addField("Action Type", String.valueOf(ale.getType()), true);
         eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
         eb.addBlankField(true);
