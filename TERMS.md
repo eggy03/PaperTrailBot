@@ -1,6 +1,6 @@
 # Terms of Service
 
-_Last updated: February 02, 2026_
+_Last updated: February 16, 2026_
 
 Thank you for using **PaperTrail**, an open-source Discord audit and message logging bot.
 
@@ -24,7 +24,7 @@ You agree to use the bot responsibly, and not for any of the following:
 ## 2. Privacy
 
 This bot logs message and event data **only if you enable those features**.
-Message content is stored in plain text and logs are automatically deleted after 30 days.
+All content is stored in a readable format .
 
 See our [Privacy Policy](./PRIVACY.md) for full details on data handling, retention, and user rights.
 
@@ -43,8 +43,7 @@ The project maintainers are not responsible for how self-hosted instances handle
 
 ## 4. Modifications
 
-You are free to fork, modify, or self-host this project under the terms of the [Apache 2.0 License](./LICENSE).
-If you publicly redistribute a modified version, you must preserve the original license and attribution.
+You are free to fork, modify, or self-host this project under the terms of the [AGPLv3](./LICENSE).
 
 ---
 

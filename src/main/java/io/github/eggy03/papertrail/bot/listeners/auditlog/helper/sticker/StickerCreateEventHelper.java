@@ -1,0 +1,71 @@
+package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.sticker;
+
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.sticker.utils.StickerUtils;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+
+import java.awt.Color;
+
+@UtilityClass
+@Slf4j
+public class StickerCreateEventHelper {
+
+    public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
+
+        AuditLogEntry ale = event.getEntry();
+
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Sticker Create Event");
+        eb.setDescription("ℹ️ The following sticker was created by: " + mentionableExecutor);
+        eb.setColor(Color.GREEN);
+
+        eb.addField("Action Type", String.valueOf(ale.getType()), true);
+        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
+
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
+
+            switch (changeKey) {
+                case "format_type", "type", "asset", "available", "guild_id" -> {
+                    // skip
+                }
+                case "id" -> {
+                    eb.addField("Sticker ID", "╰┈➤" + newValue, false);
+                    eb.addField("Sticker Link", "╰┈➤" + StickerUtils.resolveStickerUrl(event, newValue), false);
+                }
+                case "tags" ->
+                        eb.addField("Related Emoji", "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, newValue), false);
+                case "description" -> eb.addField("Description", "╰┈➤" + newValue, false);
+                case "name" -> eb.addField("Sticker Name", "╰┈➤" + newValue, false);
+
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
+            }
+        });
+
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
+        eb.setTimestamp(ale.getTimeCreated());
+
+        if (!eb.isValidLength() || eb.isEmpty()) {
+            log.warn("Embed is empty or too long (current length: {}).", eb.length());
+            return;
+        }
+
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if (sendingChannel != null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(eb.build()).queue();
+        }
+    }
+}

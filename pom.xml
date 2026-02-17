@@ -4,11 +4,11 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.egg.papertrail</groupId>
-    <artifactId>paper-trail-bot</artifactId>
-    <version>2.5.0</version>
-    <name>PaperTrail</name>
-    <description>A simple bot for logging all user actions</description>
+    <groupId>io.github.eggy03</groupId>
+    <artifactId>papertrailbot</artifactId>
+    <version>3.0.0</version>
+    <name>PaperTrail Bot</name>
+    <description>A simple bot for logging all server and member actions</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,15 +17,13 @@
         <maven.compiler.target>21</maven.compiler.target>
 
         <!-- Dependency Versions -->
-        <jda.version>6.3.0</jda.version>
-        <papertrail.sdk.version>1.0.0</papertrail.sdk.version>
+        <jda.version>6.3.1</jda.version>
+        <papertrail.sdk.version>1.0.1</papertrail.sdk.version>
         <tinylog.version>2.7.0</tinylog.version>
         <dotenv.version>3.2.0</dotenv.version>
-        <commons-lang3.version>3.19.0</commons-lang3.version>
-        <jasypt.version>1.9.3</jasypt.version>
-        <bouncycastle.version>1.83</bouncycastle.version>
-        <guava.version>33.4.8-jre</guava.version>
-        <spring.version>7.0.3</spring.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <spring.version>7.0.4</spring.version>
         <gson.version>2.13.2</gson.version>
         <lombok.version>1.18.42</lombok.version>
 
@@ -84,18 +82,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt</artifactId>
-            <version>${jasypt.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
-            <version>${bouncycastle.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
@@ -136,7 +122,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot-maven-plugin.version}</version>
                 <configuration>
-                    <mainClass>org.papertrail.main.Start</mainClass>
+                    <mainClass>io.github.eggy03.papertrail.bot.main.Start</mainClass>
                 </configuration>
             </plugin>
 

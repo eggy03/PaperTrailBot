@@ -1,6 +1,8 @@
 # Privacy Policy
 
-**Data Controller:** This project is maintained by [@Egg-03](https://github.com/eggy03).  
+**Data Controller:** This project is maintained by [@Egg-03](https://github.com/eggy03).
+
+**Last Updated:** February 16, 2026
 
 This Discord bot was built as an open source project with a privacy-first mindset.
 The Service is provided at no cost and is intended for use as-is.
@@ -33,29 +35,60 @@ The bot only stores data when specific features are explicitly enabled by server
 ### If **Message Logging** is enabled:
 - Message Content
 - Message ID
-- Author ID (Discord user ID)
+- Author ID (Discord user ID of the message owner)
 - Channel ID
 - Guild ID
 - Timestamp
-
-Message content is stored in plain text and is not used for analytics or shared outside your server.
 
 ### If **only Audit Logging** is enabled:
 - Guild ID
 - Channel ID where audit logs should be sent (one per guild)
 
-No message content or user data is stored in this case.
+No message content, message ID or Author ID is stored in this case.
 
-The stored data is used solely for server moderation purposes.
+**Note on Direct Messages (DMs)**: The bot does not monitor, read, or store data from Direct Messages between users.
+It only processes data within Discord Guilds (servers) where it has been explicitly invited.
 
 ---
 
 ## Data Retention
 
-- All stored message contents and their metadata are automatically deleted after **30 days**.
-- No data is permanently retained or used for any analytics.
-- Configuration data (e.g., log channel IDs) is kept until the server administrator unregisters the bot or removes it from the server.
-- Server administrators can also request immediate deletion of all stored data for their guild by contacting us.
+We adhere to a strict data minimization policy.
+Information is only retained for the duration necessary to provide the bot's logging features.
+
+- **Temporary Message Logs**: All captured message content (text-only) and metadata logs are stored for a maximum period
+  of 30 days.
+  Following this period, data is programmatically purged from our production databases.
+- **System Backups**: Data contained within database backups may persist for up to an additional 7 days beyond the
+  standard retention period before being overwritten.
+- **Administrative Data**: Configuration settings (e.g. designated log channels) are retained as long as the bot
+  remains authorized within the Discord Guild.
+
+---
+
+## Data Security
+
+We implement reasonable technical and organizational measures to protect stored data from unauthorized access, loss,
+or misuse. This includes strict access controls, limited operator access, and infrastructure security best practices.
+
+**Infrastructure & Storage**
+
+- Cloud Providers: We utilize `Northflank` for application hosting and `Aiven` for managed database services.
+- Encryption: While all collected data is stored in a readable format, our infrastructure providers employ encryption
+  to protect data on the physical disk level. To know more, read their security
+  policies of our providers [Northflank](https://northflank.com/security)
+  and [Aiven](https://aiven.io/security-compliance).
+
+**Access Control**
+
+Access to the production environment and database is strictly limited to the Data Controller (@Egg-03).
+No other contributors or third parties have access to the raw data stored by the bot.
+
+**Disclaimer**
+
+While we strive to use commercially acceptable means to protect your information, no method of transmission over the
+internet or method of electronic storage is 100% secure.
+We cannot guarantee absolute security and the service is provided on an "as-is" basis.
 
 ---
 
@@ -69,19 +102,6 @@ Logs are not used for analytics.
 
 ---
 
-## Security
-
-We take reasonable technical and organizational measures to protect stored data from unauthorized access, loss, or misuse.
-This includes access controls, limited operator access, and infrastructure security best practices.
-
-Message content is stored in plain text on cloud infrastructure.
-This is the same general model used by Discord (i.e., messages are not end-to-end encrypted).
-We do not perform analytics on message content.
-
-However, no method of transmission over the internet or method of electronic storage is 100% secure, and we cannot guarantee absolute security.
-
----
-
 ## Children’s Privacy
 
 This bot is not intended for users under the age of 13. It does not knowingly collect any personal information from children.
@@ -91,16 +111,15 @@ If it is discovered that such data has been inadvertently stored, it will be del
 
 ## User Rights
 
-All users, regardless of location, have the following rights:
+We respect the privacy rights of all Discord users. Regardless of your jurisdiction, you may exercise the following:
 
-- **Right of Access**: You may request what data (if any) is associated with your Discord user ID.
-- **Right to Erasure**: You may request deletion of your data from the database.
+- **Right to Access**: Users may request a transcript of all stored data associated with their Discord Snowflake ID.
+- **Right to Erasure**: Users may request the immediate removal of their data from our active logs.
 
-To protect user privacy, we will verify the identity of the requestor before fulfilling access or deletion requests (for example: confirmation from the guild owner or proof of control of the Discord user account).
-We will respond to verified requests within 30 days.
-If additional information is needed, we will notify you and may extend the response period where permitted by law.
-
-To request access or deletion, please contact us using the method below.
+To submit a request: Please contact us using one of the methods below.
+For security purposes, we may require you to verify your identity via a signed message or a direct interaction through
+the official Discord client.
+NOTE: We will never ask for any kinds of passwords or secret tokens from you.
 
 ---
 
