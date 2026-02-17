@@ -43,8 +43,7 @@ The project maintainers are not responsible for how self-hosted instances handle
 
 ## 4. Modifications
 
-You are free to fork, modify, or self-host this project under the terms of the [MIT License](./LICENSE).
-If you publicly redistribute a modified version, you must preserve the original license and attribution.
+You are free to fork, modify, or self-host this project under the terms of the [AGPLv3](./LICENSE).
 
 ---
 
