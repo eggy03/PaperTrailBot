@@ -16,6 +16,7 @@ import io.github.eggy03.papertrail.bot.listeners.misc.BotSetupInstructionCommand
 import io.github.eggy03.papertrail.bot.listeners.misc.DebugListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.ServerStatCommandListener;
+import io.github.eggy03.papertrail.bot.listeners.misc.SlashCommandRegistrationListener;
 import lombok.NonNull;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
@@ -54,7 +55,7 @@ public class Start {
         manager.addEventListener(new ActivityUpdateListener(manager));
         manager.addEventListener(new DebugListener());
         // re-enable it only when adding/updating/deleting commands
-        //manager.addEventListener(new SlashCommandRegistrationListener());
+        manager.addEventListener(new SlashCommandRegistrationListener());
 
         // Custom health check endpoint
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);

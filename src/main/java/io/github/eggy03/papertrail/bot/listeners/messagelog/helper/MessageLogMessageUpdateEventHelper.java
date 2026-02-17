@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 
@@ -52,8 +51,10 @@ public class MessageLogMessageUpdateEventHelper {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            MessageEmbed mb = eb.build();
-            if (!mb.isSendable()) {
+            // update the database with the new message
+            client.updateMessage(updatedMessageId, updatedMessage, event.getAuthor().getId());
+
+            if (!eb.isValidLength() || eb.isEmpty()) {
                 log.warn("Embed is empty or too long (current length: {}).", eb.length());
                 return;
             }
@@ -61,11 +62,8 @@ public class MessageLogMessageUpdateEventHelper {
             // send the old and updated message to the registered channel
             TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
             if (sendingChannel != null && sendingChannel.canTalk()) {
-                sendingChannel.sendMessageEmbeds(mb).queue();
+                sendingChannel.sendMessageEmbeds(eb.build()).queue();
             }
-
-            // update the database with the new message
-            client.updateMessage(updatedMessageId, updatedMessage, event.getAuthor().getId());
         });
     }
 }

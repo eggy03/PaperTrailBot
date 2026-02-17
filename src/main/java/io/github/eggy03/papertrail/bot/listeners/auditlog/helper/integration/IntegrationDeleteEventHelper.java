@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -49,8 +48,7 @@ public class IntegrationDeleteEventHelper {
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
-        MessageEmbed mb = eb.build();
-        if (!mb.isSendable()) {
+        if (!eb.isValidLength() || eb.isEmpty()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
             return;
         }

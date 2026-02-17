@@ -3,8 +3,8 @@ package io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild;
 import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.time.Instant;
 
 @UtilityClass
+@Slf4j
 public class GuildPollEventHelper {
 
     public static void format(@NonNull MessageReceivedEvent event, @NonNull MessagePoll messagePoll, @NonNull String channelIdToSendTo) {
@@ -33,11 +34,14 @@ public class GuildPollEventHelper {
         eb.setFooter("Poll Activity Detection");
         eb.setTimestamp(Instant.now());
 
-        MessageEmbed mb = eb.build();
+        if (!eb.isValidLength() || eb.isEmpty()) {
+            log.warn("Embed is empty or too long (current length: {}).", eb.length());
+            return;
+        }
 
         TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
         if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(mb).queue();
+            sendingChannel.sendMessageEmbeds(eb.build()).queue();
         }
     }
 
