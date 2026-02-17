@@ -23,6 +23,7 @@ import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.generic.Generic
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.guild.GuildUpdateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.homesettings.HomeSettingsCreateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.homesettings.HomeSettingsUpdateEventHelper;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.integration.ApplicationCommandPrivilegesUpdateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.integration.IntegrationCreateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.integration.IntegrationDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.invite.InviteCreateEventHelper;
@@ -138,6 +139,8 @@ public class AuditLogEventListener extends ListenerAdapter {
 
             case INTEGRATION_CREATE -> IntegrationCreateEventHelper.format(event, channelIdToSendTo);
             case INTEGRATION_DELETE -> IntegrationDeleteEventHelper.format(event, channelIdToSendTo);
+            case APPLICATION_COMMAND_PRIVILEGES_UPDATE ->
+                    ApplicationCommandPrivilegesUpdateEventHelper.format(event, channelIdToSendTo);
             // INTEGRATION_UPDATE has generic formatting
 
             case INVITE_CREATE -> InviteCreateEventHelper.format(event, channelIdToSendTo);
@@ -191,13 +194,14 @@ public class AuditLogEventListener extends ListenerAdapter {
                  MESSAGE_UPDATE -> GenericAuditLogEventHelper.format(event, channelIdToSendTo);
 
             // except UNKNOWN, the rest have never been seen to be triggered
-            case APPLICATION_COMMAND_PRIVILEGES_UPDATE, PRUNE, INTEGRATION_UPDATE,
-                 INVITE_UPDATE, ONBOARDING_CREATE,
+            case PRUNE, INTEGRATION_UPDATE,
+                 INVITE_UPDATE, ONBOARDING_CREATE, GUILD_PROFILE_UPDATE,
                  UNKNOWN -> GenericAuditLogEventHelper.format(event, channelIdToSendTo);
+
 
             default -> {
                 GenericAuditLogEventHelper.format(event, channelIdToSendTo);
-                log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by me yet {}", ale.getType().name());
+                log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by PaperTrail yet {}", ale.getType().name());
             }
         }
     }
