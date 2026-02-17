@@ -21,6 +21,8 @@ import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.emoji.EmojiDele
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.emoji.EmojiUpdateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.generic.GenericAuditLogEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.guild.GuildUpdateEventHelper;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.homesettings.HomeSettingsCreateEventHelper;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.homesettings.HomeSettingsUpdateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.integration.IntegrationCreateEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.integration.IntegrationDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.invite.InviteCreateEventHelper;
@@ -179,10 +181,8 @@ public class AuditLogEventListener extends ListenerAdapter {
             case ONBOARDING_PROMPT_UPDATE -> OnboardingPromptUpdateEventHelper.format(event, channelIdToSendTo);
             case ONBOARDING_PROMPT_DELETE -> OnboardingPromptDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case HOME_SETTINGS_CREATE, HOME_SETTINGS_UPDATE -> {
-                // might come back later and implement it
-                // but for now, don't send these events
-            }
+            case HOME_SETTINGS_CREATE -> HomeSettingsCreateEventHelper.format(event, channelIdToSendTo);
+            case HOME_SETTINGS_UPDATE -> HomeSettingsUpdateEventHelper.format(event, channelIdToSendTo);
 
             // these seemingly don't trigger properly, or are unreliable
             case MESSAGE_BULK_DELETE,
