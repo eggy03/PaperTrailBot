@@ -72,9 +72,8 @@ public class ThreadUpdateEventHelper {
                     eb.addField("New Archive Status", "╰┈➤" + BooleanUtils.formatToEnabledOrDisabled(newValue), true);
                     eb.addBlankField(true);
                 }
-                case "flags" -> {
-                    // skip
-                }
+                case "flags" -> eb.addField("Flags", "╰┈➤Thread flags were updated", false);
+
                 case "invitable" -> {
                     eb.addField("Was Invitable", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
                     eb.addField("Is Invitable", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
