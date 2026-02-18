@@ -56,6 +56,11 @@ public class WebhookUpdateEventHelper {
                     eb.addField("New Webhook Name", "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
+                case "application_id" -> {
+                    eb.addField("Old Application ID", "╰┈➤" + oldValue, true);
+                    eb.addField("New Application ID", "╰┈➤" + newValue, true);
+                    eb.addBlankField(true);
+                }
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

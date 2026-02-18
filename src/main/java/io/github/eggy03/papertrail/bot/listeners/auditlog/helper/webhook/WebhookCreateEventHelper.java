@@ -46,6 +46,7 @@ public class WebhookCreateEventHelper {
                 case "channel_id" ->
                         eb.addField("Channel", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
                 case "name" -> eb.addField("Webhook Name", "╰┈➤" + newValue, false);
+                case "application_id" -> eb.addField("Application ID", "╰┈➤" + newValue, false);
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
