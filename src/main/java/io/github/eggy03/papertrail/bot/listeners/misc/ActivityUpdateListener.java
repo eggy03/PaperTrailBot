@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
+import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Activity;
@@ -35,7 +36,7 @@ public class ActivityUpdateListener extends ListenerAdapter {
     }
 
     private void updateActivity() {
-        manager.setActivity(Activity.customStatus("/setup | " + manager.getGuildCache().size() + " Servers"));
+        manager.setActivity(Activity.customStatus("/setup | " + manager.getGuildCache().size() + " Servers | " + ProjectInfo.VERSION));
     }
 
 }
