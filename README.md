@@ -153,7 +153,8 @@ Some platform services may also support adding secrets directly from your `.env`
   ```
   
 #### Healthcheck Endpoint
-The bot exposes a `/ping` endpoint on port **8080**.  
+
+The bot exposes a `/health` endpoint on port **8080**.  
 This endpoint simply returns `200 OK` and is intended for platforms or uptime monitors to check if the bot is alive.
 
 > Note: This is **not a public endpoint** and serves no other function beyond internal service health monitoring.

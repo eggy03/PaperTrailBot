@@ -1,28 +1,11 @@
 package io.github.eggy03.papertrail.bot.main;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import io.github.eggy03.papertrail.bot.listeners.auditlog.event.AuditLogEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlog.setup.AuditLogSetupCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildBoostEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildMemberJoinAndLeaveEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildPollEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildVoiceEventListener;
-import io.github.eggy03.papertrail.bot.listeners.messagelog.event.MessageLogListener;
-import io.github.eggy03.papertrail.bot.listeners.messagelog.setup.MessageLogSetupCommandListener;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.misc.ActivityUpdateListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.BotSetupInstructionCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.DebugListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.ServerStatCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.SlashCommandRegistrationListener;
-import lombok.NonNull;
+import io.javalin.Javalin;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /*
@@ -30,45 +13,46 @@ import java.util.concurrent.Executors;
  */
 public class Start {
 
-    // All I/O blocking operations run inside the vThreadPool
-    private static final @NonNull Executor vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
-
-    public static void main(String[] args) throws IOException {
-
-        ConnectionInitializer ci = new ConnectionInitializer();
-        ShardManager manager = ci.getManager();
-
-        manager.addEventListener(new AuditLogSetupCommandListener());
-        manager.addEventListener(new AuditLogEventListener(vThreadPool));
-
-        manager.addEventListener(new MessageLogSetupCommandListener());
-        manager.addEventListener(new MessageLogListener(vThreadPool));
-
-        manager.addEventListener(new GuildVoiceEventListener(vThreadPool));
-        manager.addEventListener(new GuildMemberJoinAndLeaveEventListener(vThreadPool));
-        manager.addEventListener(new GuildPollEventListener(vThreadPool));
-        manager.addEventListener(new GuildBoostEventListener(vThreadPool));
-        manager.addEventListener(new SelfKickListener(vThreadPool));
-
-        manager.addEventListener(new ServerStatCommandListener());
-        manager.addEventListener(new BotSetupInstructionCommandListener());
-        manager.addEventListener(new ActivityUpdateListener(manager));
-        manager.addEventListener(new DebugListener());
-        // re-enable it only when adding/updating/deleting commands
-        manager.addEventListener(new SlashCommandRegistrationListener());
-
-        // Custom health check endpoint
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        server.createContext("/ping", new PingHandler());
-        server.setExecutor(null); // creates a default executor
-        server.start();
+    private static Javalin setHealthCheckEndpoint(int runningShards, int totalShards) {
+        return Javalin
+                .create(config -> config.useVirtualThreads = true)
+                .get("/health", ctx -> {
+                    if (runningShards != totalShards)
+                        ctx.status(503).result("Not Ready");
+                    else ctx.status(200).result("OK");
+                })
+                .start(8080);
     }
 
-    static class PingHandler implements HttpHandler {
-        @Override
-        public void handle(@NonNull HttpExchange exchange) throws IOException {
-            exchange.sendResponseHeaders(200, -1);
-        }
+    public static void main(String[] args) {
+
+        // get env vars
+        String token = EnvConfig.get("TOKEN");
+        int minShardId = Integer.parseInt(EnvConfig.get("MIN_SHARD_ID")); // min for this instance
+        int maxShardId = Integer.parseInt(EnvConfig.get("MAX_SHARD_ID")); // max for this instance
+        int totalShards = Integer.parseInt(EnvConfig.get("TOTAL_SHARDS"));
+
+        // set v-thread pools for listeners
+        ExecutorService vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
+
+        // boostrap the bot
+        ShardManager manager = new BootstrapService(token)
+                .applyRecommendedPreset()
+                .applyDefaultStatus()
+                .applyPreBuildEventListeners(vThreadPool)
+                .applySharding(minShardId, maxShardId, totalShards)
+                .start();
+        // post build listeners that require a fully built shard manager
+        manager.addEventListener(new ActivityUpdateListener(manager));
+
+        // set a health check endpoint for containers
+        Javalin endpoint = setHealthCheckEndpoint(manager.getShardsRunning(), manager.getShardsTotal());
+
+        // add shutdown hooks
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            endpoint.stop();
+            vThreadPool.shutdown();
+        }));
     }
 
 }
