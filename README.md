@@ -15,11 +15,11 @@ Key Features:
 
 # Repositories
 
-| Repository                                                                            | Description                              |
-|---------------------------------------------------------------------------------------|------------------------------------------|
-| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)                              | Core bot application                     |
-| [PaperTrail SDK](https://github.com/eggy03/papertrail-sdk)                            | Client library for the API               |
-| [PaperTrail Persistence Service](https://github.com/eggy03/PaperTrail-PersistenceAPI) | Backend API for providing CRUD functions |
+| Repository                                                         | Description                              |
+|--------------------------------------------------------------------|------------------------------------------|
+| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)           | Core bot application                     |
+| [PaperTrail SDK](https://github.com/eggy03/papertrail-sdk)         | Client library for the API               |
+| [PaperTrail API](https://github.com/eggy03/PaperTrail-API-Quarkus) | Backend API for providing CRUD functions |
 
 > [!IMPORTANT]
 > PaperTrail is currently in maintenance mode. Existing bugs will be fixed, dependency updates will be provided
@@ -28,13 +28,13 @@ Key Features:
 # Self-Hosting Guide
 
 > [!IMPORTANT]
-> Please note that this is only for advanced users who want to self-host this bot
+> Please note that this section is only for users who want to self-host this bot.
 >
-> Set up the API Service before setting up the bot
+> It is recommended that you set up the API service before setting up the bot.
 
 ## Setting up the API Service
 
-Follow this [guide](https://github.com/Egg-03/PaperTrail-PersistenceAPI?tab=readme-ov-file#papertrail-persistenceapi)
+Follow this [guide](https://github.com/eggy03/PaperTrail-API-Quarkus?tab=readme-ov-file)
 
 ## Setting up the Bot Service
 
@@ -76,13 +76,14 @@ Don't forget to copy the `bot token` as it will be required in the next step
 
 You will need the following environment variables to run the bot:
 
-| Variable       | Description                                                           |
-|----------------|-----------------------------------------------------------------------|
-| `TOKEN`        | Discord application bot token (from the Developer Portal)             |
-| `API_URL`      | Internal URL of the Persistence API (e.g., `http://persistence:8080`) |
-| `TOTAL_SHARDS` | The total number of shards (connections) your bot is using overall.   |
-| `MIN_SHARD_ID` | The first shard number this bot instance should handle.               |
-| `MAX_SHARD_ID` | The last shard number this bot instance should handle.                |
+| Variable       | Description                                                                              |
+|----------------|------------------------------------------------------------------------------------------|
+| `TOKEN`        | Discord application bot token (from the Developer Portal)                                |
+| `API_URL`      | Internal URL of the PaperTrail API (e.g., `http://localhost:8081`)                       |
+| `TOTAL_SHARDS` | The total number of shards (connections) your bot is using across **ALL** bot instances. |
+| `MIN_SHARD_ID` | The first shard number **THIS** bot instance should handle.                              |
+| `MAX_SHARD_ID` | The last shard number **THIS** bot instance should handle.                               |
+| `PORT`         | The port which the health check endpoint will bind to.                                   |
 
 Each shard allows handling up-to 2500 guilds.
 
@@ -133,37 +134,65 @@ MIN_SHARD_ID=5
 MAX_SHARD_ID=9
 ```
 
-Shard ID ranges must never overlap between running instances.
+> [!CAUTION]
+> Shard ID ranges must never overlap between running instances.
 
 ### Step 3: Deployment Options
 
-Fork this repository to your GitHub account, connect it to your preferred cloud platform, and configure your environment variables in the platform.
-Some platform services may also support adding secrets directly from your `.env` file.
+#### Local
 
-#### Cloud Platforms with GitHub + Docker Support
-- These can auto-deploy using the included `Dockerfile`
+- Clone the Repository
 
-#### Locally
-- You can also test it locally by building and running using the `Dockerfile`
-- Navigate your terminal to the repository and execute the following commands
-  
-  ```
-  docker build -t papertrail-bot .
-  docker run --env-file .env papertrail-bot
-  ```
-  
-#### Healthcheck Endpoint
+```shell
+git clone https://github.com/eggy03/PaperTrailBot.git
+cd PaperTrail-API-Quarkus
+```
 
-The bot exposes a `/health` endpoint on port **8080**.  
-This endpoint simply returns `200 OK` and is intended for platforms or uptime monitors to check if the bot is alive.
+- Keep your `.env` file ready inside the locally cloned repository
+- Make sure docker is running. The provided `Dockerfile` will be used for building.
 
-> Note: This is **not a public endpoint** and serves no other function beyond internal service health monitoring.
+```shell
+docker build -t papertrail-bot .
+docker run -p <PORT>:<PORT> --env-file .env papertrail-bot
+```
+
+`<PORT>` should be replaced by the Port number you have set in your `.env` file.
+
+#### Cloud Based
+
+You can also deploy on cloud platforms that support docker-based deploys via Dockerfile.
+The exact procedure varies, but it usually involves linking the repository, choosing the Dockerfile, and supplying the
+necessary environment variables.
+
+#### Health check Endpoint (Optional)
+
+The bot exposes a `/health` endpoint on the port set by you in the `.env` file or as system env variable.
+
+This endpoint simply returns `HTTP 200` if the bot is ready to work, else `HTTP 503`.
+
+This endpoint serves as a readiness probe for containers to check the health of the bot.
 
 # License
 
-- **PaperTrailBot**: AGPLv3
-- **PaperTrail Persistence API**: AGPLv3
-- **PaperTrail SDK**: GNU GPLv3
+This project is licensed under the [AGPLv3](/LICENSE) license.
 
----
-Feel free to raise issues on GitHub if you get stuck!
+### What this means for you ?
+
+- If you deploy this project **without modifying the source code**, you do not need to provide anything additional.
+  The source code is already publicly available.
+
+- If you **modify the source code** and run it as a service where users interact with it over a network,
+  you must make the complete corresponding source code of your modified version available to those users.
+  You are not required to publish it publicly.
+
+- You may modify, redistribute, rebrand, and monetize the project. However:
+  - Your version must remain licensed under AGPLv3.
+  - You must preserve copyright notices and the original license.
+  - You must clearly state any changes you have made.
+
+- This software is provided without warranty, as described in AGPLv3.
+
+# Help
+
+If you face any problems during self-hosting or have a question that needs to be answered, please feel free to
+open an issue in the Issues tab. I will try my best to answer them as soon as I can.
