@@ -83,7 +83,6 @@ You will need the following environment variables to run the bot:
 | `TOTAL_SHARDS` | The total number of shards (connections) your bot is using across **ALL** bot instances. |
 | `MIN_SHARD_ID` | The first shard number **THIS** bot instance should handle.                              |
 | `MAX_SHARD_ID` | The last shard number **THIS** bot instance should handle.                               |
-| `PORT`         | The port which the health check endpoint will bind to.                                   |
 
 Each shard allows handling up-to 2500 guilds.
 
@@ -153,24 +152,14 @@ cd PaperTrail-API-Quarkus
 
 ```shell
 docker build -t papertrail-bot .
-docker run -p <PORT>:<PORT> --env-file .env papertrail-bot
+docker run --env-file .env papertrail-bot
 ```
-
-`<PORT>` should be replaced by the Port number you have set in your `.env` file.
 
 #### Cloud Based
 
 You can also deploy on cloud platforms that support docker-based deploys via Dockerfile.
 The exact procedure varies, but it usually involves linking the repository, choosing the Dockerfile, and supplying the
 necessary environment variables.
-
-#### Health check Endpoint (Optional)
-
-The bot exposes a `/health` endpoint on the port set by you in the `.env` file or as system env variable.
-
-This endpoint simply returns `HTTP 200` if the bot is ready to work, else `HTTP 503`.
-
-This endpoint serves as a readiness probe for containers to check the health of the bot.
 
 # License
 
