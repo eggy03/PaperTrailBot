@@ -2,9 +2,6 @@ package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
 import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
-import io.github.eggy03.papertrail.sdk.client.HealthClient;
-import io.github.eggy03.papertrail.sdk.entity.HealthEntity;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -20,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.time.Instant;
 import java.util.EnumSet;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -102,43 +98,6 @@ public class DebugListener extends ListenerAdapter {
                 "Total Shards: `" + shardInfo.getShardTotal() + "`";
     }
 
-    @NotNull
-    public static String getApiInfo() {
-        Optional<HealthEntity> apiHealthEntity = new HealthClient(EnvConfig.get("API_URL")).getHealth();
-        if (apiHealthEntity.isEmpty())
-            return "⚠️ API Unreachable";
-
-        StringBuilder info = new StringBuilder();
-
-        HealthEntity health = apiHealthEntity.get();
-        info.append("Overall API Status: ")
-                .append("`").append(health.getStatus()).append("`")
-                .append("\n");
-
-        HealthEntity.Components components = health.getComponents();
-        if (components == null) {
-            info.append("⚠️ Individual Component Data Unavailable");
-            return info.toString().trim();
-        }
-
-        HealthEntity.Components.Database database = components.getDb();
-        HealthEntity.Components.Redis redis = components.getRedis();
-        HealthEntity.Components.Ping ping = components.getPing();
-        HealthEntity.Components.Ssl ssl = components.getSsl();
-
-        String databaseStatus = database != null ? database.getStatus() : "⚠️`DB Component Not Found`";
-        String redisStatus = redis != null ? redis.getStatus() : "⚠️`Redis Component Not Found`";
-        String pingStatus = ping != null ? ping.getStatus() : "⚠️`Ping Component Not Found`";
-        String sslStatus = ssl != null ? ssl.getStatus() : "⚠️`SSL Component Not Found`";
-
-        info.append("Database: `").append(databaseStatus).append("`").append("\n")
-                .append("Redis: `").append(redisStatus).append("`").append("\n")
-                .append("Ping: `").append(pingStatus).append("`").append("\n")
-                .append("SSL: `").append(sslStatus).append("`");
-
-        return info.toString().trim();
-    }
-
     @Override
     public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
@@ -164,8 +123,8 @@ public class DebugListener extends ListenerAdapter {
         eb.addField("Server Info", getServerInfo(guild, channel), true);
 
         eb.addField("User Info", getCallerInfo(member), true);
+        eb.addBlankField(true);
         eb.addField("Bot Info", getBotInfo(event), true);
-        eb.addField("API Info", getApiInfo(), true);
 
         eb.setFooter(ProjectInfo.APPNAME + " " + ProjectInfo.VERSION);
         eb.setTimestamp(Instant.now());
