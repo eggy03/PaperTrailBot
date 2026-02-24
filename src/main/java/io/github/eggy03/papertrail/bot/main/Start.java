@@ -13,21 +13,24 @@ import java.util.concurrent.Executors;
  */
 public class Start {
 
-    private static Javalin setHealthCheckEndpoint(int runningShards, int totalShards) {
+    private static Javalin setHealthCheckEndpoint(int runningShards, int totalShards, int port) {
         return Javalin
-                .create(config -> config.useVirtualThreads = true)
-                .get("/health", ctx -> {
-                    if (runningShards != totalShards)
-                        ctx.status(503).result("Not Ready");
-                    else ctx.status(200).result("OK");
+                .create(config -> {
+                    config.concurrency.useVirtualThreads = true;
+                    config.routes.get("/health", ctx -> {
+                        if (runningShards != totalShards)
+                            ctx.status(503).result("Not Ready");
+                        else ctx.status(200).result("OK");
+                    });
                 })
-                .start(8080);
+                .start(port);
     }
 
     public static void main(String[] args) {
 
         // get env vars
         String token = EnvConfig.get("TOKEN");
+        int port = Integer.parseInt(EnvConfig.get("PORT"));
         int minShardId = Integer.parseInt(EnvConfig.get("MIN_SHARD_ID")); // min for this instance
         int maxShardId = Integer.parseInt(EnvConfig.get("MAX_SHARD_ID")); // max for this instance
         int totalShards = Integer.parseInt(EnvConfig.get("TOTAL_SHARDS"));
@@ -46,7 +49,7 @@ public class Start {
         manager.addEventListener(new ActivityUpdateListener(manager));
 
         // set a health check endpoint for containers
-        Javalin endpoint = setHealthCheckEndpoint(manager.getShardsRunning(), manager.getShardsTotal());
+        Javalin endpoint = setHealthCheckEndpoint(manager.getShardsRunning(), manager.getShardsTotal(), port);
 
         // add shutdown hooks
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
