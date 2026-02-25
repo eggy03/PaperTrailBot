@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 import java.util.Optional;
@@ -55,10 +56,10 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
 
         if (success) {
             eb.setColor(Color.GREEN);
-            eb.addField("✅ Channel Registration Success", "╰┈➤" + "All audit log info will be logged here", false);
+            eb.addField(MarkdownUtil.underline("Registration Success"), MarkdownUtil.codeblock("All audit log info will be logged here"), false);
         } else {
             eb.setColor(Color.YELLOW);
-            eb.addField("❌ Channel Registration Failure", "╰┈➤" + "Channel could not be registered.\nCheck if a channel in this guild is already registered for logging.", false);
+            eb.addField(MarkdownUtil.underline("Registration Failure"), MarkdownUtil.codeblock("Channel could not be registered. Check if a channel in this guild is already registered for logging."), false);
         }
 
         MessageEmbed mb = eb.build();
@@ -84,13 +85,13 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
         response.ifPresentOrElse(success -> {
             String registeredChannelId = success.getChannelId();
             GuildChannel registeredChannel = event.getJDA().getGuildChannelById(registeredChannelId);
-            String mentionableRegisteredChannel = registeredChannel != null ? registeredChannel.getAsMention() : registeredChannelId;
+            String registeredChannelName = registeredChannel != null ? registeredChannel.getName() : registeredChannelId;
 
             eb.setColor(Color.CYAN);
-            eb.addField("✅ Channel Registration Check", "╰┈➤" + mentionableRegisteredChannel + " is found to be registered as the audit log channel", false);
+            eb.addField(MarkdownUtil.underline("Success"), MarkdownUtil.codeblock(registeredChannelName + " is found to be registered as the audit log channel"), false);
         }, () -> {
             eb.setColor(Color.YELLOW);
-            eb.addField("⚠️ Channel Registration Check", "╰┈➤" + "No channel has been registered for audit logs", false);
+            eb.addField(MarkdownUtil.underline("Warning"), MarkdownUtil.codeblock("No channel has been registered for audit logs"), false);
         });
 
         MessageEmbed mb = eb.build();
@@ -109,14 +110,14 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
         boolean success = client.deleteRegisteredGuild(callerGuild.getId());
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Un-Registration Process");
+        eb.setTitle("Audit Log Removal Process");
 
         if (success) {
             eb.setColor(Color.GREEN);
-            eb.addField("✅ Channel Removal", "╰┈➤" + "Channel successfully unset", false);
+            eb.addField(MarkdownUtil.underline("Removal Success"), MarkdownUtil.codeblock("Channel successfully unset"), false);
         } else {
             eb.setColor(Color.YELLOW);
-            eb.addField("❌ Channel Removal Failure", "╰┈➤" + "Channel could not be unset.\nThis may be because no channel has been registered in this guild yet.", false);
+            eb.addField(MarkdownUtil.underline("Removal Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this guild yet."), false);
         }
 
         MessageEmbed mb = eb.build();
