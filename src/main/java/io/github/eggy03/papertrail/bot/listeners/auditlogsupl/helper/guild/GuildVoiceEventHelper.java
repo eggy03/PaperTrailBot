@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -23,30 +24,41 @@ public class GuildVoiceEventHelper {
         AudioChannel joined = event.getNewValue(); // can be null if user left
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("🔊 Voice Activity Log");
+        eb.setTitle("Audit Log Entry | Voice Activity Sub-Entry");
 
         if (left == null && joined != null) {
             // User has joined a vc
-            eb.setDescription("A Member has joined a voice channel");
+            eb.setDescription("A Member Has Joined A Voice Channel");
             eb.setColor(Color.GREEN);
-            eb.addField("✅ Member Joined", "╰┈➤" + member.getAsMention() + " joined the voice channel " + joined.getAsMention(), false);
+            eb.addField(
+                    MarkdownUtil.underline("Connection Event Metadata"),
+                    MarkdownUtil.quoteBlock("Connected Member: " + member.getAsMention() + "\nJoined Channel: " + joined.getAsMention()),
+                    false)
+            ;
         }
 
         if (left != null && joined != null) {
             // Moved from one channel to another
-            eb.setDescription("A Member has switched voice channels");
+            eb.setDescription("A Member Has Switched Voice Channels");
             eb.setColor(Color.YELLOW);
-            eb.addField("🔄 Member Switched Channels", "╰┈➤" + member.getAsMention() + " joined the switched from channel " + left.getAsMention() + " to " + joined.getAsMention(), false);
+            eb.addField(
+                    MarkdownUtil.underline("Switch Event Metadata"),
+                    MarkdownUtil.quoteBlock("Switched Member: " + member.getAsMention() + "\nLeft Channel: " + left.getAsMention() + "\nJoined Channel: " + joined.getAsMention()),
+                    false);
         }
 
         if (left != null && joined == null) {
             // User disconnected voluntarily (or was disconnected by a moderator)
-            eb.setDescription("A Member has left a voice channel");
+            eb.setDescription("A Member Has Left A Voice Channel");
             eb.setColor(Color.RED);
-            eb.addField("❌ Member Left A Voice Channel", "╰┈➤" + member.getAsMention() + " left the voice channel " + left.getAsMention(), false);
+            eb.addField(
+                    MarkdownUtil.underline("Disconnection Event Metadata"),
+                    MarkdownUtil.quoteBlock("Disconnected Member: " + member.getAsMention() + "\nLeft Channel: " + left.getAsMention()),
+                    false
+            );
         }
 
-        eb.setFooter("Voice Activity Detection");
+        eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());
 
         if (!eb.isValidLength() || eb.isEmpty()) {
