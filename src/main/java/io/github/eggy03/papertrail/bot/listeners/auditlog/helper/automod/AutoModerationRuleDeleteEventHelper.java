@@ -26,7 +26,7 @@ public class AutoModerationRuleDeleteEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following AutoMod rule was deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Rule Deleted By: " + mentionableExecutor + "\nRule Deleted For: AutoMod"));
         eb.setColor(Color.RED);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

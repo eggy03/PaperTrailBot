@@ -27,7 +27,7 @@ public class AutoModerationRuleUpdateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following AutoMod rule was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Rule Updated By: " + mentionableExecutor + "\nRule Updated For: AutoMod"));
         eb.setColor(Color.YELLOW);
 
         // add name of the rule which got updated

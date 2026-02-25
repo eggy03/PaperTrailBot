@@ -28,7 +28,7 @@ public class AutoModerationRuleCreateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following AutoMod rule was created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Rule Created By: " + mentionableExecutor + "\nRule Created For: AutoMod"));
         eb.setColor(Color.GREEN);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
