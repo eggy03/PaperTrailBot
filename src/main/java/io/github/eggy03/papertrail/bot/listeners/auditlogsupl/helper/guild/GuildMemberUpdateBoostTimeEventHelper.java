@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -26,18 +27,17 @@ public class GuildMemberUpdateBoostTimeEventHelper {
         OffsetDateTime newBoostTime = event.getNewTimeBoosted(); // Will be null if the member stopped boosting
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Server Boost Event");
+        eb.setTitle("Audit Log Entry | Server Boost Event");
         eb.setThumbnail(guild.getIconUrl());
-        eb.setImage(guild.getBannerUrl());
 
         if (newBoostTime != null) {
-            eb.setDescription("**" + guild.getName() + "** has been boosted!");
+            eb.setDescription(MarkdownUtil.quoteBlock("Boosted By: " + mentionableMember + "\nTarget Server: " + guild.getName()));
             eb.setColor(Color.PINK);
-            eb.addField("Booster Gained", "╰┈➤" + mentionableMember + " has applied their first boost to your server", false);
+            eb.addField(MarkdownUtil.underline("Booster Gained"), "╰┈➤" + mentionableMember + " has applied their first boost to your server", false);
         } else {
-            eb.setDescription("**" + guild.getName() + "** has lost a boost.");
+            eb.setDescription(MarkdownUtil.quoteBlock("Boosted Removed By: " + mentionableMember + "\nTarget Server: " + guild.getName()));
             eb.setColor(Color.GRAY);
-            eb.addField("Booster Lost", "╰┈➤" + mentionableMember + " has removed their boost from your server", false);
+            eb.addField(MarkdownUtil.underline("Booster Lost"), "╰┈➤" + mentionableMember + " has removed their boost from your server", false);
         }
 
         eb.setFooter(guild.getName());
