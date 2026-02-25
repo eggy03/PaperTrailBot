@@ -4,6 +4,7 @@ import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.guild.SystemChannelFlag;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class GuildUtils {
 
     @NonNull
-    public static final String FALLBACK_STRING = "N/A";
+    private static final String FALLBACK_STRING = "N/A";
 
     // GUILD UTILS
     @NotNull
@@ -97,5 +98,15 @@ public class GuildUtils {
 
         GuildChannel channel = event.getGuild().getGuildChannelById(channelIdLong);
         return channel != null ? channel.getAsMention() : channelIdLong.toString();
+    }
+
+    @NotNull
+    public static String resolveOwnerName(Object ownerId, @NonNull GenericGuildEvent event) {
+        Long ownerIdLong = NumberParseUtils.parseLong(ownerId);
+        if (ownerIdLong == null)
+            return FALLBACK_STRING;
+
+        User user = event.getJDA().getUserById(ownerIdLong);
+        return user != null ? user.getName() : ownerIdLong.toString();
     }
 }

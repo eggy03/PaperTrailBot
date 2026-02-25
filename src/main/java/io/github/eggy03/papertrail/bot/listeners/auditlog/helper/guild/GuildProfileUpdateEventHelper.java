@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,19 +25,20 @@ public class GuildProfileUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Guild Profile Update Event");
-        eb.setDescription("ℹ️ The following guild profile updates were made by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Guild Profile Updated By: " + mentionableExecutor + "\nGuild Name: " + event.getGuild().getName()));
         eb.setColor(Color.PINK);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().keySet().forEach(key -> {
             switch (key) {
-                case "traits" -> eb.addField("Server Traits", "╰┈➤Server Traits have been updated", false);
-                case "visibility" -> eb.addField("Visibility", "╰┈➤Profile Visibility has been changed", false);
-                case "brand_color_primary" -> eb.addField("Banner Color", "╰┈➤Banner Color has been updated", false);
-                case "game_application_ids" -> eb.addField("Games", "╰┈➤Games have been updated", false);
-                default -> eb.addField(key, "╰┈➤" + key + " has/have been updated", false);
+                case "traits" ->
+                        eb.addField(MarkdownUtil.underline("Server Traits"), "╰┈➤Server Traits have been updated", false);
+                case "visibility" ->
+                        eb.addField(MarkdownUtil.underline("Visibility"), "╰┈➤Profile Visibility has been changed", false);
+                case "brand_color_primary" ->
+                        eb.addField(MarkdownUtil.underline("Banner Color"), "╰┈➤Banner Color has been updated", false);
+                case "game_application_ids" ->
+                        eb.addField(MarkdownUtil.underline("Games"), "╰┈➤Games have been updated", false);
+                default -> eb.addField(MarkdownUtil.underline(key), "╰┈➤" + key + " has/have been updated", false);
             }
         });
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
