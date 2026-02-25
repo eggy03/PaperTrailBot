@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,11 +26,8 @@ public class EmojiUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Emoji Update Event");
-        eb.setDescription("ℹ️ The following emoji was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Emoji Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -37,8 +35,8 @@ public class EmojiUpdateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             if (changeKey.equals("name")) {
-                eb.addField("Emoji Name Updated", "╰┈➤" + "From " + oldValue + " to " + newValue, false);
-                eb.addField("Target Emoji", "╰┈➤" + "<:" + newValue + ":" + ale.getTargetId() + ">", false);
+                eb.addField(MarkdownUtil.underline("Emoji Name Updated"), "╰┈➤" + "From " + oldValue + " to " + newValue, false);
+                eb.addField(MarkdownUtil.underline("Target Emoji"), "╰┈➤" + "<:" + newValue + ":" + ale.getTargetId() + ">", false);
             } else {
                 eb.addField("Unimplemented Change Key", changeKey, false);
                 log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

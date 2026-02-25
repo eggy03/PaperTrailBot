@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,11 +25,8 @@ public class EmojiCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Emoji Create Event");
-        eb.setDescription("ℹ️ The following emoji was created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Emoji Created By: " + mentionableExecutor));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -36,8 +34,8 @@ public class EmojiCreateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             if (changeKey.equals("name")) {
-                eb.addField("Emoji Name", "╰┈➤" + newValue, false);
-                eb.addField("Emoji", "╰┈➤" + "<:" + newValue + ":" + ale.getTargetId() + ">", false); // ale's TargetID retrieves the ID of the created emoji
+                eb.addField(MarkdownUtil.underline("Emoji Name"), "╰┈➤" + newValue, false);
+                eb.addField(MarkdownUtil.underline("Emoji"), "╰┈➤" + "<:" + newValue + ":" + ale.getTargetId() + ">", false); // ale's TargetID retrieves the ID of the created emoji
             } else {
                 eb.addField("Unimplemented Change Key", changeKey, false);
                 log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
