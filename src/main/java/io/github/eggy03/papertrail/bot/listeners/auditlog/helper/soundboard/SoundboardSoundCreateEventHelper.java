@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,11 +26,8 @@ public class SoundboardSoundCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Soundboard Sound Create Event");
-        eb.setDescription("ℹ️ A sound item was added to the soundboard by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Sound Item Added By: " + mentionableExecutor));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -42,13 +40,13 @@ public class SoundboardSoundCreateEventHelper {
                     // skip
                 }
                 case "volume" ->
-                        eb.addField("Volume", "╰┈➤" + SoundboardUtils.resolveVolumePercentage(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(newValue), false);
 
-                case "emoji_name" -> eb.addField("Related Emoji", "╰┈➤" + newValue, false);
+                case "emoji_name" -> eb.addField(MarkdownUtil.underline("Related Emoji"), "╰┈➤" + newValue, false);
 
-                case "emoji_id" -> eb.addField("Related Emoji ID", "╰┈➤" + newValue, false);
+                case "emoji_id" -> eb.addField(MarkdownUtil.underline("Related Emoji ID"), "╰┈➤" + newValue, false);
 
-                case "name" -> eb.addField("Sound Item Name", "╰┈➤" + newValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Sound Item Name"), "╰┈➤" + newValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

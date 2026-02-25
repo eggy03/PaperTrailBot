@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,12 +26,8 @@ public class SoundboardSoundUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Soundboard Sound Update Event");
-        eb.setDescription("ℹ️ A sound item in the soundboard was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Sound Item Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -41,23 +38,23 @@ public class SoundboardSoundUpdateEventHelper {
                     // skip
                 }
                 case "volume" -> {
-                    eb.addField("Old Volume", "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), true);
-                    eb.addField("New Volume", "╰┈➤" + SoundboardUtils.resolveVolumePercentage(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "emoji_name" -> {
-                    eb.addField("Old Related Emoji", "╰┈➤" + oldValue, true);
-                    eb.addField("New Related Emoji", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Related Emoji"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Related Emoji"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "emoji_id" -> {
-                    eb.addField("Old Related Emoji ID", "╰┈➤" + oldValue, true);
-                    eb.addField("New Related Emoji ID", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Related Emoji ID"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Related Emoji ID"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "name" -> {
-                    eb.addField("Old Sound Item Name", "╰┈➤" + oldValue, true);
-                    eb.addField("New Sound Item Name", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Sound Item Name"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Sound Item Name"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 default -> {
