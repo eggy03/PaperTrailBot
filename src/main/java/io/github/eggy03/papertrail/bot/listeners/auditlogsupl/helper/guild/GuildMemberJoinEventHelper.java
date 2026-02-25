@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -24,16 +25,16 @@ public class GuildMemberJoinEventHelper {
         User user = event.getUser();
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("🛬 Member Join Event");
-        eb.setDescription("A Member has joined " + guild.getName());
+        eb.setTitle("Audit Log Entry | Member Join Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Member Joined: " + user.getName() + "\nGuild: " + guild.getName()));
         eb.setThumbnail(user.getEffectiveAvatarUrl());
         eb.setColor(Color.GREEN);
 
-        eb.addField("Member Name", "╰┈➤" + user.getName(), false);
-        eb.addField("Member Mention", "╰┈➤" + user.getAsMention(), false);
-        eb.addField("Member ID", "╰┈➤" + user.getId(), false);
-        eb.addField("Account Created", "╰┈➤" + DurationUtils.isoToLocalTimeCounter(user.getTimeCreated()), false);
-        eb.addField("Bot Account", "╰┈➤" + BooleanUtils.formatToYesOrNo(user.isBot()), false);
+        eb.addField(MarkdownUtil.underline("Member Name"), "╰┈➤" + user.getName(), false);
+        eb.addField(MarkdownUtil.underline("Member Mention"), "╰┈➤" + user.getAsMention(), false);
+        eb.addField(MarkdownUtil.underline("Member ID"), "╰┈➤" + user.getId(), false);
+        eb.addField(MarkdownUtil.underline("Account Created"), "╰┈➤" + DurationUtils.isoToLocalTimeCounter(user.getTimeCreated()), false);
+        eb.addField(MarkdownUtil.underline("Bot Account"), "╰┈➤" + BooleanUtils.formatToYesOrNo(user.isBot()), false);
 
         eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());

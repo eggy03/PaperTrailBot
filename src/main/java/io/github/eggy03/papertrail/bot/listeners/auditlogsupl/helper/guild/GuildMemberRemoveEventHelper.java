@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild;
 
+import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -24,15 +26,16 @@ public class GuildMemberRemoveEventHelper {
         User user = event.getUser();
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("🛫 Member Leave Event");
-        eb.setDescription("A Member has left " + guild.getName());
+        eb.setTitle("Audit Log Entry | Member Leave Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Member Left: " + user.getName() + "\nGuild: " + guild.getName()));
         eb.setThumbnail(user.getEffectiveAvatarUrl());
         eb.setColor(Color.RED);
 
-        eb.addField("🏷️ Member Name", "╰┈➤" + user.getName(), false);
-        eb.addField("🆔 Member ID", "╰┈➤" + user.getId(), false);
-        eb.addField("⌛ Member Joined The Server On", "╰┈➤" + getMemberJoinDate(event), false);
-        eb.addField("⌛ Member Left The Server On", "╰┈➤" + getMemberLeaveDate(), false);
+        eb.addField(MarkdownUtil.underline("Member Name"), "╰┈➤" + user.getName(), false);
+        eb.addField(MarkdownUtil.underline("Member ID"), "╰┈➤" + user.getId(), false);
+        eb.addField(MarkdownUtil.underline("Member Account Created"), "╰┈➤" + DurationUtils.isoToLocalTimeCounter(user.getTimeCreated()), false);
+        eb.addField(MarkdownUtil.underline("Member Joined The Server On"), "╰┈➤" + getMemberJoinDate(event), false);
+        eb.addField(MarkdownUtil.underline("Member Left The Server On"), "╰┈➤" + getMemberLeaveDate(), false);
 
         eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());
