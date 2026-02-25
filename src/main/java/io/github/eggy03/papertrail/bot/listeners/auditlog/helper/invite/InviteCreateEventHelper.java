@@ -8,6 +8,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
@@ -22,10 +23,13 @@ public class InviteCreateEventHelper {
 
         AuditLogEntry ale = event.getEntry();
 
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Invite Create Event");
 
-        eb.setDescription("ℹ️ The following invite was created");
+        eb.setDescription(MarkdownUtil.quoteBlock("Invite Created By: " + mentionableExecutor));
         eb.setColor(Color.CYAN);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

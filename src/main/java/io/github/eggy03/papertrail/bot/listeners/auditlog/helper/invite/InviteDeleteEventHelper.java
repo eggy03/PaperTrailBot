@@ -28,7 +28,7 @@ public class InviteDeleteEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following invite has been deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Invite Deleted By: " + mentionableExecutor));
         eb.setColor(Color.BLUE);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
