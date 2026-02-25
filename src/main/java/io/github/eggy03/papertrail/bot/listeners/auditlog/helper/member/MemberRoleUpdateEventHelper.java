@@ -9,9 +9,9 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
-import java.util.Objects;
 
 @UtilityClass
 @Slf4j
@@ -24,19 +24,16 @@ public class MemberRoleUpdateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        User target = ale.getJDA().getUserById(ale.getTargetIdLong());
-        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
+        User targetUser = ale.getJDA().getUserById(ale.getTargetIdLong());
+        String mentionableTargetUser = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry  | Member Role Update");
-        eb.setDescription("ℹ️ The following member had their role(s) updated by: " + mentionableExecutor);
-        eb.setThumbnail(Objects.requireNonNull(event.getGuild().getMemberById(ale.getTargetIdLong())).getEffectiveAvatarUrl());
+        eb.setDescription(MarkdownUtil.quoteBlock("Executor: " + mentionableExecutor + "\nTarget: " + mentionableTargetUser));
         eb.setColor(Color.YELLOW);
 
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-
-        eb.addField("\uD83C\uDFF7️️ Target Member", "╰┈➤" + mentionableTarget, false);
+        if (targetUser != null)
+            eb.setThumbnail(targetUser.getEffectiveAvatarUrl());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -44,10 +41,10 @@ public class MemberRoleUpdateEventHelper {
 
             switch (changeKey) {
                 case "$add" ->
-                        eb.addField("✅ Role(s) Added", "╰┈➤" + MemberUtils.parseRoleListMap(event, newValue), false);
+                        eb.addField(MarkdownUtil.underline("✅ Role(s) Added"), "╰┈➤" + MemberUtils.parseRoleListMap(event, newValue), false);
 
                 case "$remove" ->
-                        eb.addField("❌ Role(s) Removed", "╰┈➤" + MemberUtils.parseRoleListMap(event, newValue), false);
+                        eb.addField(MarkdownUtil.underline("❌ Role(s) Removed"), "╰┈➤" + MemberUtils.parseRoleListMap(event, newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
