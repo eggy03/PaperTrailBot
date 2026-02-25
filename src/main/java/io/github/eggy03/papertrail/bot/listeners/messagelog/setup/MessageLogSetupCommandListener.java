@@ -106,16 +106,16 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
         }
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Message Log Un-Registration Process");
+        eb.setTitle("Message Log Removal Process");
 
         // Call the API to unregister guild
         boolean success = client.deleteRegisteredGuild(callerGuild.getId());
         if (success) {
             eb.setColor(Color.GREEN);
-            eb.addField(MarkdownUtil.underline("Un-Registration Success"), MarkdownUtil.codeblock("Channel successfully unset"), false);
+            eb.addField(MarkdownUtil.underline("Removal Success"), MarkdownUtil.codeblock("Channel successfully unset"), false);
         } else {
             eb.setColor(Color.YELLOW);
-            eb.addField(MarkdownUtil.underline("Un-Registration Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this guild yet."), false);
+            eb.addField(MarkdownUtil.underline("Removal Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this guild yet."), false);
         }
 
         MessageEmbed mb = eb.build();
