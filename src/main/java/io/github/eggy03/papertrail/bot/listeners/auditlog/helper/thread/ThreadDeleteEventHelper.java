@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -28,11 +29,8 @@ public class ThreadDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Thread Delete Event");
-        eb.setDescription("ℹ️ A thread has been deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Thread Deleted By: " + mentionableExecutor + "\nTarget Thread ID: " + ale.getTargetId()));
         eb.setColor(Color.RED);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -40,25 +38,29 @@ public class ThreadDeleteEventHelper {
 
             switch (changeKey) {
 
-                case "locked" -> eb.addField("Locked", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
+                case "locked" ->
+                        eb.addField(MarkdownUtil.underline("Was Locked"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
                 case "auto_archive_duration" ->
-                        eb.addField("Auto Archive Duration", "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(oldValue), false);
+                        eb.addField(MarkdownUtil.underline("Auto Archive Duration"), "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(oldValue), false);
 
                 case "rate_limit_per_user" ->
-                        eb.addField("Slow Mode Limit", "╰┈➤" + DurationUtils.formatSeconds(oldValue), false);
+                        eb.addField(MarkdownUtil.underline("Slow Mode Limit"), "╰┈➤" + DurationUtils.formatSeconds(oldValue), false);
 
-                case "type" -> eb.addField("Thread Type", "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), false);
+                case "type" ->
+                        eb.addField(MarkdownUtil.underline("Thread Type"), "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), false);
 
-                case "archived" -> eb.addField("Archived", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
+                case "archived" ->
+                        eb.addField(MarkdownUtil.underline("Archived"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
                 case "flags" -> {
                     // skip
                 }
 
-                case "invitable" -> eb.addField("Invitable", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
+                case "invitable" ->
+                        eb.addField(MarkdownUtil.underline("Invitable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "name" -> eb.addField("Thread Name", "╰┈➤" + oldValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Thread Name"), "╰┈➤" + oldValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
