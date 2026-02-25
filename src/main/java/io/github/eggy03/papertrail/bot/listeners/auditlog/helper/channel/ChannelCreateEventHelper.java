@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -27,16 +28,13 @@ public class ChannelCreateEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         GuildChannel targetChannel = ale.getGuild().getGuildChannelById(ale.getTargetId());
-        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
+        String targetChannelMention = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Channel Create Event");
 
-        eb.setDescription("ℹ️ The following channel was created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Channel Created By: " + mentionableExecutor + "\nCreated Channel: " + targetChannelMention));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -45,22 +43,21 @@ public class ChannelCreateEventHelper {
 
             switch (changeKey) {
                 case "user_limit" ->
-                        eb.addField("User Limit", "╰┈➤" + ChannelUtils.resolveVoiceChannelUserLimit(newValue), false);
+                        eb.addField(MarkdownUtil.underline("User Limit"), "╰┈➤" + ChannelUtils.resolveVoiceChannelUserLimit(newValue), false);
 
                 case "rate_limit_per_user" ->
-                        eb.addField("Slow Mode", "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Slow Mode"), "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
 
-                case "type" -> eb.addField("Channel Type", "╰┈➤" + ChannelUtils.resolveChannelType(newValue), false);
+                case "type" ->
+                        eb.addField(MarkdownUtil.underline("Channel Type"), "╰┈➤" + ChannelUtils.resolveChannelType(newValue), false);
 
-                case "nsfw" -> eb.addField("Is NSFW", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+                case "nsfw" ->
+                        eb.addField(MarkdownUtil.underline("Is NSFW"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "name" -> {
-                    eb.addField("Channel Name", "╰┈➤" + newValue, false);
-                    eb.addField("Channel Mention", "╰┈➤" + mentionableTargetChannel, true);
-                }
+                case "name" -> eb.addField(MarkdownUtil.underline("Channel Name"), "╰┈➤" + newValue, false);
 
                 case "bitrate" ->
-                        eb.addField("Voice Channel Bitrate", "╰┈➤" + ChannelUtils.resolveVoiceChannelBitrate(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Voice Channel Bitrate"), "╰┈➤" + ChannelUtils.resolveVoiceChannelBitrate(newValue), false);
 
                 case "permission_overwrites", "flags", "template", "available_tags" -> {
                     // the first two are for all types of channels and may stay empty during creation events
@@ -73,7 +70,6 @@ public class ChannelCreateEventHelper {
                 }
             }
         });
-
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
