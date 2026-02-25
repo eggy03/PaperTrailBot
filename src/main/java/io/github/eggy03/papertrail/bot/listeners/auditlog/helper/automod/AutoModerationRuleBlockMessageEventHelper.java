@@ -24,16 +24,10 @@ public class AutoModerationRuleBlockMessageEventHelper {
         eb.setTitle("Audit Log Entry | Auto-mod Event");
 
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
-        String targetName = (targetUser != null ? targetUser.getEffectiveName() : ale.getTargetId());
+        String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("AutoMod has blocked a message");
+        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Block\nTarget: " + targetMention));
         eb.setColor(Color.ORANGE);
-
-        eb.addField(
-                MarkdownUtil.underline("Target Member"),
-                MarkdownUtil.codeblock(targetName),
-                false
-        );
 
         eb.addField(
                 MarkdownUtil.underline("Additional Info"),

@@ -24,16 +24,10 @@ public class AutoModerationFlagToChannelEventHelper {
         eb.setTitle("Audit Log Entry | Auto-Mod Event");
 
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
-        String targetName = (targetUser != null ? targetUser.getEffectiveName() : ale.getTargetId());
+        String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("AutoMod has flagged a message");
+        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Flag\nTarget: " + targetMention));
         eb.setColor(Color.YELLOW);
-
-        eb.addField(
-                MarkdownUtil.underline("Member"),
-                MarkdownUtil.codeblock(targetName),
-                false
-        );
 
         eb.addField(
                 MarkdownUtil.underline("Additional Info"),

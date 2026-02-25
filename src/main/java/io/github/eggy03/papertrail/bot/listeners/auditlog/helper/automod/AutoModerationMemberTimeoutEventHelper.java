@@ -24,16 +24,10 @@ public class AutoModerationMemberTimeoutEventHelper {
         eb.setTitle("Audit Log Entry | Auto-mod Event");
 
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
-        String targetName = (targetUser != null ? targetUser.getEffectiveName() : ale.getTargetId());
+        String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("AutoMod has timed out a member");
+        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Member Timeout\nTarget: " + targetMention));
         eb.setColor(Color.MAGENTA);
-
-        eb.addField(
-                MarkdownUtil.underline("Target Member"),
-                MarkdownUtil.codeblock(targetName),
-                false
-        );
 
         eb.addField(
                 MarkdownUtil.underline("Additional Info"),
