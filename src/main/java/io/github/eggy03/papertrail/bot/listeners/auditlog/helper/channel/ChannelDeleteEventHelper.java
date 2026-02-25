@@ -8,8 +8,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,35 +24,27 @@ public class ChannelDeleteEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        GuildChannel targetChannel = ale.getJDA().getGuildChannelById(ale.getTargetIdLong());
-
-        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId()); // this will return only the ID cause the channel with the ID has been deleted
-
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Channel Delete Event");
 
-        eb.setDescription("ℹ️ The following channel was deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Channel Deleted By: " + mentionableExecutor + "\nTarget Channel ID: " + ale.getTargetId()));
         eb.setColor(Color.RED);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
             Object oldValue = changeValue.getOldValue();
 
             switch (changeKey) {
-                case "name" -> eb.addField("Name", "╰┈➤" + oldValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Name"), "╰┈➤" + oldValue, false);
 
-                case "type" -> eb.addField("Type", "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), false);
+                case "type" ->
+                        eb.addField(MarkdownUtil.underline("Type"), "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), false);
 
                 default -> {
                     // omit all other fields
                 }
             }
         });
-
-        eb.addField("Deleted Channel ID", "╰┈➤" + mentionableTargetChannel, false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

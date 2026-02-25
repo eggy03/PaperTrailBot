@@ -2,7 +2,11 @@ package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
 import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -12,16 +16,21 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 
 @Slf4j
+@RequiredArgsConstructor
 public class DebugListener extends ListenerAdapter {
+
+    private final ExecutorService vThreadPool;
 
     // recommended permissions for the bot to function
     private static final Set<Permission> recommendedPermissions = EnumSet.of(
@@ -64,13 +73,13 @@ public class DebugListener extends ListenerAdapter {
         grantedPermissions.forEach(permission ->
                 permString.append("✅ - ")
                         .append(permission.getName())
-                        .append(System.lineSeparator())
+                        .append("\n")
         );
 
         deniedPermissions.forEach(permission ->
                 permString.append("❌ - ")
                         .append(permission.getName())
-                        .append(System.lineSeparator())
+                        .append("\n")
         );
 
         return permString.toString().trim();
@@ -78,24 +87,50 @@ public class DebugListener extends ListenerAdapter {
 
     @NotNull
     public static String getServerInfo(@NonNull Guild guild, @NonNull GuildChannel channel) {
-        return "Server Name: `" + guild.getName() + "`" + System.lineSeparator() +
-                "Server ID: `" + guild.getId() + "`" + System.lineSeparator() +
-                "Channel Name: `" + channel.getName() + "`" + System.lineSeparator() +
-                "Channel ID: `" + channel.getId() + "`";
+        return "Server Name: " + MarkdownUtil.underline(guild.getName()) + "\n" +
+                "Server ID: " + MarkdownUtil.underline(guild.getId()) + "\n" +
+                "Current Channel Name: " + MarkdownUtil.underline(channel.getName()) + "\n" +
+                "Current Channel ID: " + MarkdownUtil.underline(channel.getId());
     }
 
     @NotNull
     public static String getCallerInfo(@NonNull Member member) {
-        return "User Name: `" + member.getUser().getGlobalName() + "`" + System.lineSeparator() +
-                "User ID: `" + member.getId() + System.lineSeparator() + "`" +
-                "Is Administrator: `" + BooleanUtils.formatToYesOrNo(member.hasPermission(Permission.ADMINISTRATOR)) + "`";
+        return "User Name: " + MarkdownUtil.underline(member.getUser().getEffectiveName()) + "\n" +
+                "User ID: " + MarkdownUtil.underline(member.getId()) + "\n" +
+                "Is Administrator: " + MarkdownUtil.underline(BooleanUtils.formatToYesOrNo(member.hasPermission(Permission.ADMINISTRATOR)));
     }
 
     @NotNull
     public static String getBotInfo(@NonNull SlashCommandInteractionEvent event) {
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
-        return "Current Shard ID: `" + shardInfo.getShardId() + System.lineSeparator() + "`" +
-                "Total Shards: `" + shardInfo.getShardTotal() + "`";
+        return "Current Shard ID: " + shardInfo.getShardId() + "\n" +
+                "Total Shards: " + shardInfo.getShardTotal();
+    }
+
+    @NotNull
+    public static String getConfigurationInfo(@NonNull Guild guild) {
+        AuditLogRegistrationClient alClient = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+        MessageLogRegistrationClient mlClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
+
+        StringBuilder sb = new StringBuilder();
+
+        alClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
+            GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
+            if (channel != null)
+                sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline(channel.getName())).append("\n");
+            else
+                sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable")).append("\n");
+        }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Audit Logging")).append("\n"));
+
+        mlClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
+            GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
+            if (channel != null)
+                sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline(channel.getName()));
+            else
+                sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable"));
+        }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Message Logging")));
+
+        return sb.toString();
     }
 
     @Override
@@ -113,22 +148,24 @@ public class DebugListener extends ListenerAdapter {
 
         GuildChannel channel = event.getGuildChannel();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Debug Info");
-        eb.setDescription("Server: " + guild.getName());
-        eb.setColor(Color.GRAY);
+        vThreadPool.execute(() -> {
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("Debug Info");
+            eb.setDescription("Server: " + guild.getName());
+            eb.setColor(Color.GRAY);
 
-        eb.addField("Bot Permissions", getBotPermissions(guild), true);
-        eb.addField("Channel Permissions", getBotPermissionsInCurrentChannel(guild, channel), true);
-        eb.addField("Server Info", getServerInfo(guild, channel), true);
+            eb.addField(MarkdownUtil.underline("Bot Permissions"), MarkdownUtil.quoteBlock(getBotPermissions(guild)), true);
+            eb.addField(MarkdownUtil.underline("Channel Permissions"), MarkdownUtil.quoteBlock(getBotPermissionsInCurrentChannel(guild, channel)), true);
+            eb.addField(MarkdownUtil.underline("Server Info"), MarkdownUtil.quoteBlock(getServerInfo(guild, channel)), true);
 
-        eb.addField("User Info", getCallerInfo(member), true);
-        eb.addBlankField(true);
-        eb.addField("Bot Info", getBotInfo(event), true);
+            eb.addField(MarkdownUtil.underline("User Info"), MarkdownUtil.quoteBlock(getCallerInfo(member)), true);
+            eb.addField(MarkdownUtil.underline("Bot Info"), MarkdownUtil.quoteBlock(getBotInfo(event)), true);
+            eb.addField(MarkdownUtil.underline("Configuration Info"), MarkdownUtil.quoteBlock(getConfigurationInfo(guild)), true);
 
-        eb.setFooter(ProjectInfo.APPNAME + " " + ProjectInfo.VERSION);
-        eb.setTimestamp(Instant.now());
+            eb.setFooter(ProjectInfo.APPNAME + " " + ProjectInfo.VERSION);
+            eb.setTimestamp(Instant.now());
 
-        event.replyEmbeds(eb.build()).queue();
+            event.replyEmbeds(eb.build()).queue();
+        });
     }
 }

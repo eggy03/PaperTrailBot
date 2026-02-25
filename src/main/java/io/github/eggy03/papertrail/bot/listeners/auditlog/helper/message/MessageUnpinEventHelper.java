@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,14 +25,14 @@ public class MessageUnpinEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Message Unpin Event");
 
+        User executor = ale.getJDA().getUserById(ale.getUserId());
+        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
         User target = ale.getJDA().getUserById(ale.getTargetId());
         String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("**A message from **: " + mentionableTarget + " un-pinned");
+        eb.setDescription(MarkdownUtil.quoteBlock("Message Un-Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
         eb.setColor(Color.MAGENTA);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

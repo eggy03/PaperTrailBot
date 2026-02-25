@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -30,12 +31,8 @@ public class OnboardingUpdateEventHelper {
 
         Guild guild = event.getGuild();
 
-        eb.setDescription("👤 " + mentionableExecutor + "has made changes to Onboarding");
+        eb.setDescription(MarkdownUtil.quoteBlock("Onboarding Settings Updated By: " + mentionableExecutor));
         eb.setColor(Color.MAGENTA);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -43,26 +40,26 @@ public class OnboardingUpdateEventHelper {
 
             switch (changeKey) {
                 case "enabled" -> {
-                    eb.addField("Old Onboarding Status", BooleanUtils.formatToEnabledOrDisabled(oldValue), true);
-                    eb.addField("New Onboarding Status", BooleanUtils.formatToEnabledOrDisabled(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Onboarding Status"), BooleanUtils.formatToEnabledOrDisabled(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Onboarding Status"), BooleanUtils.formatToEnabledOrDisabled(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "mode" -> {
-                    eb.addField("Old Onboarding Mode", OnboardingUtils.formatMode(oldValue), true);
-                    eb.addField("New Onboarding Mode", OnboardingUtils.formatMode(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Onboarding Mode"), OnboardingUtils.formatMode(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Onboarding Mode"), OnboardingUtils.formatMode(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "default_channel_ids" -> {
-                    eb.addField("Old Default Channels", OnboardingUtils.resolveChannelsFromList(guild, oldValue), true);
-                    eb.addField("New Default Channels", OnboardingUtils.resolveChannelsFromList(guild, newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Default Channels"), OnboardingUtils.resolveChannelsFromList(guild, oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Default Channels"), OnboardingUtils.resolveChannelsFromList(guild, newValue), true);
                     eb.addBlankField(true);
                 }
 
                 // triggered also when prompts are deleted/created besides the default of update
                 case "prompts" ->
-                        eb.addField("Prompt Updates", "Overall Pre-join/Post-join questions may have been updated.\n Review changes manually.", false);
+                        eb.addField(MarkdownUtil.underline("Prompt Updates"), "Overall Pre-join/Post-join questions may have been updated.\n Review changes manually.", false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

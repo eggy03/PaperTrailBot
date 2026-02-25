@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -26,11 +27,8 @@ public class OnboardingPromptUpdateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 " + mentionableExecutor + "has made changes to an existing Onboarding Prompt");
+        eb.setDescription(MarkdownUtil.quoteBlock("Onboarding Prompt Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -39,13 +37,13 @@ public class OnboardingPromptUpdateEventHelper {
 
             switch (changeKey) {
                 case "single_select" -> {
-                    eb.addField("Old Single Selection Mode", BooleanUtils.formatToYesOrNo(oldValue), false);
-                    eb.addField("New Single Selection Mode", BooleanUtils.formatToYesOrNo(newValue), false);
+                    eb.addField(MarkdownUtil.underline("Old Single Selection Mode"), BooleanUtils.formatToYesOrNo(oldValue), false);
+                    eb.addField(MarkdownUtil.underline("New Single Selection Mode"), BooleanUtils.formatToYesOrNo(newValue), false);
                 }
 
                 case "required" -> {
-                    eb.addField("Was Required", BooleanUtils.formatToYesOrNo(oldValue), false);
-                    eb.addField("Is Required", BooleanUtils.formatToYesOrNo(newValue), false);
+                    eb.addField(MarkdownUtil.underline("Was Required"), BooleanUtils.formatToYesOrNo(oldValue), false);
+                    eb.addField(MarkdownUtil.underline("Is Required"), BooleanUtils.formatToYesOrNo(newValue), false);
                 }
 
                 case "type", "id" -> {
@@ -53,16 +51,16 @@ public class OnboardingPromptUpdateEventHelper {
                 }
 
                 case "title" -> {
-                    eb.addField("Old Question Title", String.valueOf(oldValue), false);
-                    eb.addField("New Question Title", String.valueOf(newValue), false);
+                    eb.addField(MarkdownUtil.underline("Old Question Title"), String.valueOf(oldValue), false);
+                    eb.addField(MarkdownUtil.underline("New Question Title"), String.valueOf(newValue), false);
                 }
 
                 case "options" ->
-                        eb.addField("Question Options", "Review the changed options in Onboarding Settings", false);
+                        eb.addField(MarkdownUtil.underline("Question Options"), "Review the changed options in Onboarding Settings", false);
 
                 case "in_onboarding" -> {
-                    eb.addField("Was a Pre-Join Question", BooleanUtils.formatToYesOrNo(oldValue), false);
-                    eb.addField("Is a Pre-Join Question", BooleanUtils.formatToYesOrNo(newValue), false);
+                    eb.addField(MarkdownUtil.underline("Was a Pre-Join Question"), BooleanUtils.formatToYesOrNo(oldValue), false);
+                    eb.addField(MarkdownUtil.underline("Is a Pre-Join Question"), BooleanUtils.formatToYesOrNo(newValue), false);
                 }
 
                 default -> {

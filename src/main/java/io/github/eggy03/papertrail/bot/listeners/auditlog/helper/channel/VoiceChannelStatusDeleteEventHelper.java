@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -29,14 +30,11 @@ public class VoiceChannelStatusDeleteEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Voice Channel Status Delete");
 
-        eb.setDescription("ℹ️ A voice channel's status was deleted");
+        eb.setDescription(MarkdownUtil.quoteBlock("A voice channel's status was deleted"));
         eb.setColor(Color.ORANGE);
 
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-
-        eb.addField("Status Deleted By", "╰┈➤" + mentionableExecutor, false);
-        eb.addField("Target Voice Channel", "╰┈➤" + mentionableTargetChannel, false);
+        eb.addField(MarkdownUtil.underline("Status Deleted By"), "╰┈➤" + mentionableExecutor, false);
+        eb.addField(MarkdownUtil.underline("Target Voice Channel"), "╰┈➤" + mentionableTargetChannel, false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

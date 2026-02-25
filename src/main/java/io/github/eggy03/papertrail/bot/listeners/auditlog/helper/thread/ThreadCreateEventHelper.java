@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -30,14 +31,10 @@ public class ThreadCreateEventHelper {
         ThreadChannel targetThread = event.getGuild().getThreadChannelById(ale.getTargetId());
         String mentionableTargetThread = (targetThread != null ? targetThread.getAsMention() : ale.getTargetId());
 
-
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Thread Create Event");
-        eb.setDescription("ℹ️ A thread has been created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Thread Created By: " + mentionableExecutor + "\nTarget Thread: " + mentionableTargetThread));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -45,24 +42,28 @@ public class ThreadCreateEventHelper {
 
             switch (changeKey) {
 
-                case "locked" -> eb.addField("Locked", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+                case "locked" ->
+                        eb.addField(MarkdownUtil.underline("Is Locked"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "auto_archive_duration" ->
-                        eb.addField("Auto Archive Duration", "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Auto Archive Duration"), "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(newValue), false);
 
                 case "rate_limit_per_user" ->
-                        eb.addField("Slow Mode Limit", "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Slow Mode Limit"), "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
 
-                case "type" -> eb.addField("Thread Type", "╰┈➤" + ChannelUtils.resolveChannelType(newValue), false);
+                case "type" ->
+                        eb.addField(MarkdownUtil.underline("Thread Type"), "╰┈➤" + ChannelUtils.resolveChannelType(newValue), false);
 
-                case "archived" -> eb.addField("Archived", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+                case "archived" ->
+                        eb.addField(MarkdownUtil.underline("Archived"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "flags" -> {
                     // skip
                 }
-                case "invitable" -> eb.addField("Invitable", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+                case "invitable" ->
+                        eb.addField(MarkdownUtil.underline("Invitable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "name" -> eb.addField("Thread Name", "╰┈➤" + newValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Thread Name"), "╰┈➤" + newValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -70,7 +71,6 @@ public class ThreadCreateEventHelper {
                 }
             }
         });
-        eb.addField("Target Thread", "╰┈➤" + mentionableTargetThread, false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

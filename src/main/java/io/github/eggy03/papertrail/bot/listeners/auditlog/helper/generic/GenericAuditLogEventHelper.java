@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,16 +26,22 @@ public class GenericAuditLogEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Generic Event");
-        eb.setDescription("An un-implemented action event has been triggered by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Executor: " + mentionableExecutor));
         eb.setColor(Color.LIGHT_GRAY);
 
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
+        eb.addField(MarkdownUtil.underline("Action Type"), MarkdownUtil.codeblock(ale.getType().toString()), true);
+        eb.addField(MarkdownUtil.underline("Target Type"), MarkdownUtil.codeblock(ale.getTargetType().toString()), true);
 
-        ale.getChanges().forEach((changeKey, changeValue) -> {
-            eb.addField(changeKey, "OLD_VALUE: " + changeValue.getOldValue(), false);
-            eb.addField(changeKey, "NEW_VALUE: " + changeValue.getNewValue(), false);
-        });
+        ale.getChanges()
+                .forEach((changeKey, changeValue) ->
+                        eb.addField(
+                                MarkdownUtil.underline(changeKey),
+                                MarkdownUtil.codeblock("OLD VALUE\n" + changeValue.getOldValue() + "\nNEW VALUE\n" + changeValue.getNewValue()),
+                                false
+                        )
+                );
+
+
 
         if (!eb.isValidLength() || eb.isEmpty()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());

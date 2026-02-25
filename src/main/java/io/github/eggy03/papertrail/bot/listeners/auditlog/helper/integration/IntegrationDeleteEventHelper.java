@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,19 +25,16 @@ public class IntegrationDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Integration Delete Event");
-        eb.setDescription("ℹ️ The following integration was deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Integration Deleted By: " + mentionableExecutor));
         eb.setColor(Color.MAGENTA);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "type" -> eb.addField("Integration Type", "╰┈➤" + oldValue, false);
-                case "name" -> eb.addField("Integration Name", "╰┈➤" + oldValue, false);
+                case "type" -> eb.addField(MarkdownUtil.underline("Integration Type"), "╰┈➤" + oldValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Integration Name"), "╰┈➤" + oldValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

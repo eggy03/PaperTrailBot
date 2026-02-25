@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,11 +25,8 @@ public class EmojiDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Emoji Delete Event");
-        eb.setDescription("ℹ️ The following emoji was deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Emoji Deleted By: " + mentionableExecutor));
         eb.setColor(Color.RED);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -36,7 +34,7 @@ public class EmojiDeleteEventHelper {
             Object newValue = changeValue.getNewValue();
 
             if (changeKey.equals("name")) {
-                eb.addField("Emoji Name", "╰┈➤" + oldValue, false);
+                eb.addField(MarkdownUtil.underline("Emoji Name"), "╰┈➤" + oldValue, false);
             } else {
                 eb.addField("Unimplemented Change Key", changeKey, false);
                 log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

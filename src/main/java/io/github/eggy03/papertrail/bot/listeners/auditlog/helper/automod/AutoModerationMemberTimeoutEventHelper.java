@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -23,15 +24,16 @@ public class AutoModerationMemberTimeoutEventHelper {
         eb.setTitle("Audit Log Entry | Auto-mod Event");
 
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
-        String mentionableTargetUser = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
+        String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("Auto-mod has timed out " + mentionableTargetUser + " for a defined rule violation");
+        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Member Timeout\nTarget Member: " + targetMention));
         eb.setColor(Color.MAGENTA);
 
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-
-        eb.addField("Info", "For more info, check the channel where auto-mod is set to send events", false);
+        eb.addField(
+                MarkdownUtil.underline("Additional Info"),
+                MarkdownUtil.codeblock("Timeout Rule and Reason will be available in the channel set to receive AutoMod events."),
+                false
+        );
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

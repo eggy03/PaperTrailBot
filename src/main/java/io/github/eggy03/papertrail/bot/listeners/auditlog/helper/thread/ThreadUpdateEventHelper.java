@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -30,15 +31,11 @@ public class ThreadUpdateEventHelper {
         ThreadChannel targetThread = event.getGuild().getThreadChannelById(ale.getTargetId());
         String mentionableTargetThread = (targetThread != null ? targetThread.getAsMention() : ale.getTargetId());
 
-
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Thread Update Event");
-        eb.setDescription("ℹ️ A thread has been updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Thread Updated By: " + mentionableExecutor + "\nTarget Thread: " + mentionableTargetThread));
         eb.setColor(Color.YELLOW);
 
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -47,40 +44,40 @@ public class ThreadUpdateEventHelper {
             switch (changeKey) {
 
                 case "locked" -> {
-                    eb.addField("Was Locked", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
-                    eb.addField("Is Locked", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Was Locked"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("Is Locked"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "auto_archive_duration" -> {
-                    eb.addField("Old Auto Archive Duration", "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(oldValue), true);
-                    eb.addField("New Auto Archive Duration", "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Auto Archive Duration"), "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Auto Archive Duration"), "╰┈➤" + ThreadUtils.resolveAutoArchiveDuration(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "rate_limit_per_user" -> {
-                    eb.addField("Old Slow Mode Limit", "╰┈➤" + DurationUtils.formatSeconds(oldValue), true);
-                    eb.addField("New Slow Mode Limit", "╰┈➤" + DurationUtils.formatSeconds(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Slow Mode Limit"), "╰┈➤" + DurationUtils.formatSeconds(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Slow Mode Limit"), "╰┈➤" + DurationUtils.formatSeconds(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "type" -> {
-                    eb.addField("Old Thread Type", "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), true);
-                    eb.addField("New Thread Type", "╰┈➤" + ChannelUtils.resolveChannelType(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Thread Type"), "╰┈➤" + ChannelUtils.resolveChannelType(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Thread Type"), "╰┈➤" + ChannelUtils.resolveChannelType(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "archived" -> {
-                    eb.addField("Old Archive Status", "╰┈➤" + BooleanUtils.formatToEnabledOrDisabled(oldValue), true);
-                    eb.addField("New Archive Status", "╰┈➤" + BooleanUtils.formatToEnabledOrDisabled(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Archive Status"), "╰┈➤" + BooleanUtils.formatToEnabledOrDisabled(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Archive Status"), "╰┈➤" + BooleanUtils.formatToEnabledOrDisabled(newValue), true);
                     eb.addBlankField(true);
                 }
-                case "flags" -> eb.addField("Flags", "╰┈➤Thread flags were updated", false);
+                case "flags" -> eb.addField(MarkdownUtil.underline("Flags"), "╰┈➤Thread flags were updated", false);
 
                 case "invitable" -> {
-                    eb.addField("Was Invitable", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
-                    eb.addField("Is Invitable", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Was Invitable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("Is Invitable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "name" -> {
-                    eb.addField("Old Thread Name", "╰┈➤" + oldValue, true);
-                    eb.addField("New Thread Name", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Thread Name"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Thread Name"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 default -> {
@@ -89,7 +86,6 @@ public class ThreadUpdateEventHelper {
                 }
             }
         });
-        eb.addField("Target Thread", "╰┈➤" + mentionableTargetThread, false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

@@ -88,7 +88,7 @@ public class BootstrapService {
 
                 new ServerStatCommandListener(),
                 new BotSetupInstructionCommandListener(),
-                new DebugListener(),
+                new DebugListener(vThreadPool),
                 new SlashCommandRegistrationListener()
         );
         return this;

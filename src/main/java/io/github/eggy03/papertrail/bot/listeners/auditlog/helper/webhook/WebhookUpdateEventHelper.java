@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -26,12 +27,8 @@ public class WebhookUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Webhook Update Event");
-        eb.setDescription("ℹ️ A webhook has been updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Webhook Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -40,25 +37,26 @@ public class WebhookUpdateEventHelper {
             switch (changeKey) {
 
                 case "type" -> {
-                    eb.addField("Old Webhook Type", "╰┈➤" + WebhookUtils.resolveWebhookEventType(oldValue), true);
-                    eb.addField("New Webhook Type", "╰┈➤" + WebhookUtils.resolveWebhookEventType(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Webhook Type"), "╰┈➤" + WebhookUtils.resolveWebhookEventType(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Webhook Type"), "╰┈➤" + WebhookUtils.resolveWebhookEventType(newValue), true);
                     eb.addBlankField(true);
                 }
-                case "avatar_hash" -> eb.addField("Avatar", "╰┈➤Avatar has been updated", false);
+                case "avatar_hash" ->
+                        eb.addField(MarkdownUtil.underline("Avatar"), "╰┈➤Avatar has been updated", false);
 
                 case "channel_id" -> {
-                    eb.addField("Old Channel", "╰┈➤" + GuildUtils.resolveMentionableChannel(oldValue, event), true);
-                    eb.addField("New Channel", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), true);
+                    eb.addField(MarkdownUtil.underline("Old Channel"), "╰┈➤" + GuildUtils.resolveMentionableChannel(oldValue, event), true);
+                    eb.addField(MarkdownUtil.underline("New Channel"), "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), true);
                     eb.addBlankField(true);
                 }
                 case "name" -> {
-                    eb.addField("Old Webhook Name", "╰┈➤" + oldValue, true);
-                    eb.addField("New Webhook Name", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Webhook Name"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Webhook Name"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "application_id" -> {
-                    eb.addField("Old Application ID", "╰┈➤" + oldValue, true);
-                    eb.addField("New Application ID", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Application ID"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Application ID"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 default -> {

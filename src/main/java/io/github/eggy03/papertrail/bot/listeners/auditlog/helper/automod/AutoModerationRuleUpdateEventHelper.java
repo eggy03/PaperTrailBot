@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.automod.AutoModRule;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -26,17 +27,14 @@ public class AutoModerationRuleUpdateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following AutoMod rule was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Rule Updated By: " + mentionableExecutor + "\nRule Updated For: AutoMod"));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         // add name of the rule which got updated
         AutoModRule rule = ale.getGuild().retrieveAutoModRuleById(ale.getTargetId()).complete();
-        eb.addField("AutoMod Rule Name ", "╰┈➤" + rule.getName(), false);
+        eb.addField(MarkdownUtil.underline("AutoMod Rule Name"), "╰┈➤" + rule.getName(), false);
 
-        eb.addField("Additional Info", "For more info on trigger metadata, actions, exempt roles and channel changes, visit Safety Setup in your server", false);
+        eb.addField(MarkdownUtil.underline("Additional Info"), MarkdownUtil.codeblock("For more info on trigger metadata, actions, exempt roles and channel changes, visit Safety Setup in your server"), false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

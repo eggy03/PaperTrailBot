@@ -49,7 +49,7 @@ public class SlashCommandRegistrationListener extends ListenerAdapter {
                 .setDefaultPermissions(DefaultMemberPermissions.ENABLED);
 
         CommandData debug = Commands
-                .slash("debug", "Provides debug info")
+                .slash("debug", "Provides standard debug info for troubleshooting")
                 .setContexts(InteractionContextType.GUILD)
                 .setDefaultPermissions(DefaultMemberPermissions.ENABLED);
 

@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,12 +25,9 @@ public class SoundboardSoundDeleteEventHelper {
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Soundboard Sound Create Event");
-        eb.setDescription("ℹ️ A sound item was deleted from the soundboard by: " + mentionableExecutor);
+        eb.setTitle("Audit Log Entry | Soundboard Sound Delete Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Sound Item Deleted By: " + mentionableExecutor));
         eb.setColor(Color.RED);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -42,13 +40,13 @@ public class SoundboardSoundDeleteEventHelper {
                     // skip
                 }
                 case "volume" ->
-                        eb.addField("Volume", "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), false);
+                        eb.addField(MarkdownUtil.underline("Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), false);
 
-                case "emoji_name" -> eb.addField("Related Emoji", "╰┈➤" + oldValue, false);
+                case "emoji_name" -> eb.addField(MarkdownUtil.underline("Related Emoji"), "╰┈➤" + oldValue, false);
 
-                case "emoji_id" -> eb.addField("Related Emoji ID", "╰┈➤" + oldValue, false);
+                case "emoji_id" -> eb.addField(MarkdownUtil.underline("Related Emoji ID"), "╰┈➤" + oldValue, false);
 
-                case "name" -> eb.addField("Sound Item Name", "╰┈➤" + oldValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Sound Item Name"), "╰┈➤" + oldValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

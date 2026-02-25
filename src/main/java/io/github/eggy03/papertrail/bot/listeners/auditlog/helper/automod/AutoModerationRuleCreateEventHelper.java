@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -27,11 +28,8 @@ public class AutoModerationRuleCreateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        eb.setDescription("ℹ️ The following AutoMod rule was created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Rule Created By: " + mentionableExecutor + "\nRule Created For: AutoMod"));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -39,15 +37,16 @@ public class AutoModerationRuleCreateEventHelper {
 
             switch (changeKey) {
 
-                case "enabled" -> eb.addField("Enabled", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+                case "enabled" ->
+                        eb.addField(MarkdownUtil.underline("Enabled"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "trigger_type" ->
-                        eb.addField("Trigger Type", "╰┈➤" + AutoModUtils.autoModTriggerTypeResolver(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Trigger Type"), "╰┈➤" + AutoModUtils.autoModTriggerTypeResolver(newValue), false);
 
                 case "event_type" ->
-                        eb.addField("Event Type", "╰┈➤" + AutoModUtils.autoModEventTypeResolver(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Event Type"), "╰┈➤" + AutoModUtils.autoModEventTypeResolver(newValue), false);
 
-                case "name" -> eb.addField("AutoMod Rule Name ", "╰┈➤" + newValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("AutoMod Rule Name "), "╰┈➤" + newValue, false);
 
                 default -> {
                     // ignore everything else
@@ -55,7 +54,7 @@ public class AutoModerationRuleCreateEventHelper {
             }
         });
 
-        eb.addField("Additional Info", "For more info on trigger metadata, actions, exempt roles and channels, visit Safety Setup in your server", false);
+        eb.addField("Additional Info", MarkdownUtil.codeblock("For more info on trigger metadata, actions, exempt roles and channels, visit Safety Setup in your server"), false);
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 

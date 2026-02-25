@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -26,11 +27,8 @@ public class WebhookCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Webhook Create Event");
-        eb.setDescription("ℹ️ A webhook has been created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Webhook Created By: " + mentionableExecutor));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -39,14 +37,14 @@ public class WebhookCreateEventHelper {
             switch (changeKey) {
 
                 case "type" ->
-                        eb.addField("Webhook Type", "╰┈➤" + WebhookUtils.resolveWebhookEventType(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Webhook Type"), "╰┈➤" + WebhookUtils.resolveWebhookEventType(newValue), false);
                 case "avatar_hash" -> {
                     // skip
                 }
                 case "channel_id" ->
-                        eb.addField("Channel", "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
-                case "name" -> eb.addField("Webhook Name", "╰┈➤" + newValue, false);
-                case "application_id" -> eb.addField("Application ID", "╰┈➤" + newValue, false);
+                        eb.addField(MarkdownUtil.underline("Channel"), "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Webhook Name"), "╰┈➤" + newValue, false);
+                case "application_id" -> eb.addField(MarkdownUtil.underline("Application ID"), "╰┈➤" + newValue, false);
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

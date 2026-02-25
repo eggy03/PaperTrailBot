@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -20,18 +21,16 @@ public class GuildPollEventHelper {
     public static void format(@NonNull MessageReceivedEvent event, @NonNull MessagePoll messagePoll, @NonNull String channelIdToSendTo) {
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("\uD83D\uDCCA Poll Creation Log");
+        eb.setTitle("Audit Log Entry | Poll Creation Event");
         eb.setColor(Color.PINK);
-        eb.setDescription("A Poll has been created");
+        eb.setDescription(MarkdownUtil.quoteBlock("Poll Created By: " + event.getAuthor().getAsMention() + "\nTarget Channel: " + event.getChannel().getAsMention()));
 
-        eb.addField("Poll Creator", event.getAuthor().getAsMention(), false);
-        eb.addField("Question", messagePoll.getQuestion().getText(), false);
-        eb.addField("Answers", getMessagePollAnswers(messagePoll), false);
-        eb.addField("Poll Expiry Time", getPollExpiryTime(messagePoll), false);
-        eb.addField("Accepts Multiple Answers", BooleanUtils.formatToYesOrNo(messagePoll.isMultiAnswer()), false);
-        eb.addField("Channel", event.getChannel().getAsMention(), false);
+        eb.addField(MarkdownUtil.underline("Question"), messagePoll.getQuestion().getText(), false);
+        eb.addField(MarkdownUtil.underline("Answers"), getMessagePollAnswers(messagePoll), false);
+        eb.addField(MarkdownUtil.underline("Poll Expiry Time"), getPollExpiryTime(messagePoll), false);
+        eb.addField(MarkdownUtil.underline("Accepts Multiple Answers"), BooleanUtils.formatToYesOrNo(messagePoll.isMultiAnswer()), false);
 
-        eb.setFooter("Poll Activity Detection");
+        eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());
 
         if (!eb.isValidLength() || eb.isEmpty()) {

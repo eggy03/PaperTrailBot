@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,14 +25,10 @@ public class RoleDeleteEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Delete Event");
-        eb.setDescription("ℹ️ The following role was deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Role Deleted By: " + mentionableExecutor + "\nTarget Role ID: " + ale.getTargetId()));
         eb.setColor(Color.RED);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -39,19 +36,22 @@ public class RoleDeleteEventHelper {
 
             switch (changeKey) {
 
-                case "name" -> eb.addField("Role Name", "╰┈➤" + oldValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Role Name"), "╰┈➤" + oldValue, false);
 
                 case "hoist" ->
-                        eb.addField("Display Separately", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
+                        eb.addField(MarkdownUtil.underline("Display Separately"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "color" -> eb.addField("Color", "╰┈➤" + RoleUtils.formatToHex(oldValue), false);
+                case "color" ->
+                        eb.addField(MarkdownUtil.underline("Color"), "╰┈➤" + RoleUtils.formatToHex(oldValue), false);
 
                 case "permissions" ->
-                        eb.addField("Role Permissions", RoleUtils.resolveRolePermissions(oldValue, "✅"), false);
+                        eb.addField(MarkdownUtil.underline("Role Permissions"), RoleUtils.resolveRolePermissions(oldValue, "✅"), false);
 
-                case "mentionable" -> eb.addField("Mentionable", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
+                case "mentionable" ->
+                        eb.addField(MarkdownUtil.underline("Mentionable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "colors" -> eb.addField("Gradient Color System", RoleUtils.formatGradientToHex(oldValue), false);
+                case "colors" ->
+                        eb.addField(MarkdownUtil.underline("Gradient Color System"), RoleUtils.formatGradientToHex(oldValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
@@ -60,7 +60,6 @@ public class RoleDeleteEventHelper {
             }
 
         });
-        eb.addField("🆔 Deleted Role ID", "╰┈➤" + ale.getTargetId(), false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

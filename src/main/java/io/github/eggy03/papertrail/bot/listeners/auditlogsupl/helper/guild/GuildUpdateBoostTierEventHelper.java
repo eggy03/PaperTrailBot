@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostTierEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -20,11 +21,9 @@ public class GuildUpdateBoostTierEventHelper {
         Guild guild = event.getGuild();
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Server Boost Tier Update");
-        eb.setDescription(guild.getName() + " has had it's boost tier updated");
-
+        eb.setTitle("Audit Log Entry | Server Boost Tier Update");
+        eb.setDescription(MarkdownUtil.quoteBlock("Guild Boost Tier Updated\nTarget Guild: " + guild.getName()));
         eb.setThumbnail(guild.getIconUrl());
-        eb.setImage(guild.getBannerUrl());
         eb.setColor(Color.YELLOW);
 
         Guild.BoostTier oldBoostTier = event.getOldBoostTier();
@@ -40,8 +39,8 @@ public class GuildUpdateBoostTierEventHelper {
                 "**Max File Size:** " + newBoostTier.getMaxFileSize() + "\n" +
                 "**Max Bitrate:** " + newBoostTier.getMaxBitrate();
 
-        eb.addField("Old Boost Tier Information", oldTier, false);
-        eb.addField("New Boost Tier Information", newTier, false);
+        eb.addField(MarkdownUtil.underline("Old Boost Tier Information"), oldTier, false);
+        eb.addField(MarkdownUtil.underline("New Boost Tier Information"), newTier, false);
 
         eb.setFooter(guild.getName());
         eb.setTimestamp(Instant.now());
