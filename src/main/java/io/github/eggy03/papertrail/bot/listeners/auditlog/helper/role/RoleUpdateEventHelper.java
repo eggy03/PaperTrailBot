@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -30,13 +31,8 @@ public class RoleUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Update Event");
-        eb.setDescription("ℹ️ The following role was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Role Updated By: " + mentionableExecutor + "\nUpdated Role: " + mentionableTargetRole));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-
-        eb.addField("Target Role", "╰┈➤" + mentionableTargetRole, false);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -46,38 +42,38 @@ public class RoleUpdateEventHelper {
             switch (changeKey) {
 
                 case "name" -> {
-                    eb.addField("Old Role Name", "╰┈➤" + oldValue, true);
-                    eb.addField("New Role Name", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Role Name"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Role Name"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
 
                 case "hoist" -> {
-                    eb.addField("Old Display Separately", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
-                    eb.addField("New Display Separately", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Display Separately"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Display Separately"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "color" -> {
-                    eb.addField("Old Color", "╰┈➤" + RoleUtils.formatToHex(oldValue), true);
-                    eb.addField("New Color", "╰┈➤" + RoleUtils.formatToHex(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Color"), "╰┈➤" + RoleUtils.formatToHex(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Color"), "╰┈➤" + RoleUtils.formatToHex(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "permissions" -> {
-                    eb.addField("Old Role Permissions", RoleUtils.resolveRolePermissions(oldValue, "✅"), true);
-                    eb.addField("New Role Permissions", RoleUtils.resolveRolePermissions(newValue, "✅"), true);
+                    eb.addField(MarkdownUtil.underline("Old Role Permissions"), RoleUtils.resolveRolePermissions(oldValue, "✅"), true);
+                    eb.addField(MarkdownUtil.underline("New Role Permissions"), RoleUtils.resolveRolePermissions(newValue, "✅"), true);
                     eb.addBlankField(true);
                 }
 
                 case "mentionable" -> {
-                    eb.addField("Old Mentionable", "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
-                    eb.addField("New Mentionable", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Mentionable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Mentionable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), true);
                     eb.addBlankField(true);
                 }
 
                 case "colors" -> {
-                    eb.addField("Old Gradient Color System", RoleUtils.formatGradientToHex(oldValue), true);
-                    eb.addField("New Gradient Color System", RoleUtils.formatGradientToHex(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Gradient Color System"), RoleUtils.formatGradientToHex(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Gradient Color System"), RoleUtils.formatGradientToHex(newValue), true);
                     eb.addBlankField(true);
                 }
 
