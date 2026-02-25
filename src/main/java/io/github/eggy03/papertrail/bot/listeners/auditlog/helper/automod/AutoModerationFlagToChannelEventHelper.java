@@ -26,7 +26,7 @@ public class AutoModerationFlagToChannelEventHelper {
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
         String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Flag\nTarget: " + targetMention));
+        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Flag\nTarget Member: " + targetMention));
         eb.setColor(Color.YELLOW);
 
         eb.addField(

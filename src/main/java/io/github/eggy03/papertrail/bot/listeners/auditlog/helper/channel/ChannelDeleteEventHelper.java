@@ -27,7 +27,7 @@ public class ChannelDeleteEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Channel Delete Event");
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Channel Deleted By: " + mentionableExecutor + "\nDeleted Channel ID: " + ale.getTargetId()));
+        eb.setDescription(MarkdownUtil.quoteBlock("Channel Deleted By: " + mentionableExecutor + "\nTarget Channel ID: " + ale.getTargetId()));
         eb.setColor(Color.RED);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

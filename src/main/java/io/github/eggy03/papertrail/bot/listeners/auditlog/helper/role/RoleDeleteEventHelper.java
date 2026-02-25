@@ -27,7 +27,7 @@ public class RoleDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Delete Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Role Deleted By: " + mentionableExecutor + "\nDeleted Role ID: " + ale.getTargetId()));
+        eb.setDescription(MarkdownUtil.quoteBlock("Role Deleted By: " + mentionableExecutor + "\nTarget Role ID: " + ale.getTargetId()));
         eb.setColor(Color.RED);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

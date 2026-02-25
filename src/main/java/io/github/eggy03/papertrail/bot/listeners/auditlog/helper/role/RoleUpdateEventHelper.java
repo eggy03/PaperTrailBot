@@ -31,7 +31,7 @@ public class RoleUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Update Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Role Updated By: " + mentionableExecutor + "\nUpdated Role: " + mentionableTargetRole));
+        eb.setDescription(MarkdownUtil.quoteBlock("Role Updated By: " + mentionableExecutor + "\nTarget Role: " + mentionableTargetRole));
         eb.setColor(Color.YELLOW);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

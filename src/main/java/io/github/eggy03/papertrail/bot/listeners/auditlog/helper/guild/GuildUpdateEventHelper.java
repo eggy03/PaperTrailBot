@@ -28,7 +28,7 @@ public class GuildUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Guild Update Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Guild Settings Updated By: " + mentionableExecutor + "\nGuild Name: " + event.getGuild().getName()));
+        eb.setDescription(MarkdownUtil.quoteBlock("Guild Settings Updated By: " + mentionableExecutor + "\nTarget Guild: " + event.getGuild().getName()));
         eb.setColor(Color.MAGENTA);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

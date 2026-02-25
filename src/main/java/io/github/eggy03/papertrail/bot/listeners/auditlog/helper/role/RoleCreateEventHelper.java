@@ -29,7 +29,7 @@ public class RoleCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Create Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Role Created By: " + mentionableExecutor + "\nCreated Role: " + mentionableTargetRole));
+        eb.setDescription(MarkdownUtil.quoteBlock("Role Created By: " + mentionableExecutor + "\nTarget Role: " + mentionableTargetRole));
         eb.setColor(Color.GREEN);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

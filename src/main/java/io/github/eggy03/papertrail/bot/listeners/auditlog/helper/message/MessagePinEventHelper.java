@@ -30,7 +30,7 @@ public class MessagePinEventHelper {
         User target = ale.getJDA().getUserById(ale.getTargetId());
         String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Message Author: " + mentionableTarget + "\nMessage Pinned By: " + mentionableExecutor));
+        eb.setDescription(MarkdownUtil.quoteBlock("Message Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
         eb.setColor(Color.PINK);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());

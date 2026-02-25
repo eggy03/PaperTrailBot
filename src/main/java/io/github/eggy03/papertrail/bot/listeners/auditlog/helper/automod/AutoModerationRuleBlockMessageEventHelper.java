@@ -26,7 +26,7 @@ public class AutoModerationRuleBlockMessageEventHelper {
         User targetUser = ale.getJDA().getUserById(ale.getTargetId());
         String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Block\nTarget: " + targetMention));
+        eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Block\nTarget Member: " + targetMention));
         eb.setColor(Color.ORANGE);
 
         eb.addField(

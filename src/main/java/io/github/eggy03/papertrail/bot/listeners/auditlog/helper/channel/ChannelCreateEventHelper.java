@@ -33,7 +33,7 @@ public class ChannelCreateEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Channel Create Event");
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Channel Created By: " + mentionableExecutor + "\nCreated Channel: " + targetChannelMention));
+        eb.setDescription(MarkdownUtil.quoteBlock("Channel Created By: " + mentionableExecutor + "\nTarget Channel: " + targetChannelMention));
         eb.setColor(Color.GREEN);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {

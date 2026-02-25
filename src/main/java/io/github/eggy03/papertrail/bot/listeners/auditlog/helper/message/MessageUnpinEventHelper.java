@@ -31,7 +31,7 @@ public class MessageUnpinEventHelper {
         User target = ale.getJDA().getUserById(ale.getTargetId());
         String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Message Author: " + mentionableTarget + "\nMessage Un-Pinned By: " + mentionableExecutor));
+        eb.setDescription(MarkdownUtil.quoteBlock("Message Un-Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
         eb.setColor(Color.MAGENTA);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
