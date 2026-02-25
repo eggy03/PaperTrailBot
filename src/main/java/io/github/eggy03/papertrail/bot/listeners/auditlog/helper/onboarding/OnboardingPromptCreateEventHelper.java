@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -26,11 +27,8 @@ public class OnboardingPromptCreateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 
-        eb.setDescription("👤 " + mentionableExecutor + "has created an Onboarding Prompt");
+        eb.setDescription(MarkdownUtil.quoteBlock("Onboarding Prompt Created By: " + mentionableExecutor));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -39,20 +37,22 @@ public class OnboardingPromptCreateEventHelper {
 
             switch (changeKey) {
                 case "single_select" ->
-                        eb.addField("Single Selection Mode", BooleanUtils.formatToYesOrNo(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Single Selection Mode"), BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "required" -> eb.addField("Required", BooleanUtils.formatToYesOrNo(newValue), false);
+                case "required" ->
+                        eb.addField(MarkdownUtil.underline("Is Required"), BooleanUtils.formatToYesOrNo(newValue), false);
 
                 case "type", "id" -> {
                     // skip
                 }
 
-                case "title" -> eb.addField("Question Title", String.valueOf(newValue), false);
+                case "title" -> eb.addField(MarkdownUtil.underline("Question Title"), String.valueOf(newValue), false);
 
-                case "options" -> eb.addField("Question Options", "Review the options in Onboarding Settings", false);
+                case "options" ->
+                        eb.addField(MarkdownUtil.underline("Question Options"), "Review the options in Onboarding Settings", false);
 
                 case "in_onboarding" ->
-                        eb.addField("Is a Pre-Join Question", BooleanUtils.formatToYesOrNo(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Is a Pre-Join Question"), BooleanUtils.formatToYesOrNo(newValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
