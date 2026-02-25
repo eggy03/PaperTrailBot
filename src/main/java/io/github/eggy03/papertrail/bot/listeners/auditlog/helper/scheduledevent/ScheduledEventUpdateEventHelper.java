@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,12 +26,8 @@ public class ScheduledEventUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Scheduled Event Update Event");
-        eb.setDescription("ℹ️ The following scheduled event was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Scheduled Event Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -38,34 +35,38 @@ public class ScheduledEventUpdateEventHelper {
 
             switch (changeKey) {
                 case "entity_type" -> {
-                    eb.addField("Old Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), true);
-                    eb.addField("New Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Event Type"), "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Event Type"), "╰┈➤" + ScheduledEventUtils.resolveEventType(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "name" -> {
-                    eb.addField("Old Event Name", "╰┈➤" + oldValue, true);
-                    eb.addField("New Event Name", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Event Name"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Event Name"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "description" -> {
-                    eb.addField("Old Event Description", "╰┈➤" + oldValue, true);
-                    eb.addField("New Event Description", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Event Description"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Event Description"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "status" -> {
-                    eb.addField("Old Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), true);
-                    eb.addField("New Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Event Status"), "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Event Status"), "╰┈➤" + ScheduledEventUtils.resolveStatusType(newValue), true);
                     eb.addBlankField(true);
                 }
                 case "location" -> {
-                    eb.addField("Event Location", "╰┈➤" + oldValue, true);
-                    eb.addField("Event Location", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Event Location"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("Event Location"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
-                case "privacy_level" -> eb.addField("Privacy", "╰┈➤Event privacy has been updated", false);
-                case "image_hash" -> eb.addField("Image", "╰┈➤Event Image has been updated", false);
-                case "channel_id" -> eb.addField("Channel", "╰┈➤Event Channel has been updated", false);
-                case "recurrence_rule" -> eb.addField("Recurrence Rule", "╰┈➤Recurrence Rule has been updated", false);
+                case "privacy_level" ->
+                        eb.addField(MarkdownUtil.underline("Privacy"), "╰┈➤Event privacy has been updated", false);
+                case "image_hash" ->
+                        eb.addField(MarkdownUtil.underline("Image"), "╰┈➤Event Image has been updated", false);
+                case "channel_id" ->
+                        eb.addField(MarkdownUtil.underline("Channel"), "╰┈➤Event Channel has been updated", false);
+                case "recurrence_rule" ->
+                        eb.addField(MarkdownUtil.underline("Recurrence Rule"), "╰┈➤Recurrence Rule has been updated", false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

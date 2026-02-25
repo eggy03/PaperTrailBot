@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,11 +26,8 @@ public class ScheduledEventDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Scheduled Event Delete Event");
-        eb.setDescription("ℹ️ A scheduled event has been deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Scheduled Event Deleted By: " + mentionableExecutor));
         eb.setColor(Color.RED);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -37,12 +35,12 @@ public class ScheduledEventDeleteEventHelper {
 
             switch (changeKey) {
                 case "entity_type" ->
-                        eb.addField("Event Type", "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), false);
-                case "name" -> eb.addField("Event Name", "╰┈➤" + oldValue, false);
-                case "description" -> eb.addField("Event Description", "╰┈➤" + oldValue, false);
+                        eb.addField(MarkdownUtil.underline("Event Type"), "╰┈➤" + ScheduledEventUtils.resolveEventType(oldValue), false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Event Name"), "╰┈➤" + oldValue, false);
+                case "description" -> eb.addField(MarkdownUtil.underline("Event Description"), "╰┈➤" + oldValue, false);
                 case "status" ->
-                        eb.addField("Event Status", "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), false);
-                case "location" -> eb.addField("Event Location", "╰┈➤" + oldValue, false);
+                        eb.addField(MarkdownUtil.underline("Event Status"), "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), false);
+                case "location" -> eb.addField(MarkdownUtil.underline("Event Location"), "╰┈➤" + oldValue, false);
                 case "privacy_level", "image_hash", "channel_id", "recurrence_rule" -> {
                     // skip
                 }
