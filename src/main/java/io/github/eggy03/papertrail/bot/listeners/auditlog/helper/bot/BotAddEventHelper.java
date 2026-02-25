@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -30,10 +31,7 @@ public class BotAddEventHelper {
         eb.setDescription("ℹ️ A bot was added by: " + mentionableExecutor);
         eb.setColor(Color.CYAN);
 
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-
-        eb.addField("Bot Added: ", "╰┈➤" + mentionableTarget, false);
+        eb.addField(MarkdownUtil.underline("Bot Added"), "╰┈➤" + mentionableTarget, false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
