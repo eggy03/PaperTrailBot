@@ -2,15 +2,15 @@ package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.invite;
 
 import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.invite.utils.InviteUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -27,8 +27,6 @@ public class InviteCreateEventHelper {
 
         eb.setDescription("ℹ️ The following invite was created");
         eb.setColor(Color.CYAN);
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -37,38 +35,31 @@ public class InviteCreateEventHelper {
 
             switch (changeKey) {
 
-                case "code" -> eb.addField("Invite Code", "╰┈➤" + newValue, false);
+                case "code" -> eb.addField(MarkdownUtil.underline("Invite Code"), "╰┈➤" + newValue, false);
 
-                case "inviter_id" -> {
-                    User inviter = ale.getJDA().getUserById(ale.getUserIdLong());
-                    String mentionableInviter = (inviter != null ? inviter.getAsMention() : ale.getUserId());
-                    eb.addField("Invite Created By", "╰┈➤" + mentionableInviter, false);
-                }
+                case "inviter_id" ->
+                        eb.addField(MarkdownUtil.underline("Invite Created By"), "╰┈➤" + InviteUtils.resolveInviter(newValue, event), false);
 
                 case "temporary" ->
-                        eb.addField("Temporary Invite", "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+                        eb.addField(MarkdownUtil.underline("Is Temporary"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "max_uses" -> {
-                    int maxUses = Integer.parseInt(String.valueOf(newValue));
-                    eb.addField("Max Uses", "╰┈➤" + (maxUses == 0 ? "Unlimited" : String.valueOf(maxUses)), false);
-                }
+                case "max_uses" ->
+                        eb.addField(MarkdownUtil.underline("Max Uses"), "╰┈➤" + InviteUtils.resolveMaxUses(newValue), false);
 
                 case "uses", "flags" -> {
                     // ignore
                 }
 
-                case "max_age" -> eb.addField("Expires After", "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
+                case "max_age" ->
+                        eb.addField(MarkdownUtil.underline("Expires After"), "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
 
-                case "channel_id" -> {
-                    GuildChannel channel = ale.getGuild().getGuildChannelById(String.valueOf(newValue));
-                    eb.addField("Invite Channel", "╰┈➤" + (channel != null ? channel.getAsMention() : "`" + newValue + "`"), false);
-                }
+                case "channel_id" ->
+                        eb.addField(MarkdownUtil.underline("Invite Channel"), "╰┈➤" + InviteUtils.resolveInviteChannel(newValue, event), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
-
             }
         });
 
