@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -29,12 +30,8 @@ public class StickerUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Sticker Update Event");
-        eb.setDescription("ℹ️ The following sticker: " + mentionableSticker + " was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Sticker Updated By: " + mentionableExecutor + "\nUpdated Sticker: " + mentionableSticker));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -45,18 +42,18 @@ public class StickerUpdateEventHelper {
                     // skip
                 }
                 case "tags" -> {
-                    eb.addField("Old Related Emoji", "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, oldValue), true);
-                    eb.addField("New Related Emoji", "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Related Emoji"), "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Related Emoji"), "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, newValue), true);
                     eb.addBlankField(true);
                 }
                 case "description" -> {
-                    eb.addField("Old Description", "╰┈➤" + oldValue, true);
-                    eb.addField("New Description", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Description"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Description"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "name" -> {
-                    eb.addField("Old Sticker Name", "╰┈➤" + oldValue, true);
-                    eb.addField("New Sticker Name", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Sticker Name"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Sticker Name"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 default -> {

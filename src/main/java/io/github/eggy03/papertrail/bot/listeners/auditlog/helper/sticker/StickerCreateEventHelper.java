@@ -8,7 +8,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -23,13 +25,13 @@ public class StickerCreateEventHelper {
         User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
+        GuildSticker sticker = event.getGuild().getStickerById(ale.getTargetId());
+        String mentionableSticker = (sticker != null ? sticker.getName() : ale.getTargetId());
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Sticker Create Event");
-        eb.setDescription("ℹ️ The following sticker was created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Sticker Created By: " + mentionableExecutor + "\nCreated Sticker: " + mentionableSticker));
         eb.setColor(Color.GREEN);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -40,13 +42,13 @@ public class StickerCreateEventHelper {
                     // skip
                 }
                 case "id" -> {
-                    eb.addField("Sticker ID", "╰┈➤" + newValue, false);
-                    eb.addField("Sticker Link", "╰┈➤" + StickerUtils.resolveStickerUrl(event, newValue), false);
+                    eb.addField(MarkdownUtil.underline("Sticker ID"), "╰┈➤" + newValue, false);
+                    eb.addField(MarkdownUtil.underline("Sticker Link"), "╰┈➤" + StickerUtils.resolveStickerUrl(event, newValue), false);
                 }
                 case "tags" ->
-                        eb.addField("Related Emoji", "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, newValue), false);
-                case "description" -> eb.addField("Description", "╰┈➤" + newValue, false);
-                case "name" -> eb.addField("Sticker Name", "╰┈➤" + newValue, false);
+                        eb.addField(MarkdownUtil.underline("Related Emoji"), "╰┈➤" + StickerUtils.resolveRelatedEmoji(event, newValue), false);
+                case "description" -> eb.addField(MarkdownUtil.underline("Description"), "╰┈➤" + newValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Sticker Name"), "╰┈➤" + newValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
