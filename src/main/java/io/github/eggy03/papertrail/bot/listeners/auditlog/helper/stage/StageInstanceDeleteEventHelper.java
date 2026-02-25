@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,21 +26,18 @@ public class StageInstanceDeleteEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Delete Event");
-        eb.setDescription("ℹ️ A stage instance was deleted by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Deleted By: " + mentionableExecutor));
         eb.setColor(Color.RED);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "topic" -> eb.addField("Stage Topic", "╰┈➤" + oldValue, false);
+                case "topic" -> eb.addField(MarkdownUtil.underline("Stage Topic"), "╰┈➤" + oldValue, false);
 
                 case "privacy_level" ->
-                        eb.addField("Stage Privacy", "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), false);
+                        eb.addField(MarkdownUtil.underline("Stage Privacy"), "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);

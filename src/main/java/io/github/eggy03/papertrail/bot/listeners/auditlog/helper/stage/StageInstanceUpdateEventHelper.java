@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -25,12 +26,8 @@ public class StageInstanceUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Update Event");
-        eb.setDescription("ℹ️ A stage instance was updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-        eb.addBlankField(true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -38,13 +35,13 @@ public class StageInstanceUpdateEventHelper {
 
             switch (changeKey) {
                 case "topic" -> {
-                    eb.addField("Old Stage Topic", "╰┈➤" + oldValue, true);
-                    eb.addField("New Stage Topic", "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Stage Topic"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Stage Topic"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
                 case "privacy_level" -> {
-                    eb.addField("Old Stage Privacy", "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), true);
-                    eb.addField("New Stage Privacy", "╰┈➤" + StageUtils.resolveStagePrivacyLevel(newValue), true);
+                    eb.addField(MarkdownUtil.underline("Old Stage Privacy"), "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Stage Privacy"), "╰┈➤" + StageUtils.resolveStagePrivacyLevel(newValue), true);
                     eb.addBlankField(true);
                 }
 
