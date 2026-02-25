@@ -12,26 +12,28 @@ import org.jspecify.annotations.Nullable;
 @UtilityClass
 public class InviteUtils {
 
+    public static final String FALLBACK_STRING = "N/A";
+
     @NotNull
     public static String resolveInviter(@Nullable Object inviterId, @NonNull GuildAuditLogEntryCreateEvent event) {
 
-        if (inviterId == null)
-            return "N/A";
+        Long inviterIdLong = NumberParseUtils.parseLong(inviterId);
+        if (inviterIdLong == null)
+            return FALLBACK_STRING;
 
-        Member member = event.getGuild().getMemberById(inviterId.toString());
-
-        return member != null ? member.getAsMention() : inviterId.toString();
+        Member member = event.getGuild().getMemberById(inviterIdLong);
+        return member != null ? member.getAsMention() : inviterIdLong.toString();
     }
 
     @NotNull
     public static String resolveInviteChannel(@Nullable Object inviteChannelId, @NonNull GuildAuditLogEntryCreateEvent event) {
 
-        if (inviteChannelId == null)
-            return "N/A";
+        Long inviteChannelIdLong = NumberParseUtils.parseLong(inviteChannelId);
+        if (inviteChannelIdLong == null)
+            return FALLBACK_STRING;
 
-        GuildChannel channel = event.getGuild().getGuildChannelById(inviteChannelId.toString());
-
-        return channel != null ? channel.getAsMention() : inviteChannelId.toString();
+        GuildChannel channel = event.getGuild().getGuildChannelById(inviteChannelIdLong);
+        return channel != null ? channel.getAsMention() : inviteChannelIdLong.toString();
     }
 
     @NotNull
@@ -40,7 +42,7 @@ public class InviteUtils {
         Integer maxUses = NumberParseUtils.parseInt(usageCountIntegerObject);
 
         if (maxUses == null)
-            return "N/A";
+            return FALLBACK_STRING;
 
         if (maxUses == 0)
             return "Unlimited";
