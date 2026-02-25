@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,11 +25,8 @@ public class IntegrationCreateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Integration Create Event");
-        eb.setDescription("ℹ️ The following integration was created by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Integration Created By: " + mentionableExecutor));
         eb.setColor(Color.PINK);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -36,8 +34,8 @@ public class IntegrationCreateEventHelper {
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "type" -> eb.addField("Integration Type", "╰┈➤" + newValue, false);
-                case "name" -> eb.addField("Integration Name", "╰┈➤" + newValue, false);
+                case "type" -> eb.addField(MarkdownUtil.underline("Integration Type"), "╰┈➤" + newValue, false);
+                case "name" -> eb.addField(MarkdownUtil.underline("Integration Name"), "╰┈➤" + newValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
