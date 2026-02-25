@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -30,14 +31,11 @@ public class KickEventHelper {
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Kick Event");
-            eb.setDescription("ℹ️ The following member was kicked by: " + mentionableModerator);
+            eb.setDescription(MarkdownUtil.quoteBlock("A Member Has Been Kicked By: " + mentionableModerator));
             eb.setColor(Color.ORANGE);
 
-            eb.addField("Action Type", String.valueOf(ale.getType()), true);
-            eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
-
-            eb.addField("Kicked Member/Application", "╰┈➤" + mentionableKickedUser, false);
-            eb.addField("Reason", "╰┈➤" + reasonForKick, false);
+            eb.addField(MarkdownUtil.underline("Kicked Member"), "╰┈➤" + mentionableKickedUser, false);
+            eb.addField(MarkdownUtil.underline("Reason"), "╰┈➤" + reasonForKick, false);
 
             eb.setFooter("Audit Log Entry ID: " + ale.getId());
             eb.setTimestamp(ale.getTimeCreated());
