@@ -28,7 +28,7 @@ public class BotAddEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Bot Add Event");
-        eb.setDescription("ℹ️ A bot was added by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Bot Added By: " + mentionableExecutor + "\nBot ID: " + ale.getTargetId()));
         eb.setColor(Color.CYAN);
 
         eb.addField(MarkdownUtil.underline("Bot Added"), "╰┈➤" + mentionableTarget, false);
