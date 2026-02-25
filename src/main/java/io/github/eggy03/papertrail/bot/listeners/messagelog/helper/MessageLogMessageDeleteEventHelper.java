@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -36,11 +37,11 @@ public class MessageLogMessageDeleteEventHelper {
             List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(deletedMessage);
 
             EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("🗑️ Message Delete Event");
-            eb.setDescription("A message sent by " + mentionableAuthor + " has been deleted from " + event.getChannel().getAsMention());
+            eb.setTitle("Message Delete Event");
+            eb.setDescription(MarkdownUtil.quoteBlock("Author: " + mentionableAuthor + "\n" + "Channel: " + event.getChannel().getAsMention()));
             eb.setColor(Color.RED);
 
-            deletedMessageSplits.forEach(split -> eb.addField("Deleted Message", split, false));
+            deletedMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("Deleted Message"), MarkdownUtil.codeblock(split), false));
 
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());

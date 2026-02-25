@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -41,12 +42,12 @@ public class MessageLogMessageUpdateEventHelper {
             List<String> updatedMessageSplits = Splitter.fixedLength(1024).splitToList(updatedMessage);
 
             EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("📝 Message Edit Event");
-            eb.setDescription("A message sent by " + event.getAuthor().getAsMention() + " has been edited in: " + event.getJumpUrl());
+            eb.setTitle("Message Edit Event");
+            eb.setDescription(MarkdownUtil.quoteBlock("Author: " + event.getAuthor().getAsMention() + "\n" + "Channel: " + event.getChannel().getAsMention()));
             eb.setColor(Color.YELLOW);
 
-            oldMessageSplits.forEach(split -> eb.addField("Old Message", split, false));
-            updatedMessageSplits.forEach(split -> eb.addField("New Message", split, false));
+            oldMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("Old Message"), MarkdownUtil.codeblock(split), false));
+            updatedMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("New Message"), MarkdownUtil.codeblock(split), false));
 
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
