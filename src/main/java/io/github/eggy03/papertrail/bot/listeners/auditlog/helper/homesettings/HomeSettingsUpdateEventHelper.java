@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
@@ -24,19 +25,18 @@ public class HomeSettingsUpdateEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Server Guide Update Event");
-        eb.setDescription("ℹ️ The server guide has been updated by: " + mentionableExecutor);
+        eb.setDescription(MarkdownUtil.quoteBlock("Server Guide Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
-
-        eb.addField("Action Type", String.valueOf(ale.getType()), true);
-        eb.addField("Target Type", String.valueOf(ale.getTargetType()), true);
 
         ale.getChanges().keySet().forEach(key -> {
             switch (key) {
-                case "welcome_message" -> eb.addField("Welcome Message", "╰┈➤Welcome Message has been updated", false);
-                case "resource_channels" -> eb.addField("Resources", "╰┈➤Resources have been updated", false);
+                case "welcome_message" ->
+                        eb.addField(MarkdownUtil.underline("Welcome Message"), "╰┈➤Welcome Message has been updated", false);
+                case "resource_channels" ->
+                        eb.addField(MarkdownUtil.underline("Resources"), "╰┈➤Resources have been updated", false);
                 case "new_member_actions" ->
-                        eb.addField("New Member Join To-Do", "╰┈➤Interactive Actions have been updated", false);
-                default -> eb.addField(key, "╰┈➤" + key + " has/have been updated", false);
+                        eb.addField(MarkdownUtil.underline("New Member Join To-Do"), "╰┈➤Interactive Actions have been updated", false);
+                default -> eb.addField(MarkdownUtil.underline(key), "╰┈➤" + key + " has/have been updated", false);
             }
         });
 
