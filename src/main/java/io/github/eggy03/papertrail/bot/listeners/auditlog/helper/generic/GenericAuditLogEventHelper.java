@@ -32,10 +32,16 @@ public class GenericAuditLogEventHelper {
         eb.addField(MarkdownUtil.underline("Action Type"), MarkdownUtil.codeblock(ale.getType().toString()), true);
         eb.addField(MarkdownUtil.underline("Target Type"), MarkdownUtil.codeblock(ale.getTargetType().toString()), true);
 
-        ale.getChanges().forEach((changeKey, changeValue) -> {
-            eb.addField(MarkdownUtil.underline(changeKey), MarkdownUtil.codeblock("OLD VALUE\n" + changeValue.getOldValue()), false);
-            eb.addField(MarkdownUtil.underline(changeKey), MarkdownUtil.codeblock("NEW VALUE\n" + changeValue.getNewValue()), false);
-        });
+        ale.getChanges()
+                .forEach((changeKey, changeValue) ->
+                        eb.addField(
+                                MarkdownUtil.underline(changeKey),
+                                MarkdownUtil.codeblock("OLD VALUE\n" + changeValue.getOldValue() + "\nNEW VALUE\n" + changeValue.getNewValue()),
+                                false
+                        )
+                );
+
+
 
         if (!eb.isValidLength() || eb.isEmpty()) {
             log.warn("Embed is empty or too long (current length: {}).", eb.length());
