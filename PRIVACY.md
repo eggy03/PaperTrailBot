@@ -1,6 +1,7 @@
 # Privacy Policy
 
-**Data Controller:** This project is maintained by [@Egg-03](https://github.com/eggy03).
+**Data Controller:** For the official hosted instance only, [@Egg-03](https://github.com/eggy03) acts as the data
+controller.
 
 **Last Updated:** February 16, 2026
 
