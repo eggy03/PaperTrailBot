@@ -1,63 +1,174 @@
 # Terms of Service
 
-_Last updated: February 16, 2026_
+_Last updated: February 26, 2026_
 
-Thank you for using **PaperTrail**, an open-source Discord audit and message logging bot.
+_Effective: February 26, 2026_
 
-By using this software (either self-hosted or via the official hosted instance), you agree to the following terms:
+Thank you for showing interest in **PaperTrail**, an open-source Discord audit and message logging bot.
 
----
-
-## 1. Usage
-
-You may use this bot for free, either:
-- By hosting it yourself
-- Or by using the official hosted instance (if available)
-
-You agree to use the bot responsibly, and not for any of the following:
-- Harassment, abuse, or spamming users
-- Illegal activity under applicable laws
-- Violating Discord’s [Terms of Service](https://discord.com/terms)
+By using this service (either self-hosted or via any hosted instance),
+you agree to the following Terms of Service ("Terms"). Please read them carefully before using the service.
+If you do not agree, stop using the software immediately.
 
 ---
 
-## 2. Privacy
+## 1. Parties And Scope
 
-This bot logs message and event data **only if you enable those features**.
-All content is stored in a readable format .
+These Terms are a legal agreement between you ("you", "your", or the server owner where PaperTrail runs)
+and the project maintainers of PaperTrail (collectively "we", "us", "PaperTrail").
 
-See our [Privacy Policy](./PRIVACY.md) for full details on data handling, retention, and user rights.
+The [bot](https://github.com/eggy03/PaperTrailBot),
+it's related
+APIs, [1](https://github.com/eggy03/PaperTrail-API-Quarkus), [2](https://github.com/eggy03/PaperTrail-API-Spring),
+and it's [SDK]()
+are referred to collectively as the "Service."
 
----
-
-## 3. Self-Hosting
-
-If you self-host this bot, you are solely responsible for:
-- Data storage and retention
-- Security practices
-- Compliance with applicable privacy laws
-
-The project maintainers are not responsible for how self-hosted instances handle user data.
+In addition to these Terms, you must also read and accept Discord’s [Terms of Service](https://discord.com/terms).
 
 ---
 
-## 4. Modifications
+## 2. Allowed Use
 
-You are free to fork, modify, or self-host this project under the terms of the [AGPLv3](./LICENSE).
+You may use the Service for permitted purposes described in the project documentation.
+You may self-host or run the hosted instance if available.
+
+You are responsible for:
+
+- Proper configuration of the Service.
+- All activity conducted through your server.
+- Ensuring you have authority to enable logging and process user data.
+
+If you operate a server that uses the Service, you are considered the responsible party for messages and actions the
+Service performs on that server.
 
 ---
 
-## 5. No Warranty
+## 3. Prohibited Use
 
-This software is provided **"as is"**, without any warranty of any kind.
-The developers are not liable for any damages, data loss, or moderation outcomes resulting from the use of this bot.
+You agree not to use the Service to:
+
+- Harass, abuse, stalk, or otherwise violate the rights of others.
+- Send unsolicited advertising or spam, including mass direct messages.
+- Violate applicable local, national, or international laws.
+- Abuse the Service in ways that violate Discord's Terms of Service or Community Guidelines.
+- Attempt unauthorized access to internal systems, APIs, or infrastructure.
+- Modify Service logs or administrative messages in a way that intentionally obscures the origin or purpose.
 
 ---
 
-## 6. Changes
+## 4. Self-hosting and your responsibilities
 
-We may update these terms as the project evolves.
-Continued use of the bot after changes constitutes acceptance of the updated terms.
+If you self-host the Service, you are solely responsible for:
+
+- Data storage, retention, backups, and deletion policies.
+- Security of your infrastructure.
+- Compliance with applicable data protection and privacy laws.
+- Any modifications you make to the code and the consequences of those changes.
+
+We provide the Service as open source; We do not control how self-hosted instances behave.
+
+---
+
+## 5. Privacy & data handling
+
+The Service can collect and store message and guild data if you enable its features.
+How data is collected, stored, and retained depends on your configuration (self-hosted) or the hosted instance’s
+settings.
+
+Read the [Privacy Policy](/PRIVACY.md) for full details on what is collected, how it is used, retention periods, and
+user rights.
+
+---
+
+## 6. Outages, modifications, and availability
+
+We strive to keep any hosted instances of the Service available,
+but we cannot guarantee uptime. We may add, modify, or remove features at any time.
+
+We are not liable for temporary outages, feature removals, data loss from outages,
+or changes that affect your use of the Service.
+If you rely on guaranteed uptime or SLAs, consider self-hosting and maintaining your own backups.
+
+The Service fulfills its function at the time a
+message, embed, attachment, API response, or stored log entry is successfully delivered
+to your configured guild channel.
+
+Operation of the Service depends on external systems and proper configuration, including but not limited to:
+
+- Discord API availability and rate limits
+- Internal API availability
+- SDK implementation and usage
+- Server permissions and channel configuration
+- Network connectivity
+
+We do not guarantee uninterrupted operation or that every event will be logged, processed, or stored.
+
+We are not responsible for:
+
+- Deletion or modification of log messages, embeds, attachments, or stored entries by server members.
+- Permission changes that prevent logs from being sent or viewed.
+- Channel deletions or structural server changes.
+- Misuse or improper implementation of the SDK or API.
+- Failures caused by outages, misconfiguration, API limitations, or third-party service interruptions.
+
+If logging or event processing is critical to your operations, you are responsible for maintaining appropriate
+permissions, monitoring, and backups.
+
+---
+
+## 7. No Warranty
+
+The Service is provided "as is" and "as available" without warranties of any kind, express or implied.
+
+To the maximum extent permitted by law, we disclaim all warranties, including fitness for a particular purpose and
+non-infringement.
+
+We are not liable for any damages, including but not limited to data loss, operational disruption, moderation outcomes,
+or indirect or consequential damages arising from use of the Service.
+
+To the maximum extent permitted by law, our total aggregate liability for all claims arising out of or relating to the
+Service shall not exceed $5 USD.
+
+---
+
+## 8. Indemnification
+
+You agree to indemnify and hold harmless the maintainers, contributors, and affiliates from any claims, liabilities,
+damages, losses, and expenses arising from:
+
+- Your use of the Service,
+- Your breach of these Terms,
+- Actions taken by users of your server.
+
+---
+
+## 9. Termination
+
+Either party may terminate use of the Service at any time.
+
+Upon termination:
+
+- Hosted instance data may be deleted in accordance with the [Privacy Policy](/PRIVACY.md).
+- Self-hosted data remains under your control.
+
+We reserve the right to suspend or disable access to hosted instances for violations of these Terms or applicable law.
+
+---
+
+## 10. Changes to these Terms
+
+We may update these Terms as the project evolves.
+Material changes will be published through the project repository.
+
+Continued use of the Service after changes take effect constitutes acceptance of the updated Terms.
+
+---
+
+## 11. Entire agreement
+
+These Terms (together with the [Privacy Policy](/PRIVACY.md) and the [License](/LICENSE))
+constitute the entire agreement between you and the project maintainers regarding the Service,
+superseding prior agreements or representations relating to the Service.
 
 ---
 
