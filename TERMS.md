@@ -89,9 +89,7 @@ We are not liable for temporary outages, feature removals, data loss from outage
 or changes that affect your use of the Service.
 If you rely on guaranteed uptime or SLAs, consider self-hosting and maintaining your own backups.
 
-The Service fulfills its function at the time a
-message, embed, attachment, API response, or stored log entry is successfully delivered
-to your configured guild channel.
+Delivering logs to your registered guild are attempted on a best-effort basis. The Service does not track, record, or retain delivery attempts, success confirmations, or failure states. We do not guarantee that any log message, embed, attachment, or API response will be successfully delivered, stored, or remain available.
 
 Operation of the Service depends on external systems and proper configuration, including but not limited to:
 
