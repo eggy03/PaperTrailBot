@@ -1,8 +1,8 @@
 # Terms of Service
 
-_Last updated: February 26, 2026_
+_Last updated: February 27, 2026_
 
-_Effective: February 26, 2026_
+_Effective: February 27, 2026_
 
 Thank you for showing interest in **PaperTrail**, an open-source Discord audit and message logging bot.
 
@@ -14,14 +14,14 @@ If you do not agree, stop using the software immediately.
 
 ## 1. Parties And Scope
 
-These Terms are a legal agreement between you ("you", "your", or the server owner where PaperTrail runs)
+These Terms are a legal agreement between you ("you", "your", "user")
 and the project maintainers of PaperTrail (collectively "we", "us", "PaperTrail").
 
 The [bot](https://github.com/eggy03/PaperTrailBot),
-it's related
+its related
 APIs, [1](https://github.com/eggy03/PaperTrail-API-Quarkus), [2](https://github.com/eggy03/PaperTrail-API-Spring),
-and it's [SDK]()
-are referred to collectively as the "Service."
+and its [SDK](https://github.com/eggy03/PaperTrail-SDK)
+are collectively referred to as the “Service.”
 
 In addition to these Terms, you must also read and accept Discord’s [Terms of Service](https://discord.com/terms).
 
