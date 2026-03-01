@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -48,6 +47,9 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             return;
         }
 
+        // acknowledge this interaction before calling the API
+        event.deferReply().queue();
+
         // Call the API to register guild for message logging
         boolean success = client.registerGuild(callerGuild.getId(), callerChannel.getId());
 
@@ -63,8 +65,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 
         }
 
-        MessageEmbed mb = eb.build();
-        event.replyEmbeds(mb).setEphemeral(false).queue();
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
     private void retrieveMessageLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
@@ -75,11 +76,15 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             return;
         }
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("View Existing Message Log Configuration");
+        // acknowledge this interaction before calling the API
+        event.deferReply().queue();
 
         // Call the API to check for registered guild
         Optional<MessageLogRegistrationEntity> response = client.getRegisteredGuild(callerGuild.getId());
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("View Existing Message Log Configuration");
+
         response.ifPresentOrElse(success -> {
 
             String registeredChannelId = success.getChannelId();
@@ -93,8 +98,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             eb.addField(MarkdownUtil.underline("Warning"), MarkdownUtil.codeblock("No channel has been registered for message logs"), false);
         });
 
-        MessageEmbed mb = eb.build();
-        event.replyEmbeds(mb).setEphemeral(false).queue();
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
     private void unsetMessageLogging(@NonNull SlashCommandInteractionEvent event) {
@@ -105,11 +109,15 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             return;
         }
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Message Log Removal Process");
+        // acknowledge this interaction before calling the API
+        event.deferReply().queue();
 
         // Call the API to unregister guild
         boolean success = client.deleteRegisteredGuild(callerGuild.getId());
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Message Log Removal Process");
+
         if (success) {
             eb.setColor(Color.GREEN);
             eb.addField(MarkdownUtil.underline("Removal Success"), MarkdownUtil.codeblock("Channel successfully unset"), false);
@@ -118,7 +126,6 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             eb.addField(MarkdownUtil.underline("Removal Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this guild yet."), false);
         }
 
-        MessageEmbed mb = eb.build();
-        event.replyEmbeds(mb).setEphemeral(false).queue();
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 }

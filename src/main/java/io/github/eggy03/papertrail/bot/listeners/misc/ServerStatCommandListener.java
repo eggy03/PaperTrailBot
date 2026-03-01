@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
@@ -76,6 +75,9 @@ public class ServerStatCommandListener extends ListenerAdapter {
             return;
         }
 
+        // acknowledge this interaction but reply when the embed's been built
+        event.deferReply().queue();
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Server Statistics");
         eb.setDescription("Statistics For: " + guild.getName());
@@ -100,8 +102,7 @@ public class ServerStatCommandListener extends ListenerAdapter {
         eb.setFooter("Requested By: " + getDataRequestingMember(event));
         eb.setTimestamp(Instant.now());
 
-        MessageEmbed mb = eb.build();
-        event.replyEmbeds(mb).setEphemeral(false).queue();
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
 
     }
 }

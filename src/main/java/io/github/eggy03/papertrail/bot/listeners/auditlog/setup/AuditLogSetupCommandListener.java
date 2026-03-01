@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -48,6 +47,9 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             return;
         }
 
+        // acknowledge this interaction before calling the API
+        event.deferReply().queue();
+
         // Call the API to register the guild and the channel
         boolean success = client.registerGuild(callerGuild.getId(), callerChannel.getId());
 
@@ -62,8 +64,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             eb.addField(MarkdownUtil.underline("Registration Failure"), MarkdownUtil.codeblock("Channel could not be registered. Check if a channel in this guild is already registered for logging."), false);
         }
 
-        MessageEmbed mb = eb.build();
-        event.replyEmbeds(mb).setEphemeral(false).queue();
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
     private void retrieveAuditLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
@@ -73,6 +74,9 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             log.warn("An audit log view command may have been called outside of a guild. This should not happen.");
             return;
         }
+
+        // acknowledge this interaction before calling the API
+        event.deferReply().queue();
 
         // Call the API to retrieve the registered channel
         Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(callerGuild.getId());
@@ -94,8 +98,7 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             eb.addField(MarkdownUtil.underline("Warning"), MarkdownUtil.codeblock("No channel has been registered for audit logs"), false);
         });
 
-        MessageEmbed mb = eb.build();
-        event.replyEmbeds(mb).setEphemeral(false).queue();
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
     private void unsetAuditLogging(@NonNull SlashCommandInteractionEvent event) {
@@ -105,6 +108,9 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             log.warn("An audit log unset command may have been called outside of a guild. This should not happen.");
             return;
         }
+
+        // acknowledge this interaction before calling the API
+        event.deferReply().queue();
 
         // Call the API to unregister guild
         boolean success = client.deleteRegisteredGuild(callerGuild.getId());
@@ -120,7 +126,6 @@ public class AuditLogSetupCommandListener extends ListenerAdapter {
             eb.addField(MarkdownUtil.underline("Removal Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this guild yet."), false);
         }
 
-        MessageEmbed mb = eb.build();
-        event.replyEmbeds(mb).setEphemeral(false).queue();
+        event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 }

@@ -67,7 +67,7 @@ public class BotSetupInstructionCommandListener extends ListenerAdapter {
             eb.setTimestamp(Instant.now());
 
             MessageEmbed mb = eb.build();
-            event.replyEmbeds(mb).setEphemeral(false).queue();
+            event.replyEmbeds(mb).queue();
         }
     }
 }

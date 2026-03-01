@@ -148,6 +148,9 @@ public class DebugListener extends ListenerAdapter {
 
         GuildChannel channel = event.getGuildChannel();
 
+        // acknowledge this interaction but reply when the embed's been built
+        event.deferReply().queue();
+
         vThreadPool.execute(() -> {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Debug Info");
@@ -165,7 +168,7 @@ public class DebugListener extends ListenerAdapter {
             eb.setFooter(ProjectInfo.APPNAME + " " + ProjectInfo.VERSION);
             eb.setTimestamp(Instant.now());
 
-            event.replyEmbeds(eb.build()).queue();
+            event.getHook().editOriginalEmbeds(eb.build()).queue();
         });
     }
 }
