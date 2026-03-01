@@ -114,25 +114,21 @@ public class DebugListener extends ListenerAdapter {
 
         StringBuilder sb = new StringBuilder();
 
-        try {
-            alClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
-                GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
-                if (channel != null)
-                    sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline(channel.getName())).append("\n");
-                else
-                    sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable")).append("\n");
-            }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Audit Logging")).append("\n"));
+        alClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
+            GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
+            if (channel != null)
+                sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline(channel.getName())).append("\n");
+            else
+                sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable")).append("\n");
+        }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Audit Logging")).append("\n"));
 
-            mlClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
-                GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
-                if (channel != null)
-                    sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline(channel.getName()));
-                else
-                    sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable"));
-            }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Message Logging")));
-        } catch (Exception e) {
-            sb.append("ERROR: ").append(e.getMessage());
-        }
+        mlClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
+            GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
+            if (channel != null)
+                sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline(channel.getName()));
+            else
+                sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable"));
+        }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Message Logging")));
 
         return sb.toString();
     }
