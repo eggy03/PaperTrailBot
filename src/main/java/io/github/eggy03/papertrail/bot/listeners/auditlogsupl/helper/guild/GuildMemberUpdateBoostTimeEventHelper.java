@@ -31,13 +31,11 @@ public class GuildMemberUpdateBoostTimeEventHelper {
         eb.setThumbnail(guild.getIconUrl());
 
         if (newBoostTime != null) {
-            eb.setDescription(MarkdownUtil.quoteBlock("Boosted By: " + mentionableMember + "\nTarget Server: " + guild.getName()));
+            eb.setDescription(MarkdownUtil.quoteBlock("Booster Gained: " + mentionableMember + "\nTarget Server: " + guild.getName()));
             eb.setColor(Color.PINK);
-            eb.addField(MarkdownUtil.underline("Booster Gained"), "╰┈➤" + mentionableMember + " has applied their first boost to your server", false);
         } else {
-            eb.setDescription(MarkdownUtil.quoteBlock("Boosted Removed By: " + mentionableMember + "\nTarget Server: " + guild.getName()));
+            eb.setDescription(MarkdownUtil.quoteBlock("Booster Lost: " + mentionableMember + "\nTarget Server: " + guild.getName()));
             eb.setColor(Color.GRAY);
-            eb.addField(MarkdownUtil.underline("Booster Lost"), "╰┈➤" + mentionableMember + " has removed their boost from your server", false);
         }
 
         eb.setFooter(guild.getName());
