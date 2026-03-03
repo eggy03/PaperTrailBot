@@ -34,7 +34,7 @@ public class MessageLogMessageDeleteEventHelper {
             String mentionableAuthor = (author != null ? author.getAsMention() : deletedMessageAuthorId);
 
             // Splitting is required because each field in an embed can display only up-to 1024 characters
-            List<String> deletedMessageSplits = Splitter.fixedLength(1024).splitToList(deletedMessage);
+            List<String> deletedMessageSplits = Splitter.fixedLength(1000).splitToList(deletedMessage);
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Message Delete Event");

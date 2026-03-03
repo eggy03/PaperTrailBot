@@ -38,8 +38,8 @@ public class MessageLogMessageUpdateEventHelper {
 
             // Splitting is required because each field in an embed can display only up-to 1024 characters
             // A full embed can display up-to 6000 characters
-            List<String> oldMessageSplits = Splitter.fixedLength(1024).splitToList(oldMessage);
-            List<String> updatedMessageSplits = Splitter.fixedLength(1024).splitToList(updatedMessage);
+            List<String> oldMessageSplits = Splitter.fixedLength(1000).splitToList(oldMessage);
+            List<String> updatedMessageSplits = Splitter.fixedLength(1000).splitToList(updatedMessage);
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Message Edit Event");
