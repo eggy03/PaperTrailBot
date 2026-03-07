@@ -80,61 +80,6 @@ You will need the following environment variables to run the bot:
 |----------------|------------------------------------------------------------------------------------------|
 | `TOKEN`        | Discord application bot token (from the Developer Portal)                                |
 | `API_URL`      | Internal URL of the PaperTrail API (e.g., `http://localhost:8081`)                       |
-| `TOTAL_SHARDS` | The total number of shards (connections) your bot is using across **ALL** bot instances. |
-| `MIN_SHARD_ID` | The first shard number **THIS** bot instance should handle.                              |
-| `MAX_SHARD_ID` | The last shard number **THIS** bot instance should handle.                               |
-
-Each shard allows handling up-to 2500 guilds.
-
-Take a look at the following configuration examples to have a clearer picture of what values to put
-for your use-case
-
-**1: JVM Instance / 1-2500 Guilds / 1 Shard**
-
-If your bot is small or self-hosted for a limited number of servers, you only need one shard.
-This should be sufficient for the majority of self-host users
-
-```dotenv
-TOTAL_SHARDS=1
-MIN_SHARD_ID=0
-MAX_SHARD_ID=0
-```
-
-**2: JVM Instance /2500-5000 Guilds / 2 Shards**
-
-If your bot is in more than 2,500 servers, but you are still running a single JVM instance, you can increase the total
-shard count:
-
-```dotenv
-TOTAL_SHARDS=2
-MIN_SHARD_ID=0
-MAX_SHARD_ID=1
-```
-
-Remember that each shard can only handle up to 2500 guilds so plan the total number shards accordingly
-
-**3: JVM Instances / 25000 Guilds / 10 Shards**
-
-If you scale your bot horizontally, you need to split the shards between them.
-
-Instance 1:
-
-```dotenv
-TOTAL_SHARDS=10
-MIN_SHARD_ID=0
-MAX_SHARD_ID=4
-```
-
-Instance 2:
-
-```dotenv
-TOTAL_SHARDS=10
-MIN_SHARD_ID=5
-MAX_SHARD_ID=9
-```
-
-> [!CAUTION]
-> Shard ID ranges must never overlap between running instances.
 
 ### Step 3: Deployment Options
 
@@ -160,6 +105,102 @@ docker run --env-file .env papertrail-bot
 You can also deploy on cloud platforms that support docker-based deploys via Dockerfile.
 The exact procedure varies, but it usually involves linking the repository, choosing the Dockerfile, and supplying the
 necessary environment variables.
+
+# Sharding Configuration (Optional, Advanced)
+
+> [!CAUTION]
+> This section is intended for users who understand how Discord gateway sharding works
+> and want to run their bot using a custom shard layout.
+>
+> Most of the time you do not need to configure this manually.
+> If no shard configuration is provided, your bot will run using a single shard by default.
+
+Sharding splits your bot connection into multiple independent connections to the Discord gateway.
+Each independent connection is called a shard.
+Discord allows you to have upto 2500 guilds per shard but the recommended configuration is 1 shard per 1000 guilds.
+
+You will need the following additional environment variables for custom shard configuration.
+
+| Variable       | Description                                                                   |
+|----------------|-------------------------------------------------------------------------------|
+| `TOTAL_SHARDS` | Total number of shards used by the bot across all running processes/instances |
+| `MIN_SHARD_ID` | The first shard ID handled by this specific bot instance                      |
+| `MAX_SHARD_ID` | The last shard ID handled by this specific bot instance                       |
+
+Shard IDs start at 0.
+
+If `TOTAL_SHARDS=5`, the valid shard IDs are:
+
+```
+0 1 2 3 4
+```
+
+Take a look at the following configuration examples to have a clearer picture of what values to put
+for your use-case
+
+**Example 1: Single Process / Small Bot (<2500 Guilds)**
+
+If your bot is small or self-hosted for a limited number of servers (<2500), one shard is sufficient.
+This is the default pre-applied configuration when you do not provide any manual shard info.
+
+```dotenv
+TOTAL_SHARDS=1
+MIN_SHARD_ID=0
+MAX_SHARD_ID=0
+```
+
+**Example 2: Single Process / Medium Bot (2500 - 5000 Guilds)**
+
+If your bot exceeds the 2500 guild limit for a single shard, you can increase the shard count while still running one
+process:
+
+```dotenv
+TOTAL_SHARDS=2
+MIN_SHARD_ID=0
+MAX_SHARD_ID=1
+```
+
+Remember that each shard can only handle up to 2500 guilds so plan the total number shards accordingly
+
+**Example 3: 2 Bot Processes / 25000 Guilds**
+
+If you run your bot across multiple processes, you need to split the shards between them.
+
+Process/Instance 1:
+
+```dotenv
+TOTAL_SHARDS=10
+MIN_SHARD_ID=0
+MAX_SHARD_ID=4
+```
+
+Process/Instance 2:
+
+```dotenv
+TOTAL_SHARDS=10
+MIN_SHARD_ID=5
+MAX_SHARD_ID=9
+```
+
+Process 1 handles shards 0-4 and Process 2 handles 5-9.
+Each process manages 5 shards, together covering all 10 shards.
+
+
+> [!CAUTION]
+> Shard ID ranges must never overlap between running processes/instances.
+
+> [!IMPORTANT]
+> PaperTrail is designed primarily for **ease of self-hosting**.
+> Running multiple bot instances is supported, but **rate-limit coordination between instances is not implemented**.
+>
+> Gateway and REST API rate limits are automatically handled by the underlying runtime within a single process.
+> When running multiple bot instances, each process manages its own rate-limit state independently.
+>
+> Large-scale deployments may require centralized systems for **cross-shard communication, request coordination, and
+shared rate-limit tracking**. Implementing such infrastructure would significantly increase operational complexity and
+> runs counter to PaperTrail’s goal of remaining simple to deploy and self-host.
+>
+> In practice, this limitation is only relevant for **very large bots** operating at significant scale.
 
 # License
 
