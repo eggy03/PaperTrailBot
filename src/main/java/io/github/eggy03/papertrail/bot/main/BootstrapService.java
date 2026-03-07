@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.ExecutorService;
 
@@ -70,7 +71,7 @@ public class BootstrapService {
         return this;
     }
 
-    public BootstrapService applyPreBuildEventListeners(ExecutorService vThreadPool) {
+    public BootstrapService applyPreBuildEventListeners(@NonNull ExecutorService vThreadPool) {
 
         builder.addEventListeners(
 
@@ -94,8 +95,19 @@ public class BootstrapService {
         return this;
     }
 
-    public BootstrapService applySharding(int minShardId, int maxShardId, int totalShards) {
-        builder.setShardsTotal(totalShards).setShards(minShardId, maxShardId);
+    public BootstrapService applySharding(@Nullable String minShardId, @Nullable String maxShardId, @Nullable String totalShards) {
+
+        // default to single shards in case of nulls (allows for easier user config)
+        // only advanced users who know what they are doing should care about sharding
+        if (minShardId == null || maxShardId == null || totalShards == null) {
+            builder
+                    .setShardsTotal(1)
+                    .setShards(0, 0);
+        } else {
+            builder
+                    .setShardsTotal(Integer.parseInt(totalShards))
+                    .setShards(Integer.parseInt(minShardId), Integer.parseInt(maxShardId));
+        }
         return this;
     }
 

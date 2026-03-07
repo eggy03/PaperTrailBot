@@ -16,9 +16,9 @@ public class Start {
 
         // get env vars
         String token = EnvConfig.get("TOKEN");
-        int minShardId = Integer.parseInt(EnvConfig.get("MIN_SHARD_ID")); // min for this instance
-        int maxShardId = Integer.parseInt(EnvConfig.get("MAX_SHARD_ID")); // max for this instance
-        int totalShards = Integer.parseInt(EnvConfig.get("TOTAL_SHARDS"));
+        String minShardId = EnvConfig.get("MIN_SHARD_ID"); // min for this instance
+        String maxShardId = EnvConfig.get("MAX_SHARD_ID"); // max for this instance
+        String totalShards = EnvConfig.get("TOTAL_SHARDS"); // total shards for all instances
 
         // set v-thread pools for listeners
         ExecutorService vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
