@@ -1,6 +1,6 @@
 # Overview
 
-PaperTrail is a free and open-source, self-hostable, and privacy-friendly Discord bot
+PaperTrail is a free and open-source, self-hostable Discord bot
 designed to provide audit log data directly in a channel without requiring users to navigate server settings each time.
 
 Key Features:
@@ -15,11 +15,11 @@ Key Features:
 
 # Repositories
 
-| Repository                                                         | Description                              |
-|--------------------------------------------------------------------|------------------------------------------|
-| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)           | Core bot application                     |
-| [PaperTrail SDK](https://github.com/eggy03/papertrail-sdk)         | Client library for the API               |
-| [PaperTrail API](https://github.com/eggy03/PaperTrail-API-Quarkus) | Backend API for providing CRUD functions |
+| Repository                                                         | Description                                          |
+|--------------------------------------------------------------------|------------------------------------------------------|
+| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)           | Core bot application                                 |
+| [PaperTrail SDK](https://github.com/eggy03/papertrail-sdk)         | Java client library for interacting with the API     |
+| [PaperTrail API](https://github.com/eggy03/PaperTrail-API-Quarkus) | Backend API providing configuration and data storage |
 
 > [!IMPORTANT]
 > PaperTrail is currently in maintenance mode. Existing bugs will be fixed, dependency updates will be provided
@@ -89,7 +89,7 @@ You will need the following environment variables to run the bot:
 
 ```shell
 git clone https://github.com/eggy03/PaperTrailBot.git
-cd PaperTrail-API-Quarkus
+cd PaperTrailBot
 ```
 
 - Keep your `.env` file ready inside the locally cloned repository
@@ -108,7 +108,7 @@ necessary environment variables.
 
 # Sharding Configuration (Optional, Advanced)
 
-> [!CAUTION]
+> [!NOTE]
 > This section is intended for users who understand how Discord gateway sharding works
 > and want to run their bot using a custom shard layout.
 >
@@ -117,7 +117,7 @@ necessary environment variables.
 
 Sharding splits your bot connection into multiple independent connections to the Discord gateway.
 Each independent connection is called a shard.
-Discord allows you to have upto 2500 guilds per shard but the recommended configuration is 1 shard per 1000 guilds.
+Discord allows you to have up to 2500 guilds per shard but the recommended configuration is 1 shard per 1000 guilds.
 
 You will need the following additional environment variables for custom shard configuration.
 
@@ -185,28 +185,59 @@ MAX_SHARD_ID=9
 Process 1 handles shards 0-4 and Process 2 handles 5-9.
 Each process manages 5 shards, together covering all 10 shards.
 
-
-> [!CAUTION]
-> Shard ID ranges must never overlap between running processes/instances.
-
 > [!IMPORTANT]
-> PaperTrail is designed primarily for **ease of self-hosting**.
-> Running multiple bot instances is supported, but **rate-limit coordination between instances is not implemented**.
->
-> Gateway and REST API rate limits are automatically handled by the underlying runtime within a single process.
-> When running multiple bot instances, each process manages its own rate-limit state independently.
->
-> Large-scale deployments may require centralized systems for **cross-shard communication, request coordination, and
-shared rate-limit tracking**. Implementing such infrastructure would significantly increase operational complexity and
-> runs counter to PaperTrail’s goal of remaining simple to deploy and self-host.
->
-> In practice, this limitation is only relevant for **very large bots** operating at significant scale.
+> Shard ID ranges must never overlap between running bot processes/instances.
+
+# Configuring Synchronized Rate Limits (Experimental, Optional, Advanced)
+
+Running multiple bot instances is supported but largely untested.
+By default, JDA manages its own rate limits within each instance/process of your bot.
+
+For large deployments, where your bot scales across more than one instance/process,
+it is possible to synchronize Discord's rate limits across multiple instances/processes
+by using an external proxy such as the [Twilight HTTP Proxy](https://github.com/twilight-rs/http-proxy).
+This proxy acts as a shared HTTP gateway that coordinates Discord API rate limits across multiple bot instances.
+
+### Running the Proxy
+
+To use the pre-built Docker images from
+the [container registry](https://github.com/twilight-rs/http-proxy/pkgs/container/http-proxy),
+run one of the following commands:
+
+```shell
+$ docker run -itd -e DISCORD_TOKEN="my token" -p 3000:80 ghcr.io/twilight-rs/http-proxy
+# Or with metrics enabled
+$ docker run -itd -e DISCORD_TOKEN="my token" -p 3000:80 ghcr.io/twilight-rs/http-proxy:metrics
+
+```
+
+This will set the discord token to `"my token"` and map the bound port to port `3000` on the host machine.
+
+### Bot Configuration
+
+Add the following environment variable to your bot:
+
+| Variable    | Description                                                                                                                |
+|-------------|----------------------------------------------------------------------------------------------------------------------------|
+| `PROXY_URL` | Base URL for the HTTP proxy that will receive Discord API requests instead of discord.com (Example: http://localhost:3000) |
+
+When configured, all Discord API requests made by the bot will be routed through the proxy.
+
+### Limitations
+
+The proxy introduces an additional rate-limit layer which may interfere with JDA's internal rate limiting behavior,
+since JDA will still attempt to manage rate limits locally.
+
+Because of this, proxy-based synchronization should be considered advanced usage and may require additional testing in
+your deployment environment.
+
+For most self-hosted deployments and small to medium bots, the default configuration without a proxy is recommended.
 
 # License
 
 This project is licensed under the [AGPLv3](/LICENSE) license.
 
-### What this means for you ?
+### What this means for you:
 
 - If you deploy this project **without modifying the source code**, you do not need to provide anything additional.
   The source code is already publicly available.
@@ -225,4 +256,4 @@ This project is licensed under the [AGPLv3](/LICENSE) license.
 # Help
 
 If you face any problems during self-hosting or have a question that needs to be answered, please feel free to
-open an issue in the Issues tab. I will try my best to answer them as soon as I can.
+open an issue in the Issues tab. I will try my best to respond as soon as I can.
