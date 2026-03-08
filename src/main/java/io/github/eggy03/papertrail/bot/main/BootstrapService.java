@@ -16,11 +16,13 @@ import io.github.eggy03.papertrail.bot.listeners.misc.SlashCommandRegistrationLi
 import lombok.NonNull;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.RestConfig;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.ExecutorService;
@@ -108,6 +110,30 @@ public class BootstrapService {
                     .setShardsTotal(Integer.parseInt(totalShards))
                     .setShards(Integer.parseInt(minShardId), Integer.parseInt(maxShardId));
         }
+        return this;
+    }
+
+    /**
+     * <p>
+     * Allows you to use provide a custom proxy server address that will
+     * change the base of all routes from {@code discord.com} to {@code baseUrl}
+     * </p>
+     * <p>
+     * Can be used with <a href="https://github.com/twilight-rs/http-proxy">Twilight HTTP Proxy</a>
+     * to enforce a synchronization of the global rate limit across
+     * multiple processes/instances of the bot
+     * </p>
+     *
+     * @param baseUrl in the form of {@code host:port}. No config is applied if the baseUrl is null or blank
+     * @return the {@link BootstrapService} instance. Useful for chaining.
+     */
+    @ApiStatus.Experimental
+    public BootstrapService applyProxyConfig(@Nullable String baseUrl) {
+
+        if (baseUrl == null || baseUrl.isBlank())
+            return this;
+
+        builder.setRestConfig(new RestConfig().setBaseUrl(baseUrl));
         return this;
     }
 

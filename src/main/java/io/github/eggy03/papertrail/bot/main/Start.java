@@ -19,6 +19,7 @@ public class Start {
         String minShardId = EnvConfig.get("MIN_SHARD_ID"); // min for this instance
         String maxShardId = EnvConfig.get("MAX_SHARD_ID"); // max for this instance
         String totalShards = EnvConfig.get("TOTAL_SHARDS"); // total shards for all instances
+        String customBaseUrlProxy = EnvConfig.get("PROXY_URL"); // custom proxy url for the rate limited twilight discord http proxy
 
         // set v-thread pools for listeners
         ExecutorService vThreadPool = Executors.newVirtualThreadPerTaskExecutor();
@@ -29,6 +30,7 @@ public class Start {
                 .applyDefaultStatus()
                 .applyPreBuildEventListeners(vThreadPool)
                 .applySharding(minShardId, maxShardId, totalShards)
+                .applyProxyConfig(customBaseUrlProxy)
                 .start();
 
         // post build listeners that require a fully built shard manager
