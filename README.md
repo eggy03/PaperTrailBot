@@ -76,44 +76,73 @@ Don't forget to copy the `bot token` as it will be required in the next step
 
 You will need the following environment variables to run the bot:
 
-| Variable       | Description                                                                              |
-|----------------|------------------------------------------------------------------------------------------|
-| `TOKEN`        | Discord application bot token (from the Developer Portal)                                |
-| `API_URL`      | Internal URL of the PaperTrail API (e.g., `http://localhost:8081`)                       |
+| Variable  | Description                                                        |
+|-----------|--------------------------------------------------------------------|
+| `TOKEN`   | Discord application bot token (from the Developer Portal)          |
+| `API_URL` | Internal URL of the PaperTrail API (e.g., `http://localhost:8080`) |
 
 ### Step 3: Deployment Options
 
 #### Local
 
-- Clone the Repository
+- Option 1: Using Pre-Built Images
+
+Run the container directly using the image hosted on GitHub Container Registry.
+
+```shell
+docker run -d --name papertrail-bot -e TOKEN="discord-token" -e API_URL="api-url" ghcr.io/eggy03/papertrail-bot:latest
+```
+
+You may also use your `.env` file instead:
+
+Example `.env` file:
+
+```dotenv
+TOKEN="my-token"
+API_URL="http://localhost:8080"
+```
+
+```shell
+docker run -d --name papertrail-bot --env-file .env ghcr.io/eggy03/papertrail-bot:latest
+```
+
+- Option 2: Building From Source
 
 ```shell
 git clone https://github.com/eggy03/PaperTrailBot.git
 cd PaperTrailBot
 ```
 
-- Keep your `.env` file ready inside the locally cloned repository
-- Make sure docker is running. The provided `Dockerfile` will be used for building.
-
 ```shell
 docker build -t papertrail-bot .
-docker run --env-file .env papertrail-bot
+docker run -d --name papertrail-bot --env-file .env papertrail-bot
 ```
 
 #### Cloud Based
 
-You can also deploy on cloud platforms that support docker-based deploys via Dockerfile.
-The exact procedure varies, but it usually involves linking the repository, choosing the Dockerfile, and supplying the
-necessary environment variables.
+Many cloud platforms support Docker-based deployments directly from a repository.
 
-# Sharding Configuration (Optional, Advanced)
+Typically, the process involves:
+
+- Linking the repository
+- Selecting the `Dockerfile`
+- Supplying the required environment variables
+
+Alternatively, you can deploy using the pre-built container image:
+
+`ghcr.io/eggy03/papertrail-bot:latest`
+
+This avoids building the image during deployment and can significantly speed up startup time.
+
+## Testing your deployment
+
+Upon successful deployment of all the required services, including the bot, you can run the slash command
+`/setup` in a server where the bot has been invited. The command will tell you how to configure your bot.
+
+# Sharding Configuration (Advanced)
 
 > [!NOTE]
-> This section is intended for users who understand how Discord gateway sharding works
-> and want to run their bot using a custom shard layout.
->
-> Most of the time you do not need to configure this manually.
-> If no shard configuration is provided, your bot will run using a single shard by default.
+> This section is required only when your bot has reached over 1000 servers.
 
 Sharding splits your bot connection into multiple independent connections to the Discord gateway.
 Each independent connection is called a shard.
@@ -188,7 +217,10 @@ Each process manages 5 shards, together covering all 10 shards.
 > [!IMPORTANT]
 > Shard ID ranges must never overlap between running bot processes/instances.
 
-# Configuring Synchronized Rate Limits (Experimental, Optional, Advanced)
+# Configuring Synchronized Rate Limits (Advanced)
+
+> [!NOTE]
+> This section is required only if you have multiple bot processes running concurrently.
 
 Running multiple bot instances is supported but largely untested.
 By default, JDA manages its own rate limits within each instance/process of your bot.
