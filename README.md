@@ -13,32 +13,50 @@ Key Features:
 
 > Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
+Run the `/setup` slash command to see instructions on how to configure the bot for your server.
+
 # Repositories
 
-| Repository                                                         | Description                                          |
-|--------------------------------------------------------------------|------------------------------------------------------|
-| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)           | Core bot application                                 |
-| [PaperTrail SDK](https://github.com/eggy03/papertrail-sdk)         | Java client library for interacting with the API     |
-| [PaperTrail API](https://github.com/eggy03/PaperTrail-API-Quarkus) | Backend API providing configuration and data storage |
+| Repository                                                               | Description                                                                                          |
+|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)                 | Core bot application                                                                                 |
+| [PaperTrail SDK](https://github.com/eggy03/papertrail-sdk)               | Java client library for interacting with the API                                                     |
+| [PaperTrail API](https://github.com/eggy03/PaperTrail-API-Quarkus)       | Backend API providing configuration and data storage                                                 |
+| [PaperTrail Deployment](https://github.com/eggy03/PaperTrail-Deployment) | Contains docker compose files for auto configuration and deployment of the bot and required services |
 
 > [!IMPORTANT]
 > PaperTrail is currently in maintenance mode. Existing bugs will be fixed, dependency updates will be provided
-> but large new features will likely not be added.
+> but large new features will likely not be added. However, changes will be made to keep the bot and its services
+> up to date with the latest Discord API changes.
 
-# Self-Hosting Guide
+# Self-Hosting (Auto Configuration)
 
-> [!IMPORTANT]
-> Please note that this section is only for users who want to self-host this bot.
->
-> It is recommended that you set up the API service before setting up the bot.
+This option will autoconfigure all the services required for the bot to run.
+Select this option if you want a hassle-free deployment locally or in a VPS
+and do not intend to scale your bot across more than 1000-2000 servers.
 
-## Setting up the API Service
+This option uses docker compose to automatically build and wire your services.
+All you need to do is create your bot in the Developer Portal and note down the token.
+
+Then starting the bot and its services is as simple as running a single command:
+
+```shell
+docker compose up -d
+```
+
+To get started, follow this [guide](https://github.com/eggy03/PaperTrail-Deployment?tab=readme-ov-file)
+
+# Self-Hosting (Manual Configuration)
+
+This option gives you full control over the services you want to deploy
+
+## Step 1: Setting up the API Service
 
 Follow this [guide](https://github.com/eggy03/PaperTrail-API-Quarkus?tab=readme-ov-file)
 
-## Setting up the Bot Service
+## Step 2: Setting up the Bot Service
 
-### Step 1: Create an application in the Developer Portal
+### Step 2.1: Create an application in the Developer Portal
 
 Log on to the [Discord Developer Portal](https://discord.com/developers/applications) and create an application.
 
@@ -72,7 +90,7 @@ for it to work properly:
 
 Don't forget to copy the `bot token` as it will be required in the next step
 
-### Step 2: Get Required Secrets
+### Step 2.2: Get Required Secrets
 
 You will need the following environment variables to run the bot:
 
@@ -81,20 +99,6 @@ You will need the following environment variables to run the bot:
 | `TOKEN`   | Discord application bot token (from the Developer Portal)          |
 | `API_URL` | Internal URL of the PaperTrail API (e.g., `http://localhost:8080`) |
 
-### Step 3: Deployment Options
-
-#### Local
-
-- Option 1: Using Pre-Built Images
-
-Run the container directly using the image hosted on GitHub Container Registry.
-
-```shell
-docker run -d --name papertrail-bot -e TOKEN="discord-token" -e API_URL="api-url" ghcr.io/eggy03/papertrail-bot:latest
-```
-
-You may also use your `.env` file instead:
-
 Example `.env` file:
 
 ```dotenv
@@ -102,11 +106,26 @@ TOKEN="my-token"
 API_URL="http://localhost:8080"
 ```
 
+### Step 2.3: Deployment Options
+
+#### Locally (Using Pre-Built Images)
+
+Pre-built Docker images are published
+on [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot).
+
 ```shell
+# pass environment variables directly
+docker run -d --name papertrail-bot -e TOKEN="discord-token" -e API_URL="api-url" ghcr.io/eggy03/papertrail-bot:latest
+```
+
+or
+
+```shell
+# pass environmental variables through a .env file
 docker run -d --name papertrail-bot --env-file .env ghcr.io/eggy03/papertrail-bot:latest
 ```
 
-- Option 2: Building From Source
+##### Locally (Building from source)
 
 ```shell
 git clone https://github.com/eggy03/PaperTrailBot.git
@@ -118,7 +137,7 @@ docker build -t papertrail-bot .
 docker run -d --name papertrail-bot --env-file .env papertrail-bot
 ```
 
-#### Cloud Based
+#### Cloud Platforms
 
 Many cloud platforms support Docker-based deployments directly from a repository.
 
@@ -128,13 +147,13 @@ Typically, the process involves:
 - Selecting the `Dockerfile`
 - Supplying the required environment variables
 
-Alternatively, you can deploy using the pre-built container image:
-
-`ghcr.io/eggy03/papertrail-bot:latest`
-
+If supported, you can also provide the pre-built images present in
+the [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
 This avoids building the image during deployment and can significantly speed up startup time.
+However, not all platforms support pulling and running pre-built images.
+In such cases, the provided `Dockerfile` in the repository will build the image for you.
 
-## Testing your deployment
+## Step 3: Testing your deployment
 
 Upon successful deployment of all the required services, including the bot, you can run the slash command
 `/setup` in a server where the bot has been invited. The command will tell you how to configure your bot.
