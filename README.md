@@ -1,3 +1,26 @@
+## Table of Contents
+
+* [Overview](#overview)
+* [Repositories](#repositories)
+* [Self-Hosting (Auto Configuration)](#self-hosting-auto-configuration)
+* [Self-Hosting (Manual Configuration)](#self-hosting-manual-configuration)
+
+  * [Step 1: Setting up the API Service](#step-1-setting-up-the-api-service)
+  * [Step 2: Setting up the Bot Service](#step-2-setting-up-the-bot-service)
+
+    * [Step 2.1: Create an application in the Developer Portal](#step-21-create-an-application-in-the-developer-portal)
+    * [Step 2.2: Get Required Secrets](#step-22-get-required-secrets)
+    * [Step 2.3: Deployment Options](#step-23-deployment-options)
+
+      * [Locally (Using Pre-Built Images)](#locally-using-pre-built-images)
+      * [Locally (Building from source)](#locally-building-from-source)
+      * [Cloud Platforms](#cloud-platforms)
+  * [Step 3: Testing your deployment](#step-3-testing-your-deployment)
+* [Sharding Configuration (Advanced)](#sharding-configuration-advanced)
+* [Configuring Synchronized Rate Limits (Advanced)](#configuring-synchronized-rate-limits-advanced)
+* [License](#license)
+* [Help](#help)
+
 # Overview
 
 PaperTrail is a free and open-source, self-hostable Discord bot
