@@ -1,4 +1,5 @@
-## Table of Contents
+<details>
+<summary><b>Table of Contents</b></summary>
 
 * [Overview](#overview)
 * [Repositories](#repositories)
@@ -20,6 +21,8 @@
 * [Configuring Synchronized Rate Limits (Advanced)](#configuring-synchronized-rate-limits-advanced)
 * [License](#license)
 * [Help](#help)
+
+</details>
 
 # Overview
 
