@@ -225,13 +225,20 @@ When configured, all Discord API requests made by the bot will be routed through
 
 ### Limitations
 
-The proxy introduces an additional rate-limit layer which may interfere with JDA's internal rate limiting behavior,
-since JDA will still attempt to manage rate limits locally.
+Twilight HTTP Proxy has its own global rate limiting feature and recommends clients to disable their per-instance
+rate limit checks. In this setup, requests from all bot instances are centrally managed and throttled by the proxy
+rather than by each client individually.
 
-Because of this, proxy-based synchronization should be considered advanced usage and may require additional testing in
-your deployment environment.
+For PaperTrail, this would mean replacing JDA's default `SequentialRestRateLimiter`,
+which is an implementation of the `RestRateLimiter`, with a custom no-op implementation.
+Such an implementation would effectively bypass JDA’s local rate-limit checks and defer all rate limiting to the proxy.
+At the moment, PaperTrail does not provide such an implementation.
 
-For most self-hosted deployments and small to medium bots, the default configuration without a proxy is recommended.
+This means that if you use a proxy for your bot clusters, you are effectively getting throttled at the proxy-level, as
+well
+as the instance-level. While this should not create functional conflicts,
+it may lead to under-utilization of the rate limits provided by Discord and can reduce the overall throughput of your
+bot cluster.
 
 # License
 
