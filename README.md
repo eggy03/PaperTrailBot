@@ -1,5 +1,7 @@
+# Table of Contents
+
 <details>
-<summary><b>Table of Contents</b></summary>
+<summary>Contents</summary>
 
 * [Overview](#overview)
 * [Repositories](#repositories)
@@ -57,17 +59,23 @@ Run the `/setup` slash command to see instructions on how to configure the bot f
 
 # Self-Hosting (Auto Configuration)
 
-This option will autoconfigure all the services required for the bot to run.
+This option contains docker compose files which will autoconfigure
+all the services required for the bot to run.
+
 Select this option if you want a hassle-free deployment locally or in a VPS
 and do not intend to scale your bot across more than 1000-2000 servers.
 
-This option uses docker compose to automatically build and wire your services.
-All you need to do is create your bot in the Developer Portal and note down the token.
-
-Then starting the bot and its services is as simple as running a single command:
+Then starting the bot and its services is as simple as running the following commands:
 
 ```shell
-docker compose up -d
+git clone https://github.com/eggy03/PaperTrail-Deployment.git
+cd PaperTrail-Deployment
+```
+
+Create a `.env` file with required secrets in the cloned repository folder and then run:
+
+```shell
+docker compose -f compose-base.yml up -d
 ```
 
 To get started, follow this [guide](https://github.com/eggy03/PaperTrail-Deployment?tab=readme-ov-file)
@@ -139,6 +147,14 @@ API_URL="http://localhost:8080"
 Pre-built Docker images are published
 on [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot).
 
+Pull the latest release with:
+
+```shell
+docker pull ghcr.io/eggy03/papertrail-bot:latest
+```
+
+then run, either
+
 ```shell
 # pass environment variables directly
 docker run -d --name papertrail-bot -e TOKEN="discord-token" -e API_URL="api-url" ghcr.io/eggy03/papertrail-bot:latest
@@ -149,6 +165,21 @@ or
 ```shell
 # pass environmental variables through a .env file
 docker run -d --name papertrail-bot --env-file .env ghcr.io/eggy03/papertrail-bot:latest
+```
+
+or
+
+```yaml
+#Docker Compose example
+services:
+  papertrail-bot:
+    container_name: papertrail-bot
+    image: ghcr.io/eggy03/papertrail-bot:latest
+    mem_limit: 512m
+    restart: unless-stopped
+    environment:
+      TOKEN: ${TOKEN}
+      API_URL: ${API_URL}
 ```
 
 ##### Locally (Building from source)
