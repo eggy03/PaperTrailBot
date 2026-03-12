@@ -31,6 +31,7 @@
 ![Docker Images](https://img.shields.io/github/actions/workflow/status/eggy03/PaperTrailBot/.github%2Fworkflows%2Fpublish-container-image.yml?style=for-the-badge&label=IMAGES)
 ![Latest Tag](https://img.shields.io/github/v/tag/eggy03/PaperTrailBot?sort=semver&style=for-the-badge&label=LATEST%20TAG)
 ![Latest Release](https://img.shields.io/github/v/release/eggy03/PaperTrailBot?sort=date&display_name=tag&style=for-the-badge&label=LATEST%20RELEASE)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/eggy03/PaperTrailBot/latest?sort=date&style=for-the-badge)
 
 # Overview
 
