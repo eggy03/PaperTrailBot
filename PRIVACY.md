@@ -4,7 +4,7 @@
 For the official hosted instance of PaperTrail (Discord Application ID: 1381658412550590475),
 [@Egg-03](https://github.com/eggy03) acts as the data controller.
 
-**_Last Updated:_** February 27, 2026
+**_Last Updated:_** March 13, 2026
 
 **_Effective From:_** February 27, 2026
 
@@ -39,7 +39,7 @@ Use of the open-source code itself is governed by the applicable software licens
 
 ---
 
-## Information Collection
+## Data Collection
 
 The Service collects and processes only the information necessary to provide logging functionality.
 Features are disabled by default and must be explicitly enabled by server administrators.
@@ -84,7 +84,7 @@ Diagnostic logs are not used for analytics or profiling purposes.
 
 ---
 
-## Information Usage
+## Data Usage
 
 Collected information is used solely to:
 
@@ -92,12 +92,17 @@ Collected information is used solely to:
 - Maintain Service stability and diagnose technical issues
 - Comply with legal obligations when required
 
-We do not:
+### Discord API Data Usage
 
-- Sell personal data
-- Use data for advertising
-- Profile users
-- Conduct behavioral analytics
+The service interacts with the Discord API solely for the purpose of providing
+logs about the changes made to the server and the members of a guild where it has been set up.
+
+Information obtained through the Discord API is not shared with unrelated
+servers, external users, or third parties for analytics, advertising, or
+profiling purposes.
+
+Each guild can only access log data generated from events occurring within
+that specific guild.
 
 ---
 
@@ -119,7 +124,12 @@ Information is retained only for as long as necessary to provide the core functi
 
 ## Data Sharing
 
-We do not sell or rent personal data.
+We do not sell, rent, or commercially monetize personal data collected
+through the Service.
+
+Collected data is visible only within the Discord guild where the event occurred
+and where the bot has been authorized. The service does not expose log data
+between guilds.
 
 We may share data only:
 
