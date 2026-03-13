@@ -1,6 +1,6 @@
 # Terms of Service
 
-_Last updated: February 27, 2026_
+_Last updated: March 13, 2026_
 
 _Effective: February 27, 2026_
 
@@ -44,6 +44,15 @@ Service performs on that server.
 ---
 
 ## 3. Prohibited Use
+
+The service is designed to operate within the limitations and acceptable use
+policies of the Discord API. The service does not intentionally bypass rate
+limits, scrape unrelated data, or collect information outside the events
+necessary to provide its logging functionality.
+
+Information retrieved from the Discord API is processed only for the purpose
+of gathering and providing data for the guild in which the event
+occurred.
 
 You agree not to use the Service to:
 
