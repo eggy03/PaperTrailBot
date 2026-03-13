@@ -1,31 +1,3 @@
-# Table of Contents
-
-<details>
-<summary>Contents</summary>
-
-* [Overview](#overview)
-* [Repositories](#repositories)
-* [Self-Hosting (Auto Configuration)](#self-hosting-auto-configuration)
-* [Self-Hosting (Manual Configuration)](#self-hosting-manual-configuration)
-
-  * [Step 1: Setting up the API Service](#step-1-setting-up-the-api-service)
-  * [Step 2: Setting up the Bot Service](#step-2-setting-up-the-bot-service)
-
-    * [Step 2.1: Create an application in the Developer Portal](#step-21-create-an-application-in-the-developer-portal)
-    * [Step 2.2: Get Required Secrets](#step-22-get-required-secrets)
-    * [Step 2.3: Deployment Options](#step-23-deployment-options)
-
-      * [Locally (Using Pre-Built Images)](#locally-using-pre-built-images)
-      * [Locally (Building from source)](#locally-building-from-source)
-      * [Cloud Platforms](#cloud-platforms)
-  * [Step 3: Testing your deployment](#step-3-testing-your-deployment)
-* [Sharding Configuration (Advanced)](#sharding-configuration-advanced)
-* [Configuring Synchronized Rate Limits (Advanced)](#configuring-synchronized-rate-limits-advanced)
-* [License](#license)
-* [Help](#help)
-
-</details>
-
 # Status
 
 ![Docker Images](https://img.shields.io/github/actions/workflow/status/eggy03/PaperTrailBot/.github%2Fworkflows%2Fpublish-container-image.yml?style=for-the-badge&label=IMAGES)
@@ -33,18 +5,25 @@
 ![Latest Release](https://img.shields.io/github/v/release/eggy03/PaperTrailBot?sort=date&display_name=tag&style=for-the-badge&label=LATEST%20RELEASE)
 ![GitHub commits since latest release](https://img.shields.io/github/commits-since/eggy03/PaperTrailBot/latest?sort=date&style=for-the-badge)
 
+# Table of Contents
+
+* [Overview](#overview)
+* [Repositories](#repositories)
+* [Self-Host (Auto Configuration)](#self-host-auto-configuration)
+* [Self-Host (Manual Configuration)](#self-host-manual-configuration)
+* [Sharding (Advanced Configuration)](#sharding-advanced-configuration)
+* [Synchronizing Rate Limits (Advanced Configuration)](#synchronizing-rate-limits-advanced-configuration)
+* [License](#license)
+* [Help](#help)
+
 # Overview
 
-PaperTrail is a free and open-source, self-hostable Discord bot
-designed to provide audit log data directly in a channel without requiring users to navigate server settings each time.
+A free and open-source, self-hostable Discord bot designed to record the changes made to a server
+and deliver them to a configured channel without the need to manually navigate to Discord's Audit Log section.
 
-Key Features:
-
-- Full audit log integration (supports over 72 event types) and generic support for unknown types
-- Message logging  (edit, delete)
-- Member activity tracking (joins, leaves, kicks, bans, updates)
-- Voice activity logging (join/leave, move)
-- Auto-deletion of logged messages after 30 days
+With support for detecting more than 72 events, it can log changes made to: AutoMod Settings, Servers, Onboarding,
+Invites, Members, Roles, Channels, Threads, Stages, Events, Polls, Messages, Boosts, Emojis, Stickers, Soundboard,
+Integrations, Webhooks, Moderation Action and Unknown events.
 
 > Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
@@ -64,30 +43,15 @@ Run the `/setup` slash command to see instructions on how to configure the bot f
 > but large new features will likely not be added. However, changes will be made to keep the bot and its services
 > up to date with the latest Discord API changes.
 
-# Self-Hosting (Auto Configuration)
-
-This option contains docker compose files which will autoconfigure
-all the services required for the bot to run.
+# Self-Host (Auto Configuration)
 
 Select this option if you want a hassle-free deployment locally or in a VPS
-and do not intend to scale your bot across more than 1000-2000 servers.
+and do not intend to scale your bot across more than 2000 servers.
 
-Then starting the bot and its services is as simple as running the following commands:
+Follow the deployment guide in:
+[PaperTrail-Deployment Repository](https://github.com/eggy03/PaperTrail-Deployment?tab=readme-ov-file)
 
-```shell
-git clone https://github.com/eggy03/PaperTrail-Deployment.git
-cd PaperTrail-Deployment
-```
-
-Create a `.env` file with required secrets in the cloned repository folder and then run:
-
-```shell
-docker compose -f compose-base.yml up -d
-```
-
-To get started, follow this [guide](https://github.com/eggy03/PaperTrail-Deployment?tab=readme-ov-file)
-
-# Self-Hosting (Manual Configuration)
+# Self-Host (Manual Configuration)
 
 This option gives you full control over the services you want to deploy
 
@@ -133,8 +97,6 @@ Don't forget to copy the `bot token` as it will be required in the next step
 
 ### Step 2.2: Get Required Secrets
 
-You will need the following environment variables to run the bot:
-
 | Variable  | Description                                                        |
 |-----------|--------------------------------------------------------------------|
 | `TOKEN`   | Discord application bot token (from the Developer Portal)          |
@@ -149,59 +111,40 @@ API_URL="http://localhost:8080"
 
 ### Step 2.3: Deployment Options
 
-#### Locally (Using Pre-Built Images)
+#### Option A : Local Deployment
 
-Pre-built Docker images are published
-on [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot).
+<ins>Using Pre-Built Images</ins>
 
-Pull the latest release with:
+The [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
+has the native build images for the bot which you can use.
 
-```shell
-docker pull ghcr.io/eggy03/papertrail-bot:latest
-```
+Make sure you have the `.env` file containing the required secrets in the root of the folder
+you're executing the following commands from:
 
-then run, either
-
-```shell
-# pass environment variables directly
-docker run -d --name papertrail-bot -e TOKEN="discord-token" -e API_URL="api-url" ghcr.io/eggy03/papertrail-bot:latest
-```
-
-or
-
-```shell
-# pass environmental variables through a .env file
+```bash
 docker run -d --name papertrail-bot --env-file .env ghcr.io/eggy03/papertrail-bot:latest
 ```
 
-or
+<ins>Building From Source</ins>
 
-```yaml
-#Docker Compose example
-services:
-  papertrail-bot:
-    container_name: papertrail-bot
-    image: ghcr.io/eggy03/papertrail-bot:latest
-    mem_limit: 512m
-    restart: unless-stopped
-    environment:
-      TOKEN: ${TOKEN}
-      API_URL: ${API_URL}
-```
+Alternatively, you can use the provided Dockerfile to build from source:
 
-##### Locally (Building from source)
-
-```shell
+```bash
 git clone https://github.com/eggy03/PaperTrailBot.git
 cd PaperTrailBot
 ```
 
-```shell
+```bash
 docker build -t papertrail-bot .
 docker run -d --name papertrail-bot --env-file .env papertrail-bot
 ```
 
-#### Cloud Platforms
+> [!NOTE]
+>
+> While the above sub-options use `--env-file .env` for examples, you can also pass environment variables directly
+> via `docker -e KEY:"VALUE"`
+
+#### Option B: Cloud Deployment
 
 Many cloud platforms support Docker-based deployments directly from a repository.
 
@@ -211,18 +154,14 @@ Typically, the process involves:
 - Selecting the `Dockerfile`
 - Supplying the required environment variables
 
-If supported, you can also provide the pre-built images present in
-the [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
-This avoids building the image during deployment and can significantly speed up startup time.
-However, not all platforms support pulling and running pre-built images.
-In such cases, the provided `Dockerfile` in the repository will build the image for you.
+Alternatively, you can deploy using the pre-built container images found in the GitHub Container Registry, if suported.
 
 ## Step 3: Testing your deployment
 
 Upon successful deployment of all the required services, including the bot, you can run the slash command
 `/setup` in a server where the bot has been invited. The command will tell you how to configure your bot.
 
-# Sharding Configuration (Advanced)
+# Sharding (Advanced Configuration)
 
 > [!NOTE]
 > This section is required only when your bot has reached over 1000 servers.
@@ -300,18 +239,24 @@ Each process manages 5 shards, together covering all 10 shards.
 > [!IMPORTANT]
 > Shard ID ranges must never overlap between running bot processes/instances.
 
-# Configuring Synchronized Rate Limits (Advanced)
+# Synchronizing Rate Limits (Advanced Configuration)
 
 > [!NOTE]
-> This section is required only if you have multiple bot processes running concurrently.
+> This section is required only if you have multiple bot processes running concurrently, like in Example 3 of Sharding.
 
-Running multiple bot instances is supported but largely untested.
-By default, JDA manages its own rate limits within each instance/process of your bot.
+When you run multiple instances/process, the JDA in each process thinks that it has the sole responsibility
+of handling Discord's API rate limits because the processes aren't aware of each other's existence.
+This means, without some sort of communication or synchronization between the instances, you may exceed the rate limits
+pretty early.
 
-For large deployments, where your bot scales across more than one instance/process,
-it is possible to synchronize Discord's rate limits across multiple instances/processes
+It is possible to synchronize Discord's rate limits across multiple instances/processes
 by using an external proxy such as the [Twilight HTTP Proxy](https://github.com/twilight-rs/http-proxy).
 This proxy acts as a shared HTTP gateway that coordinates Discord API rate limits across multiple bot instances.
+
+This however, requires disabling the default rate limiter in JDA because the proxy will handle them globally.
+
+It is also worth noting that this feature is largely untested in PaperTrail.
+Read more about this in the [Limitations](#limitations) section.
 
 ### Running the Proxy
 
@@ -341,7 +286,7 @@ When configured, all Discord API requests made by the bot will be routed through
 ### Limitations
 
 Twilight HTTP Proxy has its own global rate limiting feature and recommends clients to disable their per-instance
-rate limit checks. In this setup, requests from all bot instances are centrally managed and throttled by the proxy
+rate limit checks. That's because requests from all bot instances are centrally managed and throttled by the proxy
 rather than by each client individually.
 
 For PaperTrail, this would mean replacing JDA's default `SequentialRestRateLimiter`,
