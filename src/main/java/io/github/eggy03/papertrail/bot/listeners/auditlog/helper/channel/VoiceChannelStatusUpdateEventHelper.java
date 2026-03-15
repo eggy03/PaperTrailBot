@@ -30,10 +30,18 @@ public class VoiceChannelStatusUpdateEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Voice Channel Status Update");
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Status Updated By: " + mentionableExecutor + "\n" + "Target Channel: " + mentionableTargetChannel));
+        eb.setDescription("A voice channel status has been updated");
         eb.setColor(Color.YELLOW);
 
-        eb.addField(MarkdownUtil.underline("Status"), "╰┈➤" + ale.getOptionByName("status"), false);
+        eb.addField(
+                MarkdownUtil.underline("Details"),
+                MarkdownUtil.quoteBlock(
+                        "Status Updated By: " + mentionableExecutor + "\n" +
+                                "Target Channel: " + mentionableTargetChannel + "\n" +
+                                "Updated Status: " + ale.getOptionByName("status")
+                ),
+                false
+        );
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
