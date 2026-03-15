@@ -1,5 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.message;
 
+import com.google.common.base.Splitter;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.message.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +18,6 @@ import java.awt.Color;
 @Slf4j
 public class MessagePinEventHelper {
 
-    // this audit log event does not expose anything other than the target and the executor of the event who sent the message
     public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
 
         AuditLogEntry ale = event.getEntry();
@@ -32,6 +33,12 @@ public class MessagePinEventHelper {
 
         eb.setDescription(MarkdownUtil.quoteBlock("Message Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
         eb.setColor(Color.PINK);
+
+        // split the message into 1000 character strings since each field can only take 1024 chars
+        String messageContent = MessageUtils.resolveTextMessageFromId(ale.getOptionByName("channel_id"), ale.getOptionByName("message_id"), event);
+        Splitter.fixedLength(1000)
+                .splitToList(messageContent)
+                .forEach(split -> eb.addField(MarkdownUtil.underline("Pinned Message ID / Text Content"), MarkdownUtil.codeblock(split), false));
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

@@ -1,5 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.message;
 
+import com.google.common.base.Splitter;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.message.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +17,7 @@ import java.awt.Color;
 @UtilityClass
 @Slf4j
 public class MessageUnpinEventHelper {
-
-    // this audit log event does not expose anything other than the target of the event who sent the message
-    // nothing about the person who un-pinned it or the message itself
+    
     public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
 
         AuditLogEntry ale = event.getEntry();
@@ -33,6 +33,12 @@ public class MessageUnpinEventHelper {
 
         eb.setDescription(MarkdownUtil.quoteBlock("Message Un-Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
         eb.setColor(Color.MAGENTA);
+
+        // split the message into 1000 character strings since each field can only take 1024 chars
+        String messageContent = MessageUtils.resolveTextMessageFromId(ale.getOptionByName("channel_id"), ale.getOptionByName("message_id"), event);
+        Splitter.fixedLength(1000)
+                .splitToList(messageContent)
+                .forEach(split -> eb.addField(MarkdownUtil.underline("Unpinned Message ID / Text Content"), MarkdownUtil.codeblock(split), false));
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
