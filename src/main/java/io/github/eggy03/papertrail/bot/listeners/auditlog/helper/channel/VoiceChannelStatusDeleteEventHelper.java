@@ -30,11 +30,10 @@ public class VoiceChannelStatusDeleteEventHelper {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Voice Channel Status Delete");
 
-        eb.setDescription(MarkdownUtil.quoteBlock("A voice channel's status was deleted"));
+        eb.setDescription(MarkdownUtil.quoteBlock("Status Updated By: " + mentionableExecutor + "\n" + "Target Channel: " + mentionableTargetChannel));
         eb.setColor(Color.ORANGE);
 
-        eb.addField(MarkdownUtil.underline("Status Deleted By"), "╰┈➤" + mentionableExecutor, false);
-        eb.addField(MarkdownUtil.underline("Target Voice Channel"), "╰┈➤" + mentionableTargetChannel, false);
+        // status deletes dont contain the deleted status content
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
