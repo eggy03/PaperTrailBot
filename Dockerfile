@@ -14,7 +14,7 @@ RUN ./mvnw dependency:go-offline
 # Copy the source files after dependencies are cached
 COPY src ./src
 
-RUN ./mvnw clean package spring-boot:repackage
+RUN ./mvnw -B -e -DskipTests clean package spring-boot:repackage
 
 # Stage 2: Create the final Docker image using IBM Semeru Runtime
 FROM ibm-semeru-runtimes:open-25-jre-noble AS runtime
