@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.member;
 
+import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild.GuildVoiceEventHelper;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,11 @@ import net.dv8tion.jda.api.utils.MarkdownUtil;
 
 import java.awt.Color;
 
+/**
+ * This helper specifically detects the mod who moved a member to a different voice channel
+ *
+ * @see GuildVoiceEventHelper - for member only data regarding voice activities
+ */
 @UtilityClass
 @Slf4j
 public class MemberVoiceMoveEventHelper {
@@ -27,7 +33,7 @@ public class MemberVoiceMoveEventHelper {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Member Voice Move Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Member Moved To A Different Voice Channel: " + mentionableExecutor));
+        eb.setDescription(MarkdownUtil.quoteBlock("Member Moved To A Different Voice Channel\n By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
