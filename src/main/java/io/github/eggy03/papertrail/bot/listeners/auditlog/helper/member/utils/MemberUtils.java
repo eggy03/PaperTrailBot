@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.member.utils;
 
+import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /*
  * See {@link io.github.eggy03.papertrail.bot.commons.utils.StackWalkerUtils}
@@ -28,24 +31,18 @@ public class MemberUtils {
     @NotNull
     public static String parseRoleListMap(@NonNull GenericGuildEvent event, @Nullable Object roleObject) {
 
-        if (roleObject == null) {
-            log.debug("role object was null");
+        if (!(roleObject instanceof List<?> roleList) || roleList.isEmpty())
             return FALLBACK_STRING;
-        }
 
-        if (roleObject instanceof List<?> roleList) {
-            StringBuilder roleString = new StringBuilder();
-            roleList.forEach(o -> {
-                if (o instanceof Map<?, ?> roleMap && roleMap.containsKey("id")) {
-                    String roleId = (String) roleMap.get("id");
-                    Role role = event.getGuild().getRoleById(roleId);
-                    roleString.append(role != null ? role.getAsMention() : roleMap.get("name")).append(" ");
-                }
-            });
-            return roleString.toString().trim();
-        }
+        return roleList.stream()
+                .filter(Map.class::isInstance)
+                .map(Map.class::cast)
+                .map(roleMap -> NumberParseUtils.parseLong(roleMap.get("id")))
+                .filter(Objects::nonNull)
+                .map(event.getGuild()::getRoleById)
+                .filter(Objects::nonNull)
+                .map(Role::getAsMention)
+                .collect(Collectors.joining(" "));
 
-        log.debug("role object was not an instance of a list-map, value: {}", roleObject);
-        return FALLBACK_STRING;
     }
 }
