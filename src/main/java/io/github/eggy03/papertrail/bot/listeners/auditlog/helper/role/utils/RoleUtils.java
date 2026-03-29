@@ -59,17 +59,19 @@ public class RoleUtils {
         try {
             int color = Integer.parseInt(colorValueString);
             return String.format("#%06X", color);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             log.debug("failed to parse color integer from value={})", colorValueInteger);
             return colorValueString;
-        } catch (IllegalFormatException e) {
+        } catch (IllegalFormatException _) {
             log.debug("failed to format color integer to hex, value={})", colorValueInteger);
             return colorValueString;
         }
     }
 
-    // gradient is returned as a hash map in the following structure
-    // {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
+    /**
+     * gradient is returned as a map in the following structure
+     * {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
+     */
     @NotNull
     public static String formatGradientToHex(@Nullable Object gradientMap) {
 
