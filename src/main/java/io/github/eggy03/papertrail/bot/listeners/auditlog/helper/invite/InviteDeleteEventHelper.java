@@ -49,6 +49,9 @@ public class InviteDeleteEventHelper {
                     // ignore
                 }
 
+                case "role_ids" ->
+                        eb.addField(MarkdownUtil.underline("Roles Attached"), "╰┈➤" + InviteUtils.resolveInviteRoleList(event, oldValue), false);
+
                 case "uses" -> eb.addField(MarkdownUtil.underline("Use Count"), "╰┈➤" + oldValue, false);
 
                 case "channel_id" ->

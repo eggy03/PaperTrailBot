@@ -4,10 +4,16 @@ import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class InviteUtils {
@@ -50,5 +56,22 @@ public class InviteUtils {
         return maxUses.toString();
     }
 
+    // the object is an array of Role IDs
+    @NotNull
+    public static String resolveInviteRoleList(@NonNull GenericGuildEvent event, @Nullable Object inviteRoleObject) {
+
+        if (!(inviteRoleObject instanceof List<?> inviteRoleList) || inviteRoleList.isEmpty())
+            return FALLBACK_STRING;
+
+        return inviteRoleList
+                .stream()
+                .map(NumberParseUtils::parseLong)
+                .filter(Objects::nonNull)
+                .map(event.getGuild()::getRoleById)
+                .filter(Objects::nonNull)
+                .map(Role::getAsMention)
+                .collect(Collectors.joining(" "))
+                .trim();
+    }
 
 }

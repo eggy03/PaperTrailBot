@@ -54,6 +54,9 @@ public class InviteCreateEventHelper {
                     // ignore
                 }
 
+                case "role_ids" ->
+                        eb.addField(MarkdownUtil.underline("Roles Attached"), "╰┈➤" + InviteUtils.resolveInviteRoleList(event, newValue), false);
+
                 case "max_age" ->
                         eb.addField(MarkdownUtil.underline("Expires After"), "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
 
