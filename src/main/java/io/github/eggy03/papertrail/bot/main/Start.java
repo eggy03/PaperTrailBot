@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
  */
 public class Start {
 
-    public static void main(String[] args) {
+    void main() {
 
         // get env vars
         String token = EnvConfig.get("TOKEN");
