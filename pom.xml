@@ -16,8 +16,8 @@
         <maven.compiler.release>25</maven.compiler.release>
 
         <!-- Dependency Versions -->
-        <jda.version>6.4.0</jda.version>
-        <papertrail.sdk.version>2.0.2</papertrail.sdk.version>
+        <jda.version>6.4.1</jda.version>
+        <papertrail.sdk.version>2.0.3</papertrail.sdk.version>
         <tinylog.version>2.7.0</tinylog.version>
         <dotenv.version>3.2.0</dotenv.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
