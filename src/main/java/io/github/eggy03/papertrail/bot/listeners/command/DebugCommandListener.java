@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.listeners.misc;
+package io.github.eggy03.papertrail.bot.listeners.command;
 
 import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @RequiredArgsConstructor
-public class DebugListener extends ListenerAdapter {
+public class DebugCommandListener extends ListenerAdapter {
 
     private final ExecutorService vThreadPool;
 

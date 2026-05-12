@@ -1,17 +1,17 @@
 package io.github.eggy03.papertrail.bot.main;
 
 import io.github.eggy03.papertrail.bot.listeners.auditlog.event.AuditLogEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlog.setup.AuditLogSetupCommandListener;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildBoostEventListener;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildMemberJoinAndLeaveEventListener;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildPollEventListener;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildVoiceEventListener;
+import io.github.eggy03.papertrail.bot.listeners.command.AuditLogSetupCommandListener;
+import io.github.eggy03.papertrail.bot.listeners.command.BotSetupInstructionCommandListener;
+import io.github.eggy03.papertrail.bot.listeners.command.DebugCommandListener;
+import io.github.eggy03.papertrail.bot.listeners.command.MessageLogSetupCommandListener;
+import io.github.eggy03.papertrail.bot.listeners.command.ServerStatCommandListener;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.event.MessageLogListener;
-import io.github.eggy03.papertrail.bot.listeners.messagelog.setup.MessageLogSetupCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.BotSetupInstructionCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.DebugListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.ServerStatCommandListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SlashCommandRegistrationListener;
 import lombok.NonNull;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -91,7 +91,7 @@ public class BootstrapService {
 
                 new ServerStatCommandListener(),
                 new BotSetupInstructionCommandListener(),
-                new DebugListener(vThreadPool),
+                new DebugCommandListener(vThreadPool),
                 new SlashCommandRegistrationListener()
         );
         return this;

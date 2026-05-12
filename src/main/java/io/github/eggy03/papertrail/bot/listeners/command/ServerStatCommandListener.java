@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.listeners.misc;
+package io.github.eggy03.papertrail.bot.listeners.command;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

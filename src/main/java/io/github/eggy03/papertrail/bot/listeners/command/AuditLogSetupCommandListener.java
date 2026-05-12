@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.listeners.auditlog.setup;
+package io.github.eggy03.papertrail.bot.listeners.command;
 
 import io.github.eggy03.papertrail.bot.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;

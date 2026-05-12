@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.listeners.misc;
+package io.github.eggy03.papertrail.bot.listeners.command;
 
 import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
 import lombok.NonNull;
