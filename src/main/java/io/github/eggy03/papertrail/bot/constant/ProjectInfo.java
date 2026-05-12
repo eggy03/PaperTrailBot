@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.commons.constant;
+package io.github.eggy03.papertrail.bot.constant;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;

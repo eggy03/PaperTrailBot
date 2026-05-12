@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
-import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
-import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
+import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
+import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import lombok.NonNull;

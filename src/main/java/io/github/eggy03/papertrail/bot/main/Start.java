@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.main;
 
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.misc.ActivityUpdateListener;
+import io.github.eggy03.papertrail.bot.utils.EnvConfig;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
 import java.util.concurrent.ExecutorService;

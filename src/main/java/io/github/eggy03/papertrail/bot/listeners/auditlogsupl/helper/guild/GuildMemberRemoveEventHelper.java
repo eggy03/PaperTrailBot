@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild;
 
-import io.github.eggy03.papertrail.bot.commons.utils.DurationUtils;
+import io.github.eggy03.papertrail.bot.utils.DurationUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.messagelog.setup;
 
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
+import io.github.eggy03.papertrail.bot.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
 import lombok.NonNull;

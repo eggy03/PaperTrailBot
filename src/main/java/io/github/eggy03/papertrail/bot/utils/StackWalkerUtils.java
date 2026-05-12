@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.commons.utils;
+package io.github.eggy03.papertrail.bot.utils;
 
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;

@@ -1,9 +1,9 @@
 package io.github.eggy03.papertrail.bot.listeners.messagelog.event;
 
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.helper.MessageLogMessageDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.helper.MessageLogMessageReceivedEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.helper.MessageLogMessageUpdateEventHelper;
+import io.github.eggy03.papertrail.bot.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;

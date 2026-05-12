@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
-import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
+import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;

@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.role.utils;
 
-import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
+import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import java.util.IllegalFormatException;
 import java.util.Map;
 
 /*
- * See {@link io.github.eggy03.papertrail.bot.commons.utils.StackWalkerUtils}
+ * See {@link io.github.eggy03.papertrail.bot.utils.StackWalkerUtils}
  * and other utilities in the util package
  * to know why logging isn't needed in some of the methods here
  */
