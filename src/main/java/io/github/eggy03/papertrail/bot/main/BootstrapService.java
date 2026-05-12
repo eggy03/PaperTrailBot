@@ -13,6 +13,9 @@ import io.github.eggy03.papertrail.bot.listeners.command.ServerStatCommandListen
 import io.github.eggy03.papertrail.bot.listeners.messagelog.event.MessageLogListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
 import io.github.eggy03.papertrail.bot.listeners.misc.SlashCommandRegistrationListener;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
+import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import lombok.NonNull;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -73,25 +76,30 @@ public class BootstrapService {
         return this;
     }
 
-    public BootstrapService applyPreBuildEventListeners(@NonNull ExecutorService vThreadPool) {
+    public BootstrapService applyPreBuildEventListeners(
+            @NonNull ExecutorService vThreadPool,
+            @NonNull AuditLogRegistrationClient auditLogRegistrationClient,
+            @NonNull MessageLogRegistrationClient messageLogRegistrationClient,
+            @NonNull MessageLogContentClient messageLogContentClient
+    ) {
 
         builder.addEventListeners(
 
-                new AuditLogSetupCommandListener(),
-                new AuditLogEventListener(vThreadPool),
+                new AuditLogSetupCommandListener(auditLogRegistrationClient),
+                new AuditLogEventListener(auditLogRegistrationClient, vThreadPool),
 
-                new MessageLogSetupCommandListener(),
-                new MessageLogListener(vThreadPool),
+                new MessageLogSetupCommandListener(messageLogRegistrationClient),
+                new MessageLogListener(messageLogRegistrationClient, messageLogContentClient, vThreadPool),
 
-                new GuildVoiceEventListener(vThreadPool),
-                new GuildMemberJoinAndLeaveEventListener(vThreadPool),
-                new GuildPollEventListener(vThreadPool),
-                new GuildBoostEventListener(vThreadPool),
-                new SelfKickListener(vThreadPool),
+                new GuildVoiceEventListener(auditLogRegistrationClient, vThreadPool),
+                new GuildMemberJoinAndLeaveEventListener(auditLogRegistrationClient, vThreadPool),
+                new GuildPollEventListener(auditLogRegistrationClient, vThreadPool),
+                new GuildBoostEventListener(auditLogRegistrationClient, vThreadPool),
+                new SelfKickListener(auditLogRegistrationClient, messageLogRegistrationClient, vThreadPool),
 
                 new ServerStatCommandListener(),
                 new BotSetupInstructionCommandListener(),
-                new DebugCommandListener(vThreadPool),
+                new DebugCommandListener(vThreadPool, auditLogRegistrationClient, messageLogRegistrationClient),
                 new SlashCommandRegistrationListener()
         );
         return this;

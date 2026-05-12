@@ -2,7 +2,6 @@ package io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild;
 
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild.GuildMemberJoinEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild.GuildMemberRemoveEventHelper;
-import io.github.eggy03.papertrail.bot.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;
@@ -21,7 +20,7 @@ import java.util.concurrent.Executor;
 public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
     @NonNull
-    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+    private final AuditLogRegistrationClient client;
 
     @NonNull
     private final Executor vThreadPool;

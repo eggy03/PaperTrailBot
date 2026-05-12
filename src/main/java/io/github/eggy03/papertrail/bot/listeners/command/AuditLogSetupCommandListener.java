@@ -1,9 +1,9 @@
 package io.github.eggy03.papertrail.bot.listeners.command;
 
-import io.github.eggy03.papertrail.bot.utils.EnvConfig;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,10 +16,11 @@ import java.awt.Color;
 import java.util.Optional;
 
 @Slf4j
+@RequiredArgsConstructor
 public class AuditLogSetupCommandListener extends ListenerAdapter {
 
     @NonNull
-    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+    private final AuditLogRegistrationClient client;
 
     @Override
     public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
