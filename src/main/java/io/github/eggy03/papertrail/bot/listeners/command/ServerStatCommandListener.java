@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.listeners.misc;
+package io.github.eggy03.papertrail.bot.listeners.command;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -18,7 +19,7 @@ import java.util.List;
 public class ServerStatCommandListener extends ListenerAdapter {
 
     @NotNull
-    public static String getMemberAndBotCount(@NonNull Guild guild) {
+    private String getMemberAndBotCount(@NonNull Guild guild) {
 
         List<Member> memberCache = guild.getMemberCache().asList();
         int allUserCount = memberCache.size();
@@ -28,38 +29,37 @@ public class ServerStatCommandListener extends ListenerAdapter {
     }
 
     @NotNull
-    public static String getGuildOwner(@NonNull Guild guild) {
+    private String getGuildOwner(@NonNull Guild guild) {
         Member owner = guild.getOwner();
 
         return owner == null ? "N/A" : owner.getAsMention();
     }
 
     @NotNull
-    public static String getGuildCreationDate(@NonNull Guild guild) {
+    private String getGuildCreationDate(@NonNull Guild guild) {
         return "<t:" + guild.getTimeCreated().toEpochSecond() + ":f>";
     }
 
     @NotNull
-    public static String getGuildVanityUrl(@NonNull Guild guild) {
+    private String getGuildVanityUrl(@NonNull Guild guild) {
         return guild.getVanityUrl() == null ? "N/A" : guild.getVanityUrl();
     }
 
     @NotNull
-    public static String getBoosters(@NonNull Guild guild) {
+    private String getBoosters(@NonNull Guild guild) {
         StringBuilder boosterString = new StringBuilder();
         guild.getBoosters().forEach(booster -> boosterString.append(booster.getAsMention()).append(" "));
         return boosterString.toString().trim().isEmpty() ? "No Boosters" : boosterString.toString().trim();
     }
 
     @NotNull
-    public static String getBoosterRole(@NonNull Guild guild) {
+    private String getBoosterRole(@NonNull Guild guild) {
         return guild.getBoostRole() != null ? guild.getBoostRole().getAsMention() : "No Boost Role Found";
     }
 
     @NotNull
-    public static String getDataRequestingMember(@NonNull SlashCommandInteractionEvent event) {
-        Member requester = event.getMember();
-        return requester != null ? requester.getEffectiveName() : "N/A";
+    private String getDataRequestingMember(@Nullable Member requestingMember) {
+        return requestingMember != null ? requestingMember.getEffectiveName() : "N/A";
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ServerStatCommandListener extends ListenerAdapter {
         eb.addField(MarkdownUtil.underline("Text Channels"), MarkdownUtil.quoteBlock(String.valueOf(guild.getTextChannels().size())), true);
         eb.addField(MarkdownUtil.underline("Voice Channels"), MarkdownUtil.quoteBlock(String.valueOf(guild.getVoiceChannels().size())), true);
 
-        eb.setFooter("Requested By: " + getDataRequestingMember(event));
+        eb.setFooter("Requested By: " + getDataRequestingMember(event.getMember()));
         eb.setTimestamp(Instant.now());
 
         event.getHook().editOriginalEmbeds(eb.build()).queue();

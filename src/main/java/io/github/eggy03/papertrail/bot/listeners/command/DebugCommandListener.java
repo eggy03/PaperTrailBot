@@ -1,8 +1,7 @@
-package io.github.eggy03.papertrail.bot.listeners.misc;
+package io.github.eggy03.papertrail.bot.listeners.command;
 
-import io.github.eggy03.papertrail.bot.commons.constant.ProjectInfo;
-import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
+import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
+import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import lombok.NonNull;
@@ -28,12 +27,20 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @RequiredArgsConstructor
-public class DebugListener extends ListenerAdapter {
+public class DebugCommandListener extends ListenerAdapter {
 
+    @NonNull
     private final ExecutorService vThreadPool;
 
+    @NonNull
+    private final AuditLogRegistrationClient alClient;
+
+    @NonNull
+    private final MessageLogRegistrationClient mlClient;
+
     // recommended permissions for the bot to function
-    private static final Set<Permission> recommendedPermissions = EnumSet.of(
+    @NonNull
+    private final Set<Permission> recommendedPermissions = EnumSet.of(
             Permission.VIEW_CHANNEL,
             Permission.VIEW_AUDIT_LOGS,
             Permission.MANAGE_SERVER,
@@ -44,17 +51,17 @@ public class DebugListener extends ListenerAdapter {
     );
 
     @NotNull
-    public static String getBotPermissions(@NonNull Guild guild) {
+    private String getBotPermissions(@NonNull Guild guild) {
         return formatPermissions(guild.getSelfMember().getPermissions());
     }
 
     @NotNull
-    public static String getBotPermissionsInCurrentChannel(@NonNull Guild guild, @NonNull GuildChannel channel) {
+    private String getBotPermissionsInCurrentChannel(@NonNull Guild guild, @NonNull GuildChannel channel) {
         return formatPermissions(guild.getSelfMember().getPermissions(channel));
     }
 
     @NotNull
-    private static String formatPermissions(@NonNull EnumSet<Permission> grantedGuildOrChannelPermissions) {
+    private String formatPermissions(@NonNull EnumSet<Permission> grantedGuildOrChannelPermissions) {
         // gets all the permissions granted to the bot in the server as a whole or a particular channel
         EnumSet<Permission> grantedPermissions = EnumSet.copyOf(grantedGuildOrChannelPermissions);
         // this will
@@ -86,7 +93,7 @@ public class DebugListener extends ListenerAdapter {
     }
 
     @NotNull
-    public static String getServerInfo(@NonNull Guild guild, @NonNull GuildChannel channel) {
+    private String getServerInfo(@NonNull Guild guild, @NonNull GuildChannel channel) {
         return "Server Name: " + MarkdownUtil.underline(guild.getName()) + "\n" +
                 "Server ID: " + MarkdownUtil.underline(guild.getId()) + "\n" +
                 "Current Channel Name: " + MarkdownUtil.underline(channel.getName()) + "\n" +
@@ -94,24 +101,22 @@ public class DebugListener extends ListenerAdapter {
     }
 
     @NotNull
-    public static String getCallerInfo(@NonNull Member member) {
+    private String getCallerInfo(@NonNull Member member) {
         return "User Name: " + MarkdownUtil.underline(member.getUser().getEffectiveName()) + "\n" +
                 "User ID: " + MarkdownUtil.underline(member.getId()) + "\n" +
                 "Is Administrator: " + MarkdownUtil.underline(BooleanUtils.formatToYesOrNo(member.hasPermission(Permission.ADMINISTRATOR)));
     }
 
     @NotNull
-    public static String getBotInfo(@NonNull SlashCommandInteractionEvent event) {
+    private String getBotInfo(@NonNull SlashCommandInteractionEvent event) {
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
         return "Current Shard ID: " + shardInfo.getShardId() + "\n" +
                 "Total Shards: " + shardInfo.getShardTotal();
     }
 
     @NotNull
-    public static String getConfigurationInfo(@NonNull Guild guild) {
-        AuditLogRegistrationClient alClient = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
-        MessageLogRegistrationClient mlClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
-
+    private String getConfigurationInfo(@NonNull Guild guild) {
+        
         StringBuilder sb = new StringBuilder();
 
         alClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {

@@ -116,7 +116,7 @@ API_URL="http://localhost:8080"
 <ins>Using Pre-Built Images</ins>
 
 The [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
-has the native build images for the bot which you can use.
+has pre-built docker images for the bot which you can use.
 
 Make sure you have the `.env` file containing the required secrets in the root of the folder
 you're executing the following commands from:

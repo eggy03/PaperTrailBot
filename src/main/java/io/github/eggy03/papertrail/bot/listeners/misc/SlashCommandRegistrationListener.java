@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 /*
- * Registers all the slash commands places throughout the code
+ * Registers all the slash commands places throughout the code on startup
  */
 public class SlashCommandRegistrationListener extends ListenerAdapter {
 

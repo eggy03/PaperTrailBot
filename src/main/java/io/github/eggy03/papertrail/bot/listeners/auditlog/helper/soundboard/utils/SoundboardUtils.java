@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.soundboard.utils;
 
-import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
+import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.math.RoundingMode;
 
 /*
- * See {@link io.github.eggy03.papertrail.bot.commons.utils.StackWalkerUtils}
+ * See {@link io.github.eggy03.papertrail.bot.utils.StackWalkerUtils}
  * and other utilities in the util package
  * to know why logging isn't needed in some of the methods here
  */

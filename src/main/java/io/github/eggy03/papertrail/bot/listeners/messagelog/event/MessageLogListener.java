@@ -1,6 +1,5 @@
 package io.github.eggy03.papertrail.bot.listeners.messagelog.event;
 
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.helper.MessageLogMessageDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.helper.MessageLogMessageReceivedEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.messagelog.helper.MessageLogMessageUpdateEventHelper;
@@ -23,9 +22,9 @@ import java.util.concurrent.Executor;
 public class MessageLogListener extends ListenerAdapter {
 
     @NonNull
-    private static final MessageLogRegistrationClient registrationClient = new MessageLogRegistrationClient(EnvConfig.get("API_URL"));
+    private final MessageLogRegistrationClient registrationClient;
     @NonNull
-    private static final MessageLogContentClient contentClient = new MessageLogContentClient(EnvConfig.get("API_URL"));
+    private final MessageLogContentClient contentClient;
     @NonNull
     private final Executor vThreadPool;
 

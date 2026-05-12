@@ -1,6 +1,5 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.event;
 
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.automod.AutoModerationFlagToChannelEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.automod.AutoModerationMemberTimeoutEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.automod.AutoModerationRuleBlockMessageEventHelper;
@@ -72,7 +71,6 @@ import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -82,13 +80,13 @@ import java.util.concurrent.Executor;
 public class AuditLogEventListener extends ListenerAdapter {
 
     @NonNull
-    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+    private final AuditLogRegistrationClient client;
 
     @NonNull
     private final Executor vThreadPool;
 
     @Override
-    public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
+    public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
             Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());

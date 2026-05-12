@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.guild.utils;
 
-import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
+import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Guild;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /*
- * See {@link io.github.eggy03.papertrail.bot.commons.utils.StackWalkerUtils}
+ * See {@link io.github.eggy03.papertrail.bot.utils.StackWalkerUtils}
  * and other utilities in the util package
  * to know why logging isn't needed in some of the methods here
  */
@@ -91,7 +91,7 @@ public class GuildUtils {
 
     // MISC GUILD UTILS (BROADER COVERAGE)
     @NotNull
-    public static String resolveMentionableChannel(Object channelId, @NonNull GenericGuildEvent event) {
+    public static String resolveMentionableChannel(@Nullable Object channelId, @NonNull GenericGuildEvent event) {
         Long channelIdLong = NumberParseUtils.parseLong(channelId);
         if (channelIdLong == null)
             return FALLBACK_STRING;
@@ -101,7 +101,7 @@ public class GuildUtils {
     }
 
     @NotNull
-    public static String resolveOwnerName(Object ownerId, @NonNull GenericGuildEvent event) {
+    public static String resolveOwnerName(@Nullable Object ownerId, @NonNull GenericGuildEvent event) {
         Long ownerIdLong = NumberParseUtils.parseLong(ownerId);
         if (ownerIdLong == null)
             return FALLBACK_STRING;

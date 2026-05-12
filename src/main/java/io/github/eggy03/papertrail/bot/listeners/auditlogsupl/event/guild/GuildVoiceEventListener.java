@@ -1,6 +1,5 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild;
 
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild.GuildVoiceEventHelper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
@@ -8,7 +7,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -19,13 +17,13 @@ import java.util.concurrent.Executor;
 public class GuildVoiceEventListener extends ListenerAdapter {
 
     @NonNull
-    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+    private final AuditLogRegistrationClient client;
 
     @NonNull
     private final Executor vThreadPool;
 
     @Override
-    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+    public void onGuildVoiceUpdate(@NonNull GuildVoiceUpdateEvent event) {
 
         vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild

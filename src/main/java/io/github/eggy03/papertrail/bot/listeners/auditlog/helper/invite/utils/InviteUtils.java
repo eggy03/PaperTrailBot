@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.invite.utils;
 
-import io.github.eggy03.papertrail.bot.commons.utils.NumberParseUtils;
+import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.Member;

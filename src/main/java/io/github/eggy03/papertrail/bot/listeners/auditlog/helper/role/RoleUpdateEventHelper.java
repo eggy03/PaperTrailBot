@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog.helper.role;
 
-import io.github.eggy03.papertrail.bot.commons.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.listeners.auditlog.helper.role.utils.RoleUtils;
+import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;

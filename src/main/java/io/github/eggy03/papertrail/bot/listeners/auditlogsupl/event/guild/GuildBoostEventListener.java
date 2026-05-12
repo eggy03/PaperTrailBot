@@ -1,6 +1,5 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild;
 
-import io.github.eggy03.papertrail.bot.commons.utils.EnvConfig;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild.GuildMemberUpdateBoostTimeEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild.GuildUpdateBoostCountEventHelper;
 import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.helper.guild.GuildUpdateBoostTierEventHelper;
@@ -21,7 +20,7 @@ import java.util.concurrent.Executor;
 public class GuildBoostEventListener extends ListenerAdapter {
 
     @NonNull
-    private static final AuditLogRegistrationClient client = new AuditLogRegistrationClient(EnvConfig.get("API_URL"));
+    private final AuditLogRegistrationClient client;
 
     @NonNull
     private final Executor vThreadPool;
