@@ -91,7 +91,7 @@ public class GuildUtils {
 
     // MISC GUILD UTILS (BROADER COVERAGE)
     @NotNull
-    public static String resolveMentionableChannel(Object channelId, @NonNull GenericGuildEvent event) {
+    public static String resolveMentionableChannel(@Nullable Object channelId, @NonNull GenericGuildEvent event) {
         Long channelIdLong = NumberParseUtils.parseLong(channelId);
         if (channelIdLong == null)
             return FALLBACK_STRING;
@@ -101,7 +101,7 @@ public class GuildUtils {
     }
 
     @NotNull
-    public static String resolveOwnerName(Object ownerId, @NonNull GenericGuildEvent event) {
+    public static String resolveOwnerName(@Nullable Object ownerId, @NonNull GenericGuildEvent event) {
         Long ownerIdLong = NumberParseUtils.parseLong(ownerId);
         if (ownerIdLong == null)
             return FALLBACK_STRING;

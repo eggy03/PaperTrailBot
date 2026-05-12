@@ -71,7 +71,6 @@ import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -87,7 +86,7 @@ public class AuditLogEventListener extends ListenerAdapter {
     private final Executor vThreadPool;
 
     @Override
-    public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
+    public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
             Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());

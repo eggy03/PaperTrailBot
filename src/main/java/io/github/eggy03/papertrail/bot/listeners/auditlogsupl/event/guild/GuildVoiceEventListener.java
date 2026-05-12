@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -24,7 +23,7 @@ public class GuildVoiceEventListener extends ListenerAdapter {
     private final Executor vThreadPool;
 
     @Override
-    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+    public void onGuildVoiceUpdate(@NonNull GuildVoiceUpdateEvent event) {
 
         vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild

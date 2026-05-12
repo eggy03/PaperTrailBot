@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -26,7 +25,7 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
     private final Executor vThreadPool;
 
     @Override
-    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+    public void onGuildMemberJoin(@NonNull GuildMemberJoinEvent event) {
 
         vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
@@ -38,7 +37,7 @@ public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+    public void onGuildMemberRemove(@NonNull GuildMemberRemoveEvent event) {
 
         vThreadPool.execute(() -> {
             // Call the API and see if the event came from a registered Guild
