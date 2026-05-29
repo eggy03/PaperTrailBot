@@ -71,7 +71,7 @@ public class ServerStatCommandListener extends ListenerAdapter {
 
         Guild guild = event.getGuild();
         if (guild == null) {
-            log.warn("Command may have been called outside of a guild");
+            log.warn("Command may have been called outside of a auditlogsupl");
             return;
         }
 

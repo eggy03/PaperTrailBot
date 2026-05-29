@@ -147,7 +147,7 @@ public class DebugCommandListener extends ListenerAdapter {
         Guild guild = event.getGuild();
         Member member = event.getMember();
         if (guild == null || member == null) {
-            log.warn("command may have been called outside of a guild");
+            log.warn("command may have been called outside of a auditlogsupl");
             return;
         }
 

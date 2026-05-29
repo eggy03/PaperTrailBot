@@ -28,12 +28,12 @@ public class ActivityUpdateListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildJoin(@NonNull GuildJoinEvent event) { // update on guild join
+    public void onGuildJoin(@NonNull GuildJoinEvent event) { // update on auditlogsupl join
         updateActivity();
     }
 
     @Override
-    public void onGuildLeave(@NonNull GuildLeaveEvent event) { // update on guild leave
+    public void onGuildLeave(@NonNull GuildLeaveEvent event) { // update on auditlogsupl leave
         updateActivity();
     }
 

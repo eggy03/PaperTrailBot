@@ -44,14 +44,14 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
         Guild callerGuild = event.getGuild();
         GuildChannel callerChannel = event.getChannel().asTextChannel();
         if (callerGuild == null) {
-            log.warn("A message log set command may have been called outside of a guild. This should not happen.");
+            log.warn("A message log set command may have been called outside of a auditlogsupl. This should not happen.");
             return;
         }
 
         // acknowledge this interaction before calling the API
         event.deferReply().queue();
 
-        // Call the API to register guild for message logging
+        // Call the API to register auditlogsupl for message logging
         boolean success = client.registerGuild(callerGuild.getId(), callerChannel.getId());
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -62,7 +62,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             eb.addField(MarkdownUtil.underline("Registration Success"), MarkdownUtil.codeblock("All edited and deleted messages will be logged here"), false);
         } else {
             eb.setColor(Color.YELLOW);
-            eb.addField(MarkdownUtil.underline("Registration Failure"), MarkdownUtil.codeblock("Channel could not be registered. Check if a channel in this guild is already registered for logging."), false);
+            eb.addField(MarkdownUtil.underline("Registration Failure"), MarkdownUtil.codeblock("Channel could not be registered. Check if a channel in this auditlogsupl is already registered for logging."), false);
 
         }
 
@@ -73,14 +73,14 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 
         Guild callerGuild = event.getGuild();
         if (callerGuild == null) {
-            log.warn("A message log view command may have been called outside of a guild. This should not happen.");
+            log.warn("A message log view command may have been called outside of a auditlogsupl. This should not happen.");
             return;
         }
 
         // acknowledge this interaction before calling the API
         event.deferReply().queue();
 
-        // Call the API to check for registered guild
+        // Call the API to check for registered auditlogsupl
         Optional<MessageLogRegistrationEntity> response = client.getRegisteredGuild(callerGuild.getId());
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -106,14 +106,14 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
 
         Guild callerGuild = event.getGuild();
         if (callerGuild == null) {
-            log.warn("A message log unset command may have been called outside of a guild. This should not happen.");
+            log.warn("A message log unset command may have been called outside of a auditlogsupl. This should not happen.");
             return;
         }
 
         // acknowledge this interaction before calling the API
         event.deferReply().queue();
 
-        // Call the API to unregister guild
+        // Call the API to unregister auditlogsupl
         boolean success = client.deleteRegisteredGuild(callerGuild.getId());
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -124,7 +124,7 @@ public class MessageLogSetupCommandListener extends ListenerAdapter {
             eb.addField(MarkdownUtil.underline("Removal Success"), MarkdownUtil.codeblock("Channel successfully unset"), false);
         } else {
             eb.setColor(Color.YELLOW);
-            eb.addField(MarkdownUtil.underline("Removal Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this guild yet."), false);
+            eb.addField(MarkdownUtil.underline("Removal Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this auditlogsupl yet."), false);
         }
 
         event.getHook().editOriginalEmbeds(eb.build()).queue();
