@@ -8,12 +8,6 @@ import net.dv8tion.jda.api.entities.automod.AutoModTriggerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
-/*
- * See {@link io.github.eggy03.papertrail.bot.utils.StackWalkerUtils}
- * and other utilities in the util package
- * to know why logging isn't needed here
- */
 @UtilityClass
 public class AutoModUtils {
 
