@@ -57,41 +57,27 @@ import io.github.eggy03.papertrail.bot.service.auditlog.thread.ThreadUpdateEvent
 import io.github.eggy03.papertrail.bot.service.auditlog.webhook.WebhookCreateEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.webhook.WebhookRemoveEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.webhook.WebhookUpdateEventHelper;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
-import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.Optional;
-
-@Slf4j
-@RequiredArgsConstructor
 @ApplicationScoped
-public class AuditLogListener extends ListenerAdapter {
-
-    private final @NonNull AuditLogRegistrationClient client;
+@Slf4j
+public class AuditLogEventHandler {
 
     private final @NonNull AutoModerationService autoModerationService;
 
-
-    @Override
-    @RunOnVirtualThread
-    public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        // Call the API and see if the event came from a registered Guild
-        Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
-        response.ifPresent(success -> auditLogParser(event, success.getChannelId()));
+    @Inject
+    public AuditLogEventHandler(@NonNull AutoModerationService autoModerationService) {
+        this.autoModerationService = autoModerationService;
     }
 
-    private void auditLogParser(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
-        AuditLogEntry ale = event.getEntry();
-        ActionType action = ale.getType();
+    public void handleEvent(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
+        ActionType action = event.getEntry().getType();
+
         switch (action) {
 
             case AUTO_MODERATION_FLAG_TO_CHANNEL ->
@@ -195,7 +181,7 @@ public class AuditLogListener extends ListenerAdapter {
 
             default -> {
                 GenericAuditLogEventHelper.format(event, channelIdToSendTo);
-                log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by PaperTrail yet {}", ale.getType().name());
+                log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by PaperTrail yet {}", action.name());
             }
         }
     }
