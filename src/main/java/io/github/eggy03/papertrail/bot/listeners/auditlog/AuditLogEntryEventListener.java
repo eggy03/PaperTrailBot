@@ -14,19 +14,42 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Optional;
 
 /**
- * Listens for {@link GuildAuditLogEntryCreateEvent} events that happen in registered guilds
- * and passes the responsibility of handling them on to {@link AbstractAuditLogEntryEventHandler}
+ * Listener responsible for receiving {@link GuildAuditLogEntryCreateEvent}
+ * events from JDA and delegating them to all registered
+ * {@link AuditLogEntryEventHandler} CDI beans.
  *
+ * <p>
+ * Before dispatching the event, the listener verifies that the guild
+ * is registered through {@link AuditLogRegistrationClient}.
+ * </p>
+ *
+ * <p>
+ * Event handlers are resolved dynamically using
+ * {@code Instance<AuditLogEntryEventHandler>}, allowing multiple
+ * independent handler implementations to process the same audit log event.
+ * </p>
+ *
+ * <p>
+ * Each discovered handler instance will receive the event through
+ * {@link AuditLogEntryEventHandler#handleEvent(GuildAuditLogEntryCreateEvent, String)}.
+ * This enables a multicast-style event processing pipeline where multiple
+ * handler beans may react to the same audit log action independently.
+ * </p>
+ *
+ * <p>
+ * Event processing is executed on a virtual thread via
+ * {@link RunOnVirtualThread}.
+ * </p>
  */
 @Slf4j
 @ApplicationScoped
 public final class AuditLogEntryEventListener extends ListenerAdapter {
 
     private final @NonNull AuditLogRegistrationClient client;
-    private final @NonNull Instance<AbstractAuditLogEntryEventHandler> eventHandlerInstance;
+    private final @NonNull Instance<AuditLogEntryEventHandler> eventHandlerInstance;
 
     @Inject
-    public AuditLogEntryEventListener(@NonNull AuditLogRegistrationClient client, @NonNull Instance<AbstractAuditLogEntryEventHandler> eventHandlerInstance) {
+    public AuditLogEntryEventListener(@NonNull AuditLogRegistrationClient client, @NonNull Instance<AuditLogEntryEventHandler> eventHandlerInstance) {
         this.client = client;
         this.eventHandlerInstance = eventHandlerInstance;
     }

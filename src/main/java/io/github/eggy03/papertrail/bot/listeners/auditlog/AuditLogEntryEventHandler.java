@@ -4,7 +4,79 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
-public abstract class AbstractAuditLogEntryEventHandler {
+/**
+ * <p>
+ * An abstract class for routing {@link GuildAuditLogEntryCreateEvent}
+ * to it's appropriate handlers.
+ * The routing is determined by {@link #handleEvent(GuildAuditLogEntryCreateEvent, String)}
+ * </p>
+ *
+ * <p>
+ * Subclasses may override only the event handlers they require
+ * method determines which handler method to invoke.
+ * </p>
+ *
+ * <p>
+ * If multiple subclasses extending this class are registered as CDI beans and are iterated
+ * through {@code Instance<AuditLogEntryEventHandler>}, each handler
+ * instance will independently receive the event simultaneously.
+ * </p>
+ *
+ * <p>
+ * For example, if two subclasses override {@code onBan()}, both overridden
+ * methods will execute when a ban event is processed, assuming both handler
+ * instances are iterated and invoked.
+ * </p>
+ *
+ * <p>
+ * The design philosophy is inspired from JDA's {@link net.dv8tion.jda.api.hooks.ListenerAdapter}
+ * </p>
+ *
+ * <p>
+ * Example usage:
+ * </p>
+ *
+ * <pre>{@code
+ * @ApplicationScoped
+ * public class MyHandler extends AuditLogEntryEventHandler {
+ *
+ *     @Override
+ *     public void onBan(@NonNull GuildAuditLogEntryCreateEvent event,
+ *                       @NonNull String channelIdToSendTo) {
+ *         // your logic here
+ *     }
+ * }
+ * }</pre>
+ *
+ * <p>
+ * Calling {@code handleEvent(...)} on {@code MyHandler} will automatically
+ * route the event to the overridden {@code onBan()} method when the
+ * incoming {@link ActionType} is {@code BAN}.
+ * </p>
+ *
+ * <p>
+ * Multiple handler beans may also extend this class simultaneously.
+ * These handlers can be dynamically resolved and iterated using:
+ * </p>
+ *
+ * <pre>{@code
+ * @Inject
+ * Instance<AuditLogEntryEventHandler> eventHandlerInstance;
+ *
+ * eventHandlerInstance.forEach(handler -> handler.handleEvent(...))
+ * }</pre>
+ *
+ * <p>
+ * Each handler instance may then independently receive and process the
+ * same audit log event through {@code handleEvent(...)}.
+ * </p>
+ *
+ * <p>
+ * A concrete implementation of this pattern can be seen in
+ * {@link AuditLogEntryEventListener}.
+ * </p>
+ */
+public abstract class AuditLogEntryEventHandler {
 
     public void onAutoModerationFlagToChannel(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
     }
@@ -219,7 +291,24 @@ public abstract class AbstractAuditLogEntryEventHandler {
     public void onUnimplementedEvent(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
     }
 
-    final void handleEvent(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
+    /**
+     * <p>
+     * Routes a {@link GuildAuditLogEntryCreateEvent} to its corresponding
+     * event handler method based on the {@link ActionType} of the audit log entry.
+     * </p>
+     *
+     * <p>
+     * Each event handler method can be overridden multiple times
+     * </p>
+     *
+     * <p>
+     * This method is marked as {@code final} and cannot be overridden
+     * </p>
+     *
+     * @param event             the audit log event received from JDA
+     * @param channelIdToSendTo the target channel ID where the event should be processed or sent
+     */
+    public final void handleEvent(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
         ActionType action = event.getEntry().getType();
 
         switch (action) {
