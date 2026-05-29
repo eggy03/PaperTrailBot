@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.utils.auditlog;
+package io.github.eggy03.papertrail.bot.service.auditlog.automod.utils;
 
 import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.NonNull;

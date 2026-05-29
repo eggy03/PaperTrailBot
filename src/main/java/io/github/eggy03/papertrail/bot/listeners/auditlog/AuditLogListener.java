@@ -1,7 +1,12 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog;
 
-import io.github.eggy03.papertrail.bot.service.auditlog.AutoModerationEventHandlerService;
-import io.github.eggy03.papertrail.bot.service.auditlog.ModActionEventHandlerService;
+import io.github.eggy03.papertrail.bot.service.auditlog.automod.AutoModerationFlagToChannelEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.automod.AutoModerationMemberTimeoutEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.automod.AutoModerationRuleBlockMessageEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.automod.AutoModerationRuleCreateEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.automod.AutoModerationRuleDeleteEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.automod.AutoModerationRuleUpdateEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.bot.BotAddEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.channel.ChannelCreateEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.channel.ChannelDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.channel.ChannelOverrideCreateEventHelper;
@@ -29,6 +34,9 @@ import io.github.eggy03.papertrail.bot.service.auditlog.member.MemberVoiceKickEv
 import io.github.eggy03.papertrail.bot.service.auditlog.member.MemberVoiceMoveEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.message.MessagePinEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.message.MessageUnpinEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.modactions.BanEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.modactions.KickEventHelper;
+import io.github.eggy03.papertrail.bot.service.auditlog.modactions.UnbanEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.onboarding.OnboardingPromptCreateEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.onboarding.OnboardingPromptDeleteEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.onboarding.OnboardingPromptUpdateEventHelper;
@@ -54,47 +62,57 @@ import io.github.eggy03.papertrail.bot.service.auditlog.thread.ThreadUpdateEvent
 import io.github.eggy03.papertrail.bot.service.auditlog.webhook.WebhookCreateEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.webhook.WebhookRemoveEventHelper;
 import io.github.eggy03.papertrail.bot.service.auditlog.webhook.WebhookUpdateEventHelper;
-import jakarta.enterprise.context.ApplicationScoped;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-/**
- * Determines the {@link ActionType} of {@link GuildAuditLogEntryCreateEvent}
- * and delegates the event to be handled by the appropriate handling services
- */
+import java.util.Optional;
+import java.util.concurrent.Executor;
+
 @Slf4j
-@ApplicationScoped
 @RequiredArgsConstructor
-public class AuditLogEventHandlerDelegator {
+public class AuditLogListener extends ListenerAdapter {
 
-    private final @NonNull AutoModerationEventHandlerService autoModerationEventHandlerService;
-    private final @NonNull ModActionEventHandlerService modActionEventHandlerService;
+    @NonNull
+    private final AuditLogRegistrationClient client;
 
-    public void handleEvent(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
-        ActionType action = event.getEntry().getType();
+    @NonNull
+    private final Executor vThreadPool;
 
+    @Override
+    public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
+        vThreadPool.execute(() -> {
+            // Call the API and see if the event came from a registered Guild
+            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
+            response.ifPresent(success -> auditLogParser(event, success.getChannelId()));
+        });
+    }
+
+    private void auditLogParser(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
+        AuditLogEntry ale = event.getEntry();
+        ActionType action = ale.getType();
         switch (action) {
 
             case AUTO_MODERATION_FLAG_TO_CHANNEL ->
-                    autoModerationEventHandlerService.handleFlagToChannelEvent(event, channelIdToSendTo);
+                    AutoModerationFlagToChannelEventHelper.format(event, channelIdToSendTo);
             case AUTO_MODERATION_MEMBER_TIMEOUT ->
-                    autoModerationEventHandlerService.handleMemberTimeoutEvent(event, channelIdToSendTo);
+                    AutoModerationMemberTimeoutEventHelper.format(event, channelIdToSendTo);
             case AUTO_MODERATION_RULE_BLOCK_MESSAGE ->
-                    autoModerationEventHandlerService.handleRuleBlockMessageEvent(event, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_CREATE ->
-                    autoModerationEventHandlerService.handleRuleCreateEvent(event, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_UPDATE ->
-                    autoModerationEventHandlerService.handleRuleUpdateEvent(event, channelIdToSendTo);
-            case AUTO_MODERATION_RULE_DELETE ->
-                    autoModerationEventHandlerService.handleRuleDeleteEvent(event, channelIdToSendTo);
+                    AutoModerationRuleBlockMessageEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_CREATE -> AutoModerationRuleCreateEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_UPDATE -> AutoModerationRuleUpdateEventHelper.format(event, channelIdToSendTo);
+            case AUTO_MODERATION_RULE_DELETE -> AutoModerationRuleDeleteEventHelper.format(event, channelIdToSendTo);
 
-            case KICK -> modActionEventHandlerService.handleKickEvent(event, channelIdToSendTo);
-            case BAN -> modActionEventHandlerService.handleBanEvent(event, channelIdToSendTo);
-            case UNBAN -> modActionEventHandlerService.handleUnbanEvent(event, channelIdToSendTo);
-            case BOT_ADD -> modActionEventHandlerService.handleBotAddEvent(event, channelIdToSendTo);
+            case KICK -> KickEventHelper.format(event, channelIdToSendTo);
+            case BAN -> BanEventHelper.format(event, channelIdToSendTo);
+            case UNBAN -> UnbanEventHelper.format(event, channelIdToSendTo);
+            case BOT_ADD -> BotAddEventHelper.format(event, channelIdToSendTo);
             // PRUNE has generic formatting
 
             case CHANNEL_CREATE -> ChannelCreateEventHelper.format(event, channelIdToSendTo);
@@ -182,7 +200,7 @@ public class AuditLogEventHandlerDelegator {
 
             default -> {
                 GenericAuditLogEventHelper.format(event, channelIdToSendTo);
-                log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by PaperTrail yet {}", action.name());
+                log.warn("The following event is either not covered by JDA's UNKNOWN type or is not implemented by PaperTrail yet {}", ale.getType().name());
             }
         }
     }
