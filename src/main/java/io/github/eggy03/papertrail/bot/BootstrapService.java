@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.main;
+package io.github.eggy03.papertrail.bot;
 
 import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
