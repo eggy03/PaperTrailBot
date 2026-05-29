@@ -2,7 +2,6 @@ package io.github.eggy03.papertrail.bot.listeners.auditlog;
 
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
-import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -35,11 +34,6 @@ import java.util.Optional;
  * This enables a multicast-style event processing pipeline where multiple
  * handler beans may react to the same audit log action independently.
  * </p>
- *
- * <p>
- * Event processing is executed on a virtual thread via
- * {@link RunOnVirtualThread}.
- * </p>
  */
 @Slf4j
 @ApplicationScoped
@@ -55,7 +49,6 @@ public final class AuditLogEntryEventListener extends ListenerAdapter {
     }
 
     @Override
-    @RunOnVirtualThread
     public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         // Call the API and see if the event came from a registered Guild
         Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());

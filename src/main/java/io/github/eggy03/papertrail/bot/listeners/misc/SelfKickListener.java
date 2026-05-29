@@ -2,8 +2,6 @@ package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
-import io.smallrye.common.annotation.Blocking;
-import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -30,8 +28,6 @@ public class SelfKickListener extends ListenerAdapter {
     }
 
     @Override
-    @Blocking
-    @RunOnVirtualThread
     public void onGuildLeave(@NonNull GuildLeaveEvent event) {
         Guild leftGuild = event.getGuild();
         auditLogRegistrationClient.deleteRegisteredGuild(leftGuild.getId());
