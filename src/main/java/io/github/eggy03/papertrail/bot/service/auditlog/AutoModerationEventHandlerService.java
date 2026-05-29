@@ -17,7 +17,7 @@ import java.awt.Color;
 
 @ApplicationScoped
 @Slf4j
-public class AutoModerationService {
+public class AutoModerationEventHandlerService {
 
     public void handleFlagToChannelEvent(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
 

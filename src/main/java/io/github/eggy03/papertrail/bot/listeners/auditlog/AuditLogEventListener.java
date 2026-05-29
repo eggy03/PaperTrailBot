@@ -12,15 +12,20 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.Optional;
 
+/**
+ * Listens for {@link GuildAuditLogEntryCreateEvent} events that happen in registered guilds
+ * and passes the responsibility of handling them on to {@link AuditLogEventHandlerDelegator}
+ *
+ */
 @Slf4j
 @ApplicationScoped
 public class AuditLogEventListener extends ListenerAdapter {
 
     private final @NonNull AuditLogRegistrationClient client;
-    private final @NonNull AuditLogEventHandler handler;
+    private final @NonNull AuditLogEventHandlerDelegator handler;
 
     @Inject
-    public AuditLogEventListener(@NonNull AuditLogRegistrationClient client, @NonNull AuditLogEventHandler handler) {
+    public AuditLogEventListener(@NonNull AuditLogRegistrationClient client, @NonNull AuditLogEventHandlerDelegator handler) {
         this.client = client;
         this.handler = handler;
     }
