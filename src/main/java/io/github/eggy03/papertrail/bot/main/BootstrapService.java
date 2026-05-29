@@ -1,23 +1,14 @@
 package io.github.eggy03.papertrail.bot.main;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.event.AuditLogEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildBoostEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildMemberJoinAndLeaveEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildPollEventListener;
-import io.github.eggy03.papertrail.bot.listeners.auditlogsupl.event.guild.GuildVoiceEventListener;
-import io.github.eggy03.papertrail.bot.listeners.command.AuditLogSetupCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.command.BotSetupInstructionCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.command.DebugCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.command.MessageLogSetupCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.command.ServerStatCommandListener;
-import io.github.eggy03.papertrail.bot.listeners.messagelog.event.MessageLogListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.SelfKickListener;
-import io.github.eggy03.papertrail.bot.listeners.misc.SlashCommandRegistrationListener;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
-import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
+import io.quarkus.runtime.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 import lombok.NonNull;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestConfig;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
@@ -25,23 +16,43 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.jetbrains.annotations.ApiStatus;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jspecify.annotations.Nullable;
 
-import java.util.concurrent.ExecutorService;
-
-/**
- * A wrapper over {@link DefaultShardManagerBuilder} configured with defaults
- */
+@ApplicationScoped
+@Startup
 public class BootstrapService {
 
-    private final @NonNull DefaultShardManagerBuilder builder;
+    private final @NonNull String discordToken;
+    private final @NonNull Integer minShardId;
+    private final @NonNull Integer maxShardId;
+    private final @NonNull Integer totalShards;
+    private final @Nullable String twilightHttpProxyUrl;
+    private final @NonNull Instance<ListenerAdapter> listeners;
 
-    public BootstrapService(@NonNull String token) {
-        builder = DefaultShardManagerBuilder.createDefault(token);
+    private ShardManager shardManager;
+
+    @Inject
+    public BootstrapService(
+            @ConfigProperty(name = "discord.token") @NonNull String discordToken,
+            @ConfigProperty(name = "min.shard.id", defaultValue = "0") @NonNull Integer minShardId,
+            @ConfigProperty(name = "max.shard.id", defaultValue = "0") @NonNull Integer maxShardId,
+            @ConfigProperty(name = "total.shards", defaultValue = "1") @NonNull Integer totalShards,
+            @ConfigProperty(name = "twilight.http.proxy.url") @Nullable String twilightHttpProxyUrl,
+            @NonNull Instance<ListenerAdapter> listeners
+    ) {
+        this.discordToken = discordToken;
+        this.minShardId = minShardId;
+        this.maxShardId = maxShardId;
+        this.totalShards = totalShards;
+        this.twilightHttpProxyUrl = twilightHttpProxyUrl;
+        this.listeners = listeners;
     }
 
-    public BootstrapService applyRecommendedPreset() {
+    @PostConstruct
+    void login() {
+
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(discordToken);
 
         builder.enableIntents(GatewayIntent.SCHEDULED_EVENTS,
                 GatewayIntent.AUTO_MODERATION_EXECUTION,
@@ -67,86 +78,38 @@ public class BootstrapService {
         );
         // chunk all guilds
         builder.setChunkingFilter(ChunkingFilter.ALL);
-        return this;
 
-    }
-
-    public BootstrapService applyDefaultStatus() {
+        // set status
         builder.setStatus(OnlineStatus.ONLINE);
-        return this;
-    }
 
-    public BootstrapService applyPreBuildEventListeners(
-            @NonNull ExecutorService vThreadPool,
-            @NonNull AuditLogRegistrationClient auditLogRegistrationClient,
-            @NonNull MessageLogRegistrationClient messageLogRegistrationClient,
-            @NonNull MessageLogContentClient messageLogContentClient
-    ) {
+        // add listeners
+        listeners.forEach(builder::addEventListeners);
 
-        builder.addEventListeners(
+        // add shards
+        builder.setShardsTotal(totalShards);
+        builder.setShards(minShardId, maxShardId);
 
-                new AuditLogSetupCommandListener(auditLogRegistrationClient),
-                new AuditLogEventListener(auditLogRegistrationClient, vThreadPool),
-
-                new MessageLogSetupCommandListener(messageLogRegistrationClient),
-                new MessageLogListener(messageLogRegistrationClient, messageLogContentClient, vThreadPool),
-
-                new GuildVoiceEventListener(auditLogRegistrationClient, vThreadPool),
-                new GuildMemberJoinAndLeaveEventListener(auditLogRegistrationClient, vThreadPool),
-                new GuildPollEventListener(auditLogRegistrationClient, vThreadPool),
-                new GuildBoostEventListener(auditLogRegistrationClient, vThreadPool),
-                new SelfKickListener(auditLogRegistrationClient, messageLogRegistrationClient, vThreadPool),
-
-                new ServerStatCommandListener(),
-                new BotSetupInstructionCommandListener(),
-                new DebugCommandListener(vThreadPool, auditLogRegistrationClient, messageLogRegistrationClient),
-                new SlashCommandRegistrationListener()
-        );
-        return this;
-    }
-
-    public BootstrapService applySharding(@Nullable String minShardId, @Nullable String maxShardId, @Nullable String totalShards) {
-
-        // default to single shards in case of nulls (allows for easier user config)
-        // only advanced users who know what they are doing should care about sharding
-        if (minShardId == null || maxShardId == null || totalShards == null) {
-            builder
-                    .setShardsTotal(1)
-                    .setShards(0, 0);
-        } else {
-            builder
-                    .setShardsTotal(Integer.parseInt(totalShards))
-                    .setShards(Integer.parseInt(minShardId), Integer.parseInt(maxShardId));
+        // add custom twilight http proxy url if present
+        // note the current implementation only changes the proxy
+        // JDA's internal rate limit logic still applies on top of the proxy
+        // you need to provide a custom RestRateLimiter config
+        if (twilightHttpProxyUrl != null) {
+            builder.setRestConfig(new RestConfig().setBaseUrl(twilightHttpProxyUrl));
         }
-        return this;
+
+        // build shard manager and login
+        shardManager = builder.build();
+
     }
 
-    /**
-     * <p>
-     * Allows you to use provide a custom proxy server address that will
-     * change the base of all routes from {@code discord.com} to {@code baseUrl}
-     * </p>
-     * <p>
-     * Can be used with <a href="https://github.com/twilight-rs/http-proxy">Twilight HTTP Proxy</a>
-     * to enforce a synchronization of the global rate limit across
-     * multiple processes/instances of the bot
-     * </p>
-     *
-     * @param baseUrl in the form of {@code host:port}. No config is applied if the baseUrl is null or blank
-     * @return the {@link BootstrapService} instance. Useful for chaining.
-     */
-    @ApiStatus.Experimental
-    public BootstrapService applyProxyConfig(@Nullable String baseUrl) {
+    @Produces
+    @ApplicationScoped
+    ShardManager shardManager() {
 
-        if (baseUrl == null || baseUrl.isBlank())
-            return this;
+        if (shardManager == null)
+            throw new IllegalStateException("ShardManager requested before it was available");
 
-        builder.setRestConfig(new RestConfig().setBaseUrl(baseUrl));
-        return this;
-    }
-
-    public ShardManager start() {
-        return builder.build();
+        return shardManager;
     }
 
 }
