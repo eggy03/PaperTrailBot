@@ -296,9 +296,15 @@ public abstract class GuildAuditLogEntryCreateEventHandler {
     public void onMessageDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
     }
 
+    /**
+     * For {@link ActionType} not fully known by JDA yet
+     */
     public void onUnknownEvent(@NonNull GuildAuditLogEntryCreateEvent event) {
     }
 
+    /**
+     * For {@link ActionType}s which are defined but not implemented by PaperTrail
+     */
     public void onUnimplementedEvent(@NonNull GuildAuditLogEntryCreateEvent event) {
     }
 
