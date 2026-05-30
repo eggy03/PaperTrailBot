@@ -1,9 +1,9 @@
 package io.github.eggy03.papertrail.bot.service.auditlog.thread;
 
-import io.github.eggy03.papertrail.bot.service.auditlog.channel.utils.ChannelUtils;
 import io.github.eggy03.papertrail.bot.service.auditlog.thread.utils.ThreadUtils;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.DurationUtils;
+import io.github.eggy03.papertrail.bot.utils.auditlog.ChannelUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
