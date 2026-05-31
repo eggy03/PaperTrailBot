@@ -2,11 +2,13 @@ package io.github.eggy03.papertrail.bot;
 
 import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -18,6 +20,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+@Slf4j
 @ApplicationScoped
 @Startup
 public final class BootstrapService {
@@ -98,6 +101,18 @@ public final class BootstrapService {
 
         // build shard manager and login
         shardManager = builder.build();
+
+    }
+
+    @PreDestroy
+    void shutdown() {
+        if (shardManager == null)
+            return;
+
+        for (int i = minShardId; i <= maxShardId; i++) {
+            log.info("Shutting Down Shard: {}", i);
+            shardManager.shutdown(i);
+        }
 
     }
 
