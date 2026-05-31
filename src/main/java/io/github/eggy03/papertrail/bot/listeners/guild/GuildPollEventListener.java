@@ -1,6 +1,6 @@
-package io.github.eggy03.papertrail.bot.listeners.auditlogsupl;
+package io.github.eggy03.papertrail.bot.listeners.guild;
 
-import io.github.eggy03.papertrail.bot.service.auditlogsupl.GuildPollEventHelper;
+import io.github.eggy03.papertrail.bot.service.guild.GuildPollEventHelper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;
@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
-// auditlogsupl poll events are mapped to audit log table
+// guild poll events are mapped to audit log table
 @RequiredArgsConstructor
 public final class GuildPollEventListener extends ListenerAdapter {
 

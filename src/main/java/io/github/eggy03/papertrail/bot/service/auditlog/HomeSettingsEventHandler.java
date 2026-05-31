@@ -65,7 +65,7 @@ public final class HomeSettingsEventHandler extends GuildAuditLogEntryCreateEven
 
         eb.addField(
                 MarkdownUtil.underline("More Info"),
-                MarkdownUtil.codeblock("To view the created guide, either visit the Server Guide section or the Onboarding section of your auditlogsupl."),
+                MarkdownUtil.codeblock("To view the created guide, either visit the Server Guide section or the Onboarding section of your guild."),
                 false
         );
 

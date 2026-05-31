@@ -1,7 +1,7 @@
-package io.github.eggy03.papertrail.bot.listeners.auditlogsupl;
+package io.github.eggy03.papertrail.bot.listeners.guild;
 
-import io.github.eggy03.papertrail.bot.service.auditlogsupl.GuildMemberJoinEventHelper;
-import io.github.eggy03.papertrail.bot.service.auditlogsupl.GuildMemberRemoveEventHelper;
+import io.github.eggy03.papertrail.bot.service.guild.GuildMemberJoinEventHelper;
+import io.github.eggy03.papertrail.bot.service.guild.GuildMemberRemoveEventHelper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;

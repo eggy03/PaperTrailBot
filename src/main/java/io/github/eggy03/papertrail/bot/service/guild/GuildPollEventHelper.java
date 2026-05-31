@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.service.auditlogsupl;
+package io.github.eggy03.papertrail.bot.service.guild;
 
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import lombok.NonNull;

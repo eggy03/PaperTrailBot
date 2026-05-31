@@ -1,8 +1,8 @@
-package io.github.eggy03.papertrail.bot.listeners.auditlogsupl;
+package io.github.eggy03.papertrail.bot.listeners.guild;
 
-import io.github.eggy03.papertrail.bot.service.auditlogsupl.GuildMemberUpdateBoostTimeEventHelper;
-import io.github.eggy03.papertrail.bot.service.auditlogsupl.GuildUpdateBoostCountEventHelper;
-import io.github.eggy03.papertrail.bot.service.auditlogsupl.GuildUpdateBoostTierEventHelper;
+import io.github.eggy03.papertrail.bot.service.guild.GuildMemberUpdateBoostTimeEventHelper;
+import io.github.eggy03.papertrail.bot.service.guild.GuildUpdateBoostCountEventHelper;
+import io.github.eggy03.papertrail.bot.service.guild.GuildUpdateBoostTierEventHelper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;

@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.service.messagelog;
+package io.github.eggy03.papertrail.bot.service.message;
 
 import com.google.common.base.Splitter;
 import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;

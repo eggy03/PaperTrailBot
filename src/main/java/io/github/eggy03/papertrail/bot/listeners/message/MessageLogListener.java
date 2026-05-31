@@ -1,8 +1,8 @@
-package io.github.eggy03.papertrail.bot.listeners.messagelog;
+package io.github.eggy03.papertrail.bot.listeners.message;
 
-import io.github.eggy03.papertrail.bot.service.messagelog.MessageLogMessageDeleteEventHelper;
-import io.github.eggy03.papertrail.bot.service.messagelog.MessageLogMessageReceivedEventHelper;
-import io.github.eggy03.papertrail.bot.service.messagelog.MessageLogMessageUpdateEventHelper;
+import io.github.eggy03.papertrail.bot.service.message.MessageLogMessageDeleteEventHelper;
+import io.github.eggy03.papertrail.bot.service.message.MessageLogMessageReceivedEventHelper;
+import io.github.eggy03.papertrail.bot.service.message.MessageLogMessageUpdateEventHelper;
 import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
@@ -41,9 +41,9 @@ public final class MessageLogListener extends ListenerAdapter {
         }
 
         vThreadPool.execute(() -> {
-            // get the auditlogsupl id for which the event was fired
+            // get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
-            // Call the API to see if the auditlogsupl is registered for Message Logging
+            // Call the API to see if the guild is registered for Message Logging
             Optional<MessageLogRegistrationEntity> response = registrationClient.getRegisteredGuild(guildId);
             response.ifPresent(success ->
                     MessageLogMessageReceivedEventHelper.saveMessage(event, contentClient)
@@ -59,9 +59,9 @@ public final class MessageLogListener extends ListenerAdapter {
         }
 
         vThreadPool.execute(() -> {
-            // Get the auditlogsupl id for which the event was fired
+            // Get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
-            // Call the API to see if the auditlogsupl is registered for Message Logging
+            // Call the API to see if the guild is registered for Message Logging
             Optional<MessageLogRegistrationEntity> response = registrationClient.getRegisteredGuild(guildId);
             response.ifPresent(success -> {
 
@@ -80,10 +80,10 @@ public final class MessageLogListener extends ListenerAdapter {
 
         vThreadPool.execute(() -> {
 
-            // Get the auditlogsupl id for which the event was fired
+            // Get the guild id for which the event was fired
             String guildId = event.getGuild().getId();
 
-            // Call the API to see if the auditlogsupl is registered for Message Logging
+            // Call the API to see if the guild is registered for Message Logging
             Optional<MessageLogRegistrationEntity> response = registrationClient.getRegisteredGuild(guildId);
             response.ifPresent(success -> {
 

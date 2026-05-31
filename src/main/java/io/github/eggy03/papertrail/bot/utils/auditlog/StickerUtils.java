@@ -20,7 +20,7 @@ public final class StickerUtils {
     public static String resolveStickerUrl(@NonNull GenericGuildEvent event, @Nullable Object stickerIdObject) {
 
         if (stickerIdObject == null) {
-            log.debug("stickerIdObject is null (auditlogsupl={})", event.getGuild().getId());
+            log.debug("stickerIdObject is null (guild={})", event.getGuild().getId());
             return FALLBACK_STRING;
         }
 
@@ -28,7 +28,7 @@ public final class StickerUtils {
         GuildSticker sticker = event.getGuild().getStickerById(String.valueOf(stickerIdObject));
 
         if (sticker == null) {
-            log.debug("sticker not found (stickerIdObject={}, auditlogsupl={})", stickerIdStr, event.getGuild().getId());
+            log.debug("sticker not found (stickerIdObject={}, guild={})", stickerIdStr, event.getGuild().getId());
             return stickerIdStr;
         }
 
@@ -43,7 +43,7 @@ public final class StickerUtils {
     public static String resolveRelatedEmoji(@NonNull GenericGuildEvent event, @Nullable Object emojiIdObject) {
 
         if (emojiIdObject == null) {
-            log.debug("emojiIdObject is null (auditlogsupl={})", event.getGuild().getId());
+            log.debug("emojiIdObject is null (guild={})", event.getGuild().getId());
             return FALLBACK_STRING;
         }
 
@@ -54,13 +54,13 @@ public final class StickerUtils {
             Emoji emoji = event.getGuild().getEmojiById(emojiIdLong);
 
             if (emoji == null) {
-                log.debug("custom emoji not found (emojiIdLong={}, auditlogsupl={})", emojiIdLong, event.getGuild().getId());
+                log.debug("custom emoji not found (emojiIdLong={}, guild={})", emojiIdLong, event.getGuild().getId());
                 return emojiIdString;
             }
             return emoji.getFormatted();
 
         } catch (NumberFormatException _) {
-            log.debug("value is not numeric, treating as Unicode (value={}, auditlogsupl={})", emojiIdString, event.getGuild().getId());
+            log.debug("value is not numeric, treating as Unicode (value={}, guild={})", emojiIdString, event.getGuild().getId());
             return emojiIdString;
         }
 

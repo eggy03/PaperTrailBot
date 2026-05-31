@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.service.auditlogsupl;
+package io.github.eggy03.papertrail.bot.service.guild;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
