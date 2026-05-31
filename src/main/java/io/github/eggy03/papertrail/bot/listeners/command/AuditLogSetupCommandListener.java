@@ -1,26 +1,23 @@
 package io.github.eggy03.papertrail.bot.listeners.command;
 
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.bot.handlers.command.AuditLogSetupCommandHandler;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.utils.MarkdownUtil;
 
-import java.awt.Color;
-import java.util.Optional;
-
+@ApplicationScoped
 @Slf4j
-@RequiredArgsConstructor
 public final class AuditLogSetupCommandListener extends ListenerAdapter {
 
-    @NonNull
-    private final AuditLogRegistrationClient client;
+    private final @NonNull AuditLogSetupCommandHandler handler;
+
+    @Inject
+    public AuditLogSetupCommandListener(@NonNull AuditLogSetupCommandHandler handler) {
+        this.handler = handler;
+    }
 
     @Override
     public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
@@ -30,103 +27,13 @@ public final class AuditLogSetupCommandListener extends ListenerAdapter {
         }
 
         switch (event.getSubcommandName()) {
-            case "set" -> setAuditLogging(event);
-            case "view" -> retrieveAuditLoggingChannel(event);
-            case "remove" -> unsetAuditLogging(event);
+            case "set" -> handler.setAuditLogging(event);
+            case "view" -> handler.viewAuditLoggingChannel(event);
+            case "remove" -> handler.unsetAuditLogging(event);
             default -> {
                 // do nothing
             }
         }
     }
 
-    private void setAuditLogging(@NonNull SlashCommandInteractionEvent event) {
-
-        Guild callerGuild = event.getGuild();
-        GuildChannel callerChannel = event.getChannel().asTextChannel();
-        if (callerGuild == null) {
-            log.warn("An audit log set command may have been called outside of a guild. This should not happen.");
-            return;
-        }
-
-        // acknowledge this interaction before calling the API
-        event.deferReply().queue();
-
-        // Call the API to register the guild and the channel
-        boolean success = client.registerGuild(callerGuild.getId(), callerChannel.getId());
-
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Registration Process");
-
-        if (success) {
-            eb.setColor(Color.GREEN);
-            eb.addField(MarkdownUtil.underline("Registration Success"), MarkdownUtil.codeblock("All audit log info will be logged here"), false);
-        } else {
-            eb.setColor(Color.YELLOW);
-            eb.addField(MarkdownUtil.underline("Registration Failure"), MarkdownUtil.codeblock("Channel could not be registered. Check if a channel in this guild is already registered for logging."), false);
-        }
-
-        event.getHook().editOriginalEmbeds(eb.build()).queue();
-    }
-
-    private void retrieveAuditLoggingChannel(@NonNull SlashCommandInteractionEvent event) {
-
-        Guild callerGuild = event.getGuild();
-        if (callerGuild == null) {
-            log.warn("An audit log view command may have been called outside of a guild. This should not happen.");
-            return;
-        }
-
-        // acknowledge this interaction before calling the API
-        event.deferReply().queue();
-
-        // Call the API to retrieve the registered channel
-        Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(callerGuild.getId());
-
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("View Existing Audit Log Configuration");
-
-        // if there is no channel_id for the given guild_id returned by the API, then inform
-        // the user of the same, else link the channel that has been registered
-        response.ifPresentOrElse(success -> {
-            String registeredChannelId = success.getChannelId();
-            GuildChannel registeredChannel = event.getJDA().getGuildChannelById(registeredChannelId);
-            String registeredChannelName = registeredChannel != null ? registeredChannel.getName() : registeredChannelId;
-
-            eb.setColor(Color.CYAN);
-            eb.addField(MarkdownUtil.underline("Success"), MarkdownUtil.codeblock(registeredChannelName + " is found to be registered as the audit log channel"), false);
-        }, () -> {
-            eb.setColor(Color.YELLOW);
-            eb.addField(MarkdownUtil.underline("Warning"), MarkdownUtil.codeblock("No channel has been registered for audit logs"), false);
-        });
-
-        event.getHook().editOriginalEmbeds(eb.build()).queue();
-    }
-
-    private void unsetAuditLogging(@NonNull SlashCommandInteractionEvent event) {
-
-        Guild callerGuild = event.getGuild();
-        if (callerGuild == null) {
-            log.warn("An audit log unset command may have been called outside of a guild. This should not happen.");
-            return;
-        }
-
-        // acknowledge this interaction before calling the API
-        event.deferReply().queue();
-
-        // Call the API to unregister guild
-        boolean success = client.deleteRegisteredGuild(callerGuild.getId());
-
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Removal Process");
-
-        if (success) {
-            eb.setColor(Color.GREEN);
-            eb.addField(MarkdownUtil.underline("Removal Success"), MarkdownUtil.codeblock("Channel successfully unset"), false);
-        } else {
-            eb.setColor(Color.YELLOW);
-            eb.addField(MarkdownUtil.underline("Removal Failure"), MarkdownUtil.codeblock("Channel could not be unset. This may be because no channel has been registered in this guild yet."), false);
-        }
-
-        event.getHook().editOriginalEmbeds(eb.build()).queue();
-    }
 }
