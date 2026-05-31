@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.service.auditlog.member.utils;
+package io.github.eggy03.papertrail.bot.utils.auditlog;
 
 import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.NonNull;
@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,5 +40,25 @@ public class MemberUtils {
                 .map(Role::getAsMention)
                 .collect(Collectors.joining(" "));
 
+    }
+
+    @NotNull
+    @SuppressWarnings("all")
+    public static String resolveNickNameChanges(@Nullable Object oldNickValue, @Nullable Object newNickValue) {
+
+        if (oldNickValue == null && newNickValue != null) { // change from global name to a new nickname in the server
+            return "Added Nickname: " + MarkdownUtil.underline(newNickValue.toString());
+        }
+
+        if (oldNickValue != null && newNickValue == null) { // change to the global name from having a nickname
+            return "Reset Nickname From: " + MarkdownUtil.underline(oldNickValue.toString());
+        }
+
+        if (oldNickValue != null && newNickValue != null) { // changing from one nick to another
+            return "Changed Nickname From: " + MarkdownUtil.underline(oldNickValue.toString()) + " to: " + MarkdownUtil.underline(newNickValue.toString());
+        }
+
+        // both shouldn't be null which indicates that names couldn't be fetched from the event
+        return MarkdownUtil.underline("Changes could not be resolved!");
     }
 }
