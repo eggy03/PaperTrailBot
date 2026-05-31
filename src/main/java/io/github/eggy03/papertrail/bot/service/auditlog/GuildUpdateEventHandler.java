@@ -1,10 +1,14 @@
-package io.github.eggy03.papertrail.bot.service.auditlog.guild;
+package io.github.eggy03.papertrail.bot.service.auditlog;
 
-import io.github.eggy03.papertrail.bot.service.auditlog.guild.utils.GuildUtils;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.DurationUtils;
+import io.github.eggy03.papertrail.bot.utils.auditlog.GuildUtils;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -12,14 +16,45 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
 
-@UtilityClass
+@ApplicationScoped
 @Slf4j
-public class GuildUpdateEventHelper {
+@SuppressWarnings("java:S1192")
+public class GuildUpdateEventHandler extends GuildAuditLogEntryCreateEventHandler {
 
-    public static void format(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull String channelIdToSendTo) {
+    private final @NonNull AuditLogRegistrationClient client;
+
+    @Inject
+    public GuildUpdateEventHandler(@NonNull AuditLogRegistrationClient client) {
+        this.client = client;
+    }
+
+    @NonNull
+    private String getRegisteredGuildChannel(@NonNull String guildId) {
+        return client.getRegisteredGuild(guildId)
+                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+
+    }
+
+    private void performChecksThenBuildAndSendEmbed(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull EmbedBuilder embedBuilder, @NonNull String channelIdToSendTo) {
+        if (!embedBuilder.isValidLength() || embedBuilder.isEmpty()) {
+            log.warn("Embed is empty or too long (current length: {}).", embedBuilder.length());
+            return;
+        }
+
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if (sendingChannel != null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(embedBuilder.build()).queue();
+        }
+    }
+
+    @Override
+    public void onGuildUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -99,7 +134,7 @@ public class GuildUpdateEventHelper {
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
-                    log.info("Unimplemented Change Key: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                    log.info("Unimplemented Change Key for Guild Update: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
         });
@@ -107,14 +142,40 @@ public class GuildUpdateEventHelper {
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
-        if (!eb.isValidLength() || eb.isEmpty()) {
-            log.warn("Embed is empty or too long (current length: {}).", eb.length());
-            return;
-        }
+        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+    }
 
-        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(eb.build()).queue();
-        }
+    @Override
+    public void onGuildProfileUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
+
+        AuditLogEntry ale = event.getEntry();
+
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Guild Profile Update Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Guild Profile Updated By: " + mentionableExecutor + "\nTarget Guild: " + event.getGuild().getName()));
+        eb.setColor(Color.PINK);
+
+        ale.getChanges().keySet().forEach(key -> {
+            switch (key) {
+                case "traits" ->
+                        eb.addField(MarkdownUtil.underline("Server Traits"), "╰┈➤Server Traits have been updated", false);
+                case "visibility" ->
+                        eb.addField(MarkdownUtil.underline("Visibility"), "╰┈➤Profile Visibility has been changed", false);
+                case "brand_color_primary" ->
+                        eb.addField(MarkdownUtil.underline("Banner Color"), "╰┈➤Banner Color has been updated", false);
+                case "game_application_ids" ->
+                        eb.addField(MarkdownUtil.underline("Games"), "╰┈➤Games have been updated", false);
+                default -> eb.addField(MarkdownUtil.underline(key), "╰┈➤" + key + " has/have been updated", false);
+            }
+        });
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
+        eb.setTimestamp(ale.getTimeCreated());
+
+        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
     }
 }
