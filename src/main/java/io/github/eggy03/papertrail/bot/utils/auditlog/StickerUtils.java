@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.service.auditlog.sticker.utils;
+package io.github.eggy03.papertrail.bot.utils.auditlog;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -59,7 +59,7 @@ public class StickerUtils {
             }
             return emoji.getFormatted();
 
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             log.debug("value is not numeric, treating as Unicode (value={}, auditlogsupl={})", emojiIdString, event.getGuild().getId());
             return emojiIdString;
         }
