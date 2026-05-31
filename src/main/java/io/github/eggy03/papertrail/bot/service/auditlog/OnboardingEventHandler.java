@@ -65,8 +65,8 @@ public class OnboardingEventHandler extends GuildAuditLogEntryCreateEventHandler
         eb.setColor(Color.LIGHT_GRAY);
 
         String implementationNotice = "We do not have sufficient data to log the changes in an ONBOARDING_CREATE Event."
-                .concat("That is because, even for Onboarding creations, ONBOARDING_UPDATE is fired")
-                .concat(" A proper implementation might happen in future releases if this event is fired");
+                .concat(" That is because, even for Onboarding creations, ONBOARDING_UPDATE is fired instead.")
+                .concat(" A proper implementation might happen in future releases if such an event is fired consistently.");
 
         eb.addField("Implementation Notice", MarkdownUtil.codeblock(implementationNotice), false);
 

@@ -74,7 +74,7 @@ public class IntegrationEventHandler extends GuildAuditLogEntryCreateEventHandle
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
-                    log.info("Unimplemented Change Key on Integration Delete: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                    log.info("Unimplemented Change Key on Integration Create: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
         });
@@ -100,13 +100,12 @@ public class IntegrationEventHandler extends GuildAuditLogEntryCreateEventHandle
         eb.setColor(Color.LIGHT_GRAY);
 
         String implementationNotice = "We do not have sufficient data to log the changes in an INTEGRATION_UPDATE Event."
-                .concat(" A proper implementation might happen in future releases");
+                .concat(" A proper implementation might happen in future releases if such an event is fired consistently.");
 
         eb.addField("Implementation Notice", MarkdownUtil.codeblock(implementationNotice), false);
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
-
 
         performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
     }

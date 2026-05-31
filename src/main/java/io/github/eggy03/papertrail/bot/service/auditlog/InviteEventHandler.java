@@ -124,8 +124,9 @@ public class InviteEventHandler extends GuildAuditLogEntryCreateEventHandler {
         eb.setTitle("Audit Log Entry | Invite Update Event");
         eb.setColor(Color.LIGHT_GRAY);
 
-        String implementationNotice = "We do not have sufficient data to log the changes in an INVITE_UPDATE Event."
-                .concat(" A proper implementation might happen in future releases");
+        String implementationNotice = "We do not have sufficient data to log the changes in an INVITE_UPDATE Event"
+                .concat(" because invites seem to be immutable at the moment, which causes this event to not be fired.")
+                .concat(" A proper implementation might happen in future releases if such an event is fired consistently.");
 
         eb.addField("Implementation Notice", MarkdownUtil.codeblock(implementationNotice), false);
 
