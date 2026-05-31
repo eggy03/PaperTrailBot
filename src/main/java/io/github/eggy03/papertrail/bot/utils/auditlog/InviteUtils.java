@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @UtilityClass
-public class InviteUtils {
+public final class InviteUtils {
 
     public static final String FALLBACK_STRING = "N/A";
 

@@ -10,7 +10,7 @@ import java.math.RoundingMode;
 
 @UtilityClass
 @Slf4j
-public class NumberParseUtils {
+public final class NumberParseUtils {
 
     @Nullable
     public static Long parseLong(@Nullable Object possibleLongValue) {

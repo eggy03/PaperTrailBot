@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
-public class BooleanUtils {
+public final class BooleanUtils {
 
     @NonNull
     private static final String FALLBACK_STRING = "N/A";

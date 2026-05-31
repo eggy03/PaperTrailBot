@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
-public class AutoModUtils {
+public final class AutoModUtils {
 
     @NonNull
     public static final String FALLBACK_STRING = "N/A";

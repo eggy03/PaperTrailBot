@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
  * Registers all the slash commands places throughout the code on startup
  */
 @ApplicationScoped
-public class SlashCommandRegistrationListener extends ListenerAdapter {
+public final class SlashCommandRegistrationListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NonNull ReadyEvent event) {

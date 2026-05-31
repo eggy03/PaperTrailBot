@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
  * This class will have methods that unregister the log channels from the database after the bot has been kicked
  */
 @ApplicationScoped
-public class SelfKickListener extends ListenerAdapter {
+public final class SelfKickListener extends ListenerAdapter {
 
     @NonNull
     private final AuditLogRegistrationClient auditLogRegistrationClient;

@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @UtilityClass
 @Slf4j
-public class MessageLogMessageDeleteEventHelper {
+public final class MessageLogMessageDeleteEventHelper {
 
     public static void deleteMessage(@NonNull MessageDeleteEvent event, @NonNull MessageLogContentClient client, @NonNull String deletedMessageId, @NonNull String channelIdToSendTo) {
         // fetch the old message object from the API

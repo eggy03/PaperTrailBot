@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
 
 // Experimental
 @RequiredArgsConstructor
-public class GuildBoostEventListener extends ListenerAdapter {
+public final class GuildBoostEventListener extends ListenerAdapter {
 
     @NonNull
     private final AuditLogRegistrationClient client;

@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ProjectInfo {
+public final class ProjectInfo {
 
     @NonNull
     public static final String APPNAME = "PaperTrail";

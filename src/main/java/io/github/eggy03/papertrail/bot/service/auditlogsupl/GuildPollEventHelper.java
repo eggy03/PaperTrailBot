@@ -16,7 +16,7 @@ import java.time.Instant;
 
 @UtilityClass
 @Slf4j
-public class GuildPollEventHelper {
+public final class GuildPollEventHelper {
 
     public static void format(@NonNull MessageReceivedEvent event, @NonNull MessagePoll messagePoll, @NonNull String channelIdToSendTo) {
 

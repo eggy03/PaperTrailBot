@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AuditLogSetupCommandListener extends ListenerAdapter {
+public final class AuditLogSetupCommandListener extends ListenerAdapter {
 
     @NonNull
     private final AuditLogRegistrationClient client;

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 @Slf4j
-public class OnboardingUtils {
+public final class OnboardingUtils {
 
     @NonNull
     public static final String FALLBACK_STRING = "N/A";

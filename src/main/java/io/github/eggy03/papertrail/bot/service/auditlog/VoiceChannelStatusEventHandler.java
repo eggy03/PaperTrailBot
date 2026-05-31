@@ -21,7 +21,7 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public class VoiceChannelStatusEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class VoiceChannelStatusEventHandler extends GuildAuditLogEntryCreateEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 

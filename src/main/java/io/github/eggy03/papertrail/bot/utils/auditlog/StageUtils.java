@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
-public class StageUtils {
+public final class StageUtils {
 
     @NotNull
     public static String resolveStagePrivacyLevel(@Nullable Object stagePrivacyLevelInteger) {

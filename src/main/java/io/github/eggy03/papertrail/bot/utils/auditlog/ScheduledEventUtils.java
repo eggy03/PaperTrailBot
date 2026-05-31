@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
 @Slf4j
-public class ScheduledEventUtils {
+public final class ScheduledEventUtils {
 
     @NonNull
     public static final String FALLBACK_STRING = "N/A";

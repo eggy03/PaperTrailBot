@@ -22,7 +22,7 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public class StickerEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class StickerEventHandler extends GuildAuditLogEntryCreateEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 

@@ -8,9 +8,10 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import lombok.NonNull;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jetbrains.annotations.Contract;
 
 @ApplicationScoped
-public class PaperTrailSdkBeanProvider {
+public final class PaperTrailSdkBeanProvider {
 
     private final @NonNull String apiUrl;
 
@@ -19,18 +20,24 @@ public class PaperTrailSdkBeanProvider {
         this.apiUrl = apiUrl;
     }
 
+    @Contract(" -> new")
     @Produces
-    public AuditLogRegistrationClient auditLogRegistrationClient() {
+    @ApplicationScoped
+    public @NonNull AuditLogRegistrationClient auditLogRegistrationClient() {
         return new AuditLogRegistrationClient(apiUrl);
     }
 
+    @Contract(" -> new")
     @Produces
-    public MessageLogRegistrationClient messageLogRegistrationClient() {
+    @ApplicationScoped
+    public @NonNull MessageLogRegistrationClient messageLogRegistrationClient() {
         return new MessageLogRegistrationClient(apiUrl);
     }
 
+    @Contract(" -> new")
     @Produces
-    public MessageLogContentClient messageLogContentClient() {
+    @ApplicationScoped
+    public @NonNull MessageLogContentClient messageLogContentClient() {
         return new MessageLogContentClient(apiUrl);
     }
 }

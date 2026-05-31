@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
-public class GuildUtils {
+public final class GuildUtils {
 
     @NonNull
     private static final String FALLBACK_STRING = "N/A";

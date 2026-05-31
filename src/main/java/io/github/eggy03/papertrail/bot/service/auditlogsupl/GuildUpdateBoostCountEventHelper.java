@@ -14,7 +14,7 @@ import java.time.Instant;
 
 @UtilityClass
 @Slf4j
-public class GuildUpdateBoostCountEventHelper {
+public final class GuildUpdateBoostCountEventHelper {
 
     public static void format(@NonNull GuildUpdateBoostCountEvent event, @NonNull String channelIdToSendTo) {
         Guild guild = event.getGuild();

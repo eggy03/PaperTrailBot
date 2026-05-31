@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @UtilityClass
 @Slf4j
-public class MessageLogMessageUpdateEventHelper {
+public final class MessageLogMessageUpdateEventHelper {
 
     public static void updateMessage(@NonNull MessageUpdateEvent event, @NonNull MessageLogContentClient client, @NonNull String updatedMessageId, @NonNull String channelIdToSendTo) {
 

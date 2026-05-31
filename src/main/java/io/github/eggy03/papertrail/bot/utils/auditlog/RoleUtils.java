@@ -14,7 +14,7 @@ import java.util.Map;
 
 @UtilityClass
 @Slf4j
-public class RoleUtils {
+public final class RoleUtils {
 
     @NonNull
     private static final String FALLBACK_STRING = "N/A";

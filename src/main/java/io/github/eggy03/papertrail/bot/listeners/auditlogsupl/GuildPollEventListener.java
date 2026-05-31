@@ -14,7 +14,7 @@ import java.util.concurrent.Executor;
 
 // auditlogsupl poll events are mapped to audit log table
 @RequiredArgsConstructor
-public class GuildPollEventListener extends ListenerAdapter {
+public final class GuildPollEventListener extends ListenerAdapter {
 
     @NonNull
     private final AuditLogRegistrationClient client;

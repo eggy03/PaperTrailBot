@@ -20,7 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 @Startup
-public class BootstrapService {
+public final class BootstrapService {
 
     private final @NonNull String discordToken;
     private final @NonNull Integer minShardId;

@@ -16,7 +16,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Slf4j
-public class ServerStatCommandListener extends ListenerAdapter {
+public final class ServerStatCommandListener extends ListenerAdapter {
 
     @NotNull
     private String getMemberAndBotCount(@NonNull Guild guild) {

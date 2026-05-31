@@ -24,7 +24,7 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public class ChannelOverrideEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class ChannelOverrideEventHandler extends GuildAuditLogEntryCreateEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 

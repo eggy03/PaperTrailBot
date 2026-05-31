@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
 @ApplicationScoped
-public class ActivityUpdateListener extends ListenerAdapter {
+public final class ActivityUpdateListener extends ListenerAdapter {
 
     @NonNull
     private final ShardManager manager;

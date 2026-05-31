@@ -21,7 +21,7 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public class UnknownEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class UnknownEventHandler extends GuildAuditLogEntryCreateEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 

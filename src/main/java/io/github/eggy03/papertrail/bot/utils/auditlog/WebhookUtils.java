@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
 @Slf4j
-public class WebhookUtils {
+public final class WebhookUtils {
 
     @NonNull
     public static final String FALLBACK_STRING = "N/A";

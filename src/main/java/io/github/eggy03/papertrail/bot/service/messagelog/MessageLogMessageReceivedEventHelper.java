@@ -6,7 +6,7 @@ import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 @UtilityClass
-public class MessageLogMessageReceivedEventHelper {
+public final class MessageLogMessageReceivedEventHelper {
 
     public static void saveMessage(@NonNull MessageReceivedEvent event, @NonNull MessageLogContentClient client) {
 

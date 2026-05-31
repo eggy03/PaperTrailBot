@@ -21,7 +21,7 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public class StageInstanceEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 

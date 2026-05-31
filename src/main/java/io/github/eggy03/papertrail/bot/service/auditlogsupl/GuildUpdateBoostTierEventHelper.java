@@ -14,7 +14,7 @@ import java.time.Instant;
 
 @UtilityClass
 @Slf4j
-public class GuildUpdateBoostTierEventHelper {
+public final class GuildUpdateBoostTierEventHelper {
 
     public static void format(@NonNull GuildUpdateBoostTierEvent event, @NonNull String channelIdToSendTo) {
 

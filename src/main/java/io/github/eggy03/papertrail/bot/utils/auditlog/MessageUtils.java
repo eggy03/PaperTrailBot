@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
-public class MessageUtils {
+public final class MessageUtils {
 
     private static final String FALLBACK_STRING = "N/A";
 

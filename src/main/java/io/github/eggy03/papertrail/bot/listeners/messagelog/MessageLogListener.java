@@ -19,7 +19,7 @@ import java.util.concurrent.Executor;
 
 @Slf4j
 @RequiredArgsConstructor
-public class MessageLogListener extends ListenerAdapter {
+public final class MessageLogListener extends ListenerAdapter {
 
     @NonNull
     private final MessageLogRegistrationClient registrationClient;

@@ -16,7 +16,7 @@ import java.util.EnumSet;
 
 @UtilityClass
 @Slf4j
-public class ChannelUtils {
+public final class ChannelUtils {
 
     @NonNull
     public static final String FALLBACK_STRING = "N/A";

@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.awt.Color;
 import java.time.Instant;
 
-public class BotSetupInstructionCommandListener extends ListenerAdapter {
+public final class BotSetupInstructionCommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {

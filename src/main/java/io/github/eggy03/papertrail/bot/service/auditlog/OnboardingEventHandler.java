@@ -23,7 +23,7 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public class OnboardingEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class OnboardingEventHandler extends GuildAuditLogEntryCreateEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 

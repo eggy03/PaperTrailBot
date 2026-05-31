@@ -16,7 +16,7 @@ import java.util.concurrent.Executor;
 // this event is not properly logged in the audit logs, hence the usage of JDA's listener is preferred
 // this event is logged in the same channel where the audit log events are logged
 @RequiredArgsConstructor
-public class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
+public final class GuildMemberJoinAndLeaveEventListener extends ListenerAdapter {
 
     @NonNull
     private final AuditLogRegistrationClient client;

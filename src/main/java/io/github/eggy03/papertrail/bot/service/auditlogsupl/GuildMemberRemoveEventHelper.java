@@ -18,7 +18,7 @@ import java.time.Instant;
 
 @UtilityClass
 @Slf4j
-public class GuildMemberRemoveEventHelper {
+public final class GuildMemberRemoveEventHelper {
 
     public static void format(@NonNull GuildMemberRemoveEvent event, @NonNull String channelIdToSendTo) {
 

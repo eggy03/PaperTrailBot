@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.math.RoundingMode;
 
 @UtilityClass
-public class SoundboardUtils {
+public final class SoundboardUtils {
 
     @NotNull
     public static String resolveVolumePercentage(@Nullable Object decimalVolume) {

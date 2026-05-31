@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 
 @UtilityClass
 @Slf4j
-public class GuildMemberUpdateBoostTimeEventHelper {
+public final class GuildMemberUpdateBoostTimeEventHelper {
 
     public static void format(@NonNull GuildMemberUpdateBoostTimeEvent event, @NonNull String channelIdToSendTo) {
         Member member = event.getMember();

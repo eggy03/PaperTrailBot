@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @RequiredArgsConstructor
-public class DebugCommandListener extends ListenerAdapter {
+public final class DebugCommandListener extends ListenerAdapter {
 
     @NonNull
     private final ExecutorService vThreadPool;
