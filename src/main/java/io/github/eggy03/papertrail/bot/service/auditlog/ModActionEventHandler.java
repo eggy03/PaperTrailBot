@@ -168,6 +168,25 @@ public class ModActionEventHandler extends GuildAuditLogEntryCreateEventHandler 
     @Override
     public void onPrune(@NonNull GuildAuditLogEntryCreateEvent event) {
         // I have never seen a prune event trigger yet
-        log.warn("Unimplemented Prune Event Detected\n{}", event.getEntry().getChanges());
+        log.warn("Prune Event Detected\n{}", event.getEntry().getChanges());
+
+        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
+
+        AuditLogEntry ale = event.getEntry();
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Prune Event");
+        eb.setColor(Color.LIGHT_GRAY);
+
+        String implementationNotice = "We do not have sufficient payload data to log the changes in a PRUNE Event."
+                .concat(" A proper implementation might happen in future releases");
+
+        eb.addField("Implementation Notice", MarkdownUtil.codeblock(implementationNotice), false);
+
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
+        eb.setTimestamp(ale.getTimeCreated());
+
+        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
     }
 }
