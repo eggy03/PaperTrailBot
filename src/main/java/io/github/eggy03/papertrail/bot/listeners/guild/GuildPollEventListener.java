@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.guild;
 
-import io.github.eggy03.papertrail.bot.service.guild.GuildPollEventHelper;
+import io.github.eggy03.papertrail.bot.handlers.guild.GuildPollEventHelper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import lombok.NonNull;

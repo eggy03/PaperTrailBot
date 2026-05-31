@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.listeners.message;
 
-import io.github.eggy03.papertrail.bot.service.message.MessageLogMessageDeleteEventHelper;
-import io.github.eggy03.papertrail.bot.service.message.MessageLogMessageReceivedEventHelper;
-import io.github.eggy03.papertrail.bot.service.message.MessageLogMessageUpdateEventHelper;
+import io.github.eggy03.papertrail.bot.handlers.message.MessageLogMessageDeleteEventHelper;
+import io.github.eggy03.papertrail.bot.handlers.message.MessageLogMessageReceivedEventHelper;
+import io.github.eggy03.papertrail.bot.handlers.message.MessageLogMessageUpdateEventHelper;
 import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+// todo rename this and its helpers to GuildMessageEventListener* and move it to the guild package
 @Slf4j
 @RequiredArgsConstructor
 public final class MessageLogListener extends ListenerAdapter {
