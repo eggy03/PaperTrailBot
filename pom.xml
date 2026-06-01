@@ -55,6 +55,12 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
 
+        <!-- Health -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
+
         <!-- JDA -->
         <dependency>
             <groupId>net.dv8tion</groupId>
