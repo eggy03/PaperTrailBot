@@ -1,23 +1,57 @@
 package io.github.eggy03.papertrail.bot.handlers.guild;
 
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
 import java.time.Instant;
 
-@UtilityClass
+@ApplicationScoped
 @Slf4j
-public final class GuildVoiceEventHelper {
+public final class GuildVoiceEventHandler {
 
-    public static void format(@NonNull GuildVoiceUpdateEvent event, @NonNull String channelIdToSendTo) {
+    private final @NonNull AuditLogRegistrationClient client;
+
+    @Inject
+    public GuildVoiceEventHandler(@NonNull AuditLogRegistrationClient client) {
+        this.client = client;
+    }
+
+    @NonNull
+    private String getRegisteredGuildChannel(@NonNull String guildId) {
+        return client.getRegisteredGuild(guildId)
+                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+
+    }
+
+    private void performChecksThenBuildAndSendEmbed(@NonNull GenericGuildEvent event, @NonNull EmbedBuilder embedBuilder, @NonNull String channelIdToSendTo) {
+        if (!embedBuilder.isValidLength() || embedBuilder.isEmpty()) {
+            log.warn("Embed is empty or too long (current length: {}).", embedBuilder.length());
+            return;
+        }
+
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if (sendingChannel != null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(embedBuilder.build()).queue();
+        }
+    }
+
+    public void handleVoiceUpdateEvent(@NonNull GuildVoiceUpdateEvent event) {
+
+        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
 
         Member member = event.getMember();
         AudioChannel left = event.getOldValue(); // can be null if user joined for first time
@@ -61,14 +95,6 @@ public final class GuildVoiceEventHelper {
         eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());
 
-        if (!eb.isValidLength() || eb.isEmpty()) {
-            log.warn("Embed is empty or too long (current length: {}).", eb.length());
-            return;
-        }
-
-        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(eb.build()).queue();
-        }
+        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
     }
 }
