@@ -7,6 +7,7 @@
     <version>3.7.3</version>
     <name>PaperTrail Bot</name>
     <description>A simple bot for logging all server and member actions</description>
+    <packaging>quarkus</packaging>
 
     <properties>
         <!-- Project Properties -->
