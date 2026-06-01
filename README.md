@@ -13,6 +13,7 @@
 * [Self-Host (Manual Configuration)](#self-host-manual-configuration)
 * [Sharding (Advanced Configuration)](#sharding-advanced-configuration)
 * [Synchronizing Rate Limits (Advanced Configuration)](#synchronizing-rate-limits-advanced-configuration)
+* [Health Checks and Custom Port Configuration](#health-checks-and-custom-port-configuration)
 * [License](#license)
 * [Help](#help)
 
@@ -300,12 +301,40 @@ as the instance-level. While this should not create functional conflicts,
 it may lead to under-utilization of the rate limits provided by Discord and can reduce the overall throughput of your
 bot cluster.
 
+# Health Checks and Custom Port Configuration
+
+## Health Checks
+
+Since v4, it is possible to get health information by probing any of the following health endpoints:
+
+| Endpoint            | Description                                                                                           |
+|---------------------|-------------------------------------------------------------------------------------------------------|
+| `/q/health`         | Aggregated health status containing all registered checks.                                            |
+| `/q/health/live`    | Liveness probe. Verifies that the bot process is healthy and that all shards are operating normally.  |
+| `/q/health/ready`   | Readiness probe. Verifies that all shards are fully connected to Discord and ready to receive events. |
+| `/q/health/started` | Startup probe. Indicates whether the application has completed its startup sequence.                  |
+
+### Liveness Check
+
+The liveness check reports **UP** when all shards belonging to this instance are in one of the following states:
+
+* `CONNECTED`
+* `ATTEMPTING_TO_RECONNECT`
+* `RECONNECT_QUEUED`
+* `WAITING_TO_RECONNECT`
+
+### Readiness Check
+
+The readiness check reports **UP** only when every shard belonging to this instance is fully `CONNECTED` to Discord.
+
+## Custom Port Configuration
+
+By, default PaperTrail runs on port 8080.
+You can alter this behavior by setting the `PORT` environment variable to a different port.
+
 # License
 
 This project is licensed under the [AGPLv3](/LICENSE) license.
-Read this
-easy-to-understand [Medium](https://medium.com/swlh/understanding-the-agpl-the-most-misunderstood-license-86fd1fe91275)
-article about AGPLv3 and it's scope.
 
 # Help
 
