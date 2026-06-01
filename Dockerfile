@@ -23,6 +23,6 @@ WORKDIR /app
 VOLUME /tmp
 
 # Copy the JAR from the build stage
-COPY --from=build --chown=papertrail:papertrail /app/target/papertrailbot-jar-with-dependencies.jar papertrailbot.jar
+COPY --from=build --chown=papertrail:papertrail /app/target/papertrailbot-runner.jar papertrailbot.jar
 USER papertrail
 ENTRYPOINT ["java","-jar","papertrailbot.jar"]
