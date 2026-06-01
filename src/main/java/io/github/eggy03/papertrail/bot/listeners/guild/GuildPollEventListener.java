@@ -1,26 +1,22 @@
 package io.github.eggy03.papertrail.bot.listeners.guild;
 
-import io.github.eggy03.papertrail.bot.handlers.guild.GuildPollEventHelper;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.bot.handlers.guild.GuildPollEventHandler;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.Optional;
-import java.util.concurrent.Executor;
-
 // guild poll events are mapped to audit log table
-@RequiredArgsConstructor
+@ApplicationScoped
 public final class GuildPollEventListener extends ListenerAdapter {
 
-    @NonNull
-    private final AuditLogRegistrationClient client;
+    private final @NonNull GuildPollEventHandler handler;
 
-    @NonNull
-    private final Executor vThreadPool;
+    @Inject
+    public GuildPollEventListener(@NonNull GuildPollEventHandler handler) {
+        this.handler = handler;
+    }
 
     @Override
     public void onMessageReceived(@NonNull MessageReceivedEvent event) {
@@ -28,17 +24,6 @@ public final class GuildPollEventListener extends ListenerAdapter {
         if (!event.isFromGuild())
             return;
 
-        // check if message has a poll
-        MessagePoll messagePoll = event.getMessage().getPoll();
-        if (messagePoll == null)
-            return;
-
-        vThreadPool.execute(() -> {
-            // Call the API and see if the event came from a registered Guild
-            Optional<AuditLogRegistrationEntity> response = client.getRegisteredGuild(event.getGuild().getId());
-            response.ifPresent(success ->
-                    GuildPollEventHelper.format(event, messagePoll, success.getChannelId())
-            );
-        });
+        handler.handlePollCreationEvent(event);
     }
 }

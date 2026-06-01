@@ -1,24 +1,61 @@
 package io.github.eggy03.papertrail.bot.handlers.guild;
 
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Instant;
 
-@UtilityClass
+@ApplicationScoped
 @Slf4j
-public final class GuildPollEventHelper {
+public final class GuildPollEventHandler {
 
-    public static void format(@NonNull MessageReceivedEvent event, @NonNull MessagePoll messagePoll, @NonNull String channelIdToSendTo) {
+    private final @NonNull AuditLogRegistrationClient client;
+
+    @Inject
+    public GuildPollEventHandler(@NonNull AuditLogRegistrationClient client) {
+        this.client = client;
+    }
+
+    @NonNull
+    private String getRegisteredGuildChannel(@NonNull String guildId) {
+        return client.getRegisteredGuild(guildId)
+                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+
+    }
+
+    private void performChecksThenBuildAndSendEmbed(@NonNull MessageReceivedEvent event, @NonNull EmbedBuilder embedBuilder, @NonNull String channelIdToSendTo) {
+        if (!embedBuilder.isValidLength() || embedBuilder.isEmpty()) {
+            log.warn("Embed is empty or too long (current length: {}).", embedBuilder.length());
+            return;
+        }
+
+        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
+        if (sendingChannel != null && sendingChannel.canTalk()) {
+            sendingChannel.sendMessageEmbeds(embedBuilder.build()).queue();
+        }
+    }
+
+    public void handlePollCreationEvent(@NonNull MessageReceivedEvent event) {
+        // check if message has a poll
+        MessagePoll messagePoll = event.getMessage().getPoll();
+        if (messagePoll == null)
+            return;
+
+        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Poll Creation Event");
@@ -33,19 +70,12 @@ public final class GuildPollEventHelper {
         eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());
 
-        if (!eb.isValidLength() || eb.isEmpty()) {
-            log.warn("Embed is empty or too long (current length: {}).", eb.length());
-            return;
-        }
+        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
 
-        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(eb.build()).queue();
-        }
     }
 
     @NotNull
-    private static String getMessagePollAnswers(@NonNull MessagePoll messagePoll) {
+    private String getMessagePollAnswers(@NonNull MessagePoll messagePoll) {
 
         StringBuilder answers = new StringBuilder();
         messagePoll.getAnswers().forEach(answer -> answers
@@ -60,7 +90,7 @@ public final class GuildPollEventHelper {
     }
 
     @NotNull
-    private static String getPollExpiryTime(@NonNull MessagePoll messagePoll) {
+    private String getPollExpiryTime(@NonNull MessagePoll messagePoll) {
         return messagePoll.getTimeExpiresAt() != null ?
                 "<t:" + messagePoll.getTimeExpiresAt().toEpochSecond() + ":f>" :
                 "Never Expires";
