@@ -24,7 +24,7 @@
 
         <!-- Dependency Versions -->
         <jda.version>6.4.1</jda.version>
-        <papertrail.sdk.version>2.0.4</papertrail.sdk.version>
+        <papertrail.sdk.version>2.0.5</papertrail.sdk.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <guava.version>33.5.0-jre</guava.version>
         <jetbrains.annotations.version>26.1.0</jetbrains.annotations.version>
