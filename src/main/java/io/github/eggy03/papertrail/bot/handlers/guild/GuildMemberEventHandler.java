@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -103,7 +102,7 @@ public class GuildMemberEventHandler {
         performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
     }
 
-    @NotNull
+    @NonNull
     private String getMemberJoinDate(@NonNull GuildMemberRemoveEvent event) {
 
         Member member = event.getMember();
@@ -116,7 +115,7 @@ public class GuildMemberEventHandler {
         return "Unavailable";
     }
 
-    @NotNull
+    @NonNull
     private String getMemberLeaveDate() {
         return "<t:" + Instant.now().getEpochSecond() + ":f>";
     }

@@ -1,15 +1,15 @@
 package io.github.eggy03.papertrail.bot.utils.auditlog;
 
 import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.StageInstance;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
 public final class StageUtils {
 
-    @NotNull
+    @NonNull
     public static String resolveStagePrivacyLevel(@Nullable Object stagePrivacyLevelInteger) {
         Integer privacyLevel = NumberParseUtils.parseInt(stagePrivacyLevelInteger);
 

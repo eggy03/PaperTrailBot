@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.utils.auditlog;
 
 import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.RoundingMode;
@@ -10,7 +10,7 @@ import java.math.RoundingMode;
 @UtilityClass
 public final class SoundboardUtils {
 
-    @NotNull
+    @NonNull
     public static String resolveVolumePercentage(@Nullable Object decimalVolume) {
         Double volume = NumberParseUtils.parseDouble(decimalVolume, 4, RoundingMode.HALF_UP);
         if (volume == null)

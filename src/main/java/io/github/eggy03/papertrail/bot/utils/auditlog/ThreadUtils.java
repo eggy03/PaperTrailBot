@@ -4,7 +4,6 @@ import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
@@ -13,7 +12,7 @@ public final class ThreadUtils {
     @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     public static String resolveAutoArchiveDuration(@Nullable Object minutes) {
 
         Integer minuteInt = NumberParseUtils.parseInt(minutes);

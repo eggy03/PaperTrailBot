@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.guild.SystemChannelFlag;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
@@ -18,7 +17,7 @@ public final class GuildUtils {
     private static final String FALLBACK_STRING = "N/A";
 
     // GUILD UTILS
-    @NotNull
+    @NonNull
     public static String resolveGuildVerificationLevel(@Nullable Object verificationLevelInteger) {
 
         Integer verificationLevel = NumberParseUtils.parseInt(verificationLevelInteger);
@@ -34,7 +33,7 @@ public final class GuildUtils {
 
     }
 
-    @NotNull
+    @NonNull
     public static String resolveGuildModActionMFALevel(@Nullable Object mfaLevelInteger) {
         Integer mfaLevel = NumberParseUtils.parseInt(mfaLevelInteger);
         if (mfaLevel == null)
@@ -44,7 +43,7 @@ public final class GuildUtils {
 
     }
 
-    @NotNull
+    @NonNull
     public static String resolveGuildDefaultMessageNotificationLevel(@Nullable Object notificationLevelInteger) {
         Integer notificationLevel = NumberParseUtils.parseInt(notificationLevelInteger);
         if (notificationLevel == null)
@@ -54,7 +53,7 @@ public final class GuildUtils {
 
     }
 
-    @NotNull
+    @NonNull
     public static String resolveExplicitContentFilterLevel(@Nullable Object explicitContentFilterLevelInteger) {
         Integer ecfLevel = NumberParseUtils.parseInt(explicitContentFilterLevelInteger);
         if (ecfLevel == null)
@@ -63,7 +62,7 @@ public final class GuildUtils {
         return Guild.ExplicitContentLevel.fromKey(ecfLevel).getDescription();
     }
 
-    @NotNull
+    @NonNull
     public static String resolveSystemChannelFlags(@Nullable Object systemChannelFlagsIntegerObject) {
         Integer systemChannelFlagsInteger = NumberParseUtils.parseInt(systemChannelFlagsIntegerObject);
 
@@ -85,7 +84,7 @@ public final class GuildUtils {
     }
 
     // MISC GUILD UTILS (BROADER COVERAGE)
-    @NotNull
+    @NonNull
     public static String resolveMentionableChannel(@Nullable Object channelId, @NonNull GenericGuildEvent event) {
         Long channelIdLong = NumberParseUtils.parseLong(channelId);
         if (channelIdLong == null)
@@ -95,7 +94,7 @@ public final class GuildUtils {
         return channel != null ? channel.getAsMention() : channelIdLong.toString();
     }
 
-    @NotNull
+    @NonNull
     public static String resolveOwnerName(@Nullable Object ownerId, @NonNull GenericGuildEvent event) {
         Long ownerIdLong = NumberParseUtils.parseLong(ownerId);
         if (ownerIdLong == null)

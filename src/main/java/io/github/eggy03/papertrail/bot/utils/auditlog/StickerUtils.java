@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
@@ -16,7 +15,7 @@ public final class StickerUtils {
     @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     public static String resolveStickerUrl(@NonNull GenericGuildEvent event, @Nullable Object stickerIdObject) {
 
         if (stickerIdObject == null) {
@@ -39,7 +38,7 @@ public final class StickerUtils {
     // emojiIdObject does NOT give you snowflake IDs in case of Unicode emojis
     // it only gives u IDs in case of custom emojis
     // any values caught by NumberFormatException are Unicode emojis and can be returned raw
-    @NotNull
+    @NonNull
     public static String resolveRelatedEmoji(@NonNull GenericGuildEvent event, @Nullable Object emojiIdObject) {
 
         if (emojiIdObject == null) {

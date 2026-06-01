@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import org.jetbrains.annotations.Blocking;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
@@ -15,7 +14,7 @@ public final class MessageUtils {
 
     private static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     @Blocking
     public static String resolveMessageJumpUrlFromId(@Nullable Object channelId, @Nullable Object messageId, @NonNull GenericGuildEvent event) {
 

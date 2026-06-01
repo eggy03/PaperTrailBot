@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.api.entities.automod.AutoModEventType;
 import net.dv8tion.jda.api.entities.automod.AutoModTriggerType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
@@ -14,7 +13,7 @@ public final class AutoModUtils {
     @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     public static String autoModEventTypeResolver(@Nullable Object autoModEventTypeInteger) {
         Integer eventTypeInt = NumberParseUtils.parseInt(autoModEventTypeInteger);
         if (eventTypeInt == null) {
@@ -24,7 +23,7 @@ public final class AutoModUtils {
         return AutoModEventType.fromKey(eventTypeInt).name();
     }
 
-    @NotNull
+    @NonNull
     public static String autoModTriggerTypeResolver(@Nullable Object autoModTriggerTypeInteger) {
         Integer triggerTypeInt = NumberParseUtils.parseInt(autoModTriggerTypeInteger);
         if (triggerTypeInt == null)

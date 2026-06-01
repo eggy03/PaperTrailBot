@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -74,7 +73,7 @@ public final class GuildPollEventHandler {
 
     }
 
-    @NotNull
+    @NonNull
     private String getMessagePollAnswers(@NonNull MessagePoll messagePoll) {
 
         StringBuilder answers = new StringBuilder();
@@ -89,7 +88,7 @@ public final class GuildPollEventHandler {
         return answers.toString().trim();
     }
 
-    @NotNull
+    @NonNull
     private String getPollExpiryTime(@NonNull MessagePoll messagePoll) {
         return messagePoll.getTimeExpiresAt() != null ?
                 "<t:" + messagePoll.getTimeExpiresAt().toEpochSecond() + ":f>" :

@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public final class MemberUtils {
 
     // Parses an array list of map of role objects supplied by JDA
     // roles are exposed as arraylists of maps [{name=role, id=1}, {name=role2, id=2}]
-    @NotNull
+    @NonNull
     public static String parseRoleListMap(@NonNull GenericGuildEvent event, @Nullable Object roleObject) {
 
         if (!(roleObject instanceof List<?> roleList) || roleList.isEmpty())
@@ -42,7 +41,7 @@ public final class MemberUtils {
 
     }
 
-    @NotNull
+    @NonNull
     @SuppressWarnings("all")
     public static String resolveNickNameChanges(@Nullable Object oldNickValue, @Nullable Object newNickValue) {
 

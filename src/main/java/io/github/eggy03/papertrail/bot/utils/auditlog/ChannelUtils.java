@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -24,7 +23,7 @@ public final class ChannelUtils {
     /**
      * can also be used for threads
      */
-    @NotNull
+    @NonNull
     public static String resolveChannelType(@Nullable Object channelTypeInteger) {
 
         Integer channelType = NumberParseUtils.parseInt(channelTypeInteger);
@@ -34,7 +33,7 @@ public final class ChannelUtils {
         return ChannelType.fromId(channelType).name();
     }
 
-    @NotNull
+    @NonNull
     public static String resolveVoiceChannelUserLimit(@Nullable Object limitNumber) {
         Integer userLimit = NumberParseUtils.parseInt(limitNumber);
         if (userLimit == null)
@@ -43,7 +42,7 @@ public final class ChannelUtils {
         return userLimit == 0 ? "Unlimited" : userLimit.toString();
     }
 
-    @NotNull
+    @NonNull
     public static String resolveVoiceChannelBitrate(@Nullable Object bitrateInteger) {
         Integer bitrate = NumberParseUtils.parseInt(bitrateInteger);
         if (bitrate == null)
@@ -52,7 +51,7 @@ public final class ChannelUtils {
         return (bitrate / 1000) + " kbps";
     }
 
-    @NotNull
+    @NonNull
     public static String resolveVoiceChannelVideoQuality(@Nullable Object voiceChannelVideoQualityInteger) {
 
         Integer videoQuality = NumberParseUtils.parseInt(voiceChannelVideoQualityInteger);
@@ -66,7 +65,7 @@ public final class ChannelUtils {
     }
 
     // CHANNEL OVERRIDE UTILS
-    @NotNull
+    @NonNull
     public static String resolveChannelOverrideTargetType(@Nullable Object targetTypeInteger) {
         Integer targetType = NumberParseUtils.parseInt(targetTypeInteger);
 
@@ -79,7 +78,7 @@ public final class ChannelUtils {
 
     }
 
-    @NotNull
+    @NonNull
     public static String resolveChannelOverridePermissions(@Nullable Object permissionValueLong, @NonNull String emoji) {
 
         Long permissionValue = NumberParseUtils.parseLong(permissionValueLong);
@@ -101,7 +100,7 @@ public final class ChannelUtils {
     }
 
     // MISC UTILS
-    @NotNull
+    @NonNull
     public static String autoResolveMemberOrRole(@Nullable Object memberOrRoleId, @NonNull GenericGuildEvent event) {
 
         if (memberOrRoleId == null) {

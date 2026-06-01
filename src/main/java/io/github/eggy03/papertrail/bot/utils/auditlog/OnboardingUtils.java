@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public final class OnboardingUtils {
     @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     public static String formatMode(@Nullable Object value) {
         if (value == null) {
             log.debug("format mode value was null");
@@ -37,7 +36,7 @@ public final class OnboardingUtils {
         };
     }
 
-    @NotNull
+    @NonNull
     public static String resolveChannelsFromList(@NonNull Guild guild, @Nullable Object value) {
 
         if (!(value instanceof List<?> channelIdList) || channelIdList.isEmpty())

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public final class InviteUtils {
 
     public static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     public static String resolveInviter(@Nullable Object inviterId, @NonNull GuildAuditLogEntryCreateEvent event) {
 
         Long inviterIdLong = NumberParseUtils.parseLong(inviterId);
@@ -31,7 +30,7 @@ public final class InviteUtils {
         return member != null ? member.getAsMention() : inviterIdLong.toString();
     }
 
-    @NotNull
+    @NonNull
     public static String resolveInviteChannel(@Nullable Object inviteChannelId, @NonNull GuildAuditLogEntryCreateEvent event) {
 
         Long inviteChannelIdLong = NumberParseUtils.parseLong(inviteChannelId);
@@ -42,7 +41,7 @@ public final class InviteUtils {
         return channel != null ? channel.getAsMention() : inviteChannelIdLong.toString();
     }
 
-    @NotNull
+    @NonNull
     public static String resolveMaxUses(@Nullable Object usageCountIntegerObject) {
 
         Integer maxUses = NumberParseUtils.parseInt(usageCountIntegerObject);
@@ -57,7 +56,7 @@ public final class InviteUtils {
     }
 
     // the object is an array of Role IDs
-    @NotNull
+    @NonNull
     public static String resolveInviteRoleList(@NonNull GenericGuildEvent event, @Nullable Object inviteRoleObject) {
 
         if (!(inviteRoleObject instanceof List<?> inviteRoleList) || inviteRoleList.isEmpty())

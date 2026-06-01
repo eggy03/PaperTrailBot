@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
@@ -15,7 +14,7 @@ public final class ScheduledEventUtils {
     @NonNull
     public static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     public static String resolveEventType(@Nullable Object eventTypeInteger) {
 
         Integer eventType = NumberParseUtils.parseInt(eventTypeInteger);
@@ -26,7 +25,7 @@ public final class ScheduledEventUtils {
 
     }
 
-    @NotNull
+    @NonNull
     public static String resolveStatusType(@Nullable Object eventTypeInteger) {
         Integer eventType = NumberParseUtils.parseInt(eventTypeInteger);
         if (eventType == null)

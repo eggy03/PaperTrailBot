@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
@@ -48,7 +47,7 @@ public final class ServerStatCommandHandler {
         event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
-    @NotNull
+    @NonNull
     private String getMemberAndBotCount(@NonNull Guild guild) {
 
         List<Member> memberCache = guild.getMemberCache().asList();
@@ -58,36 +57,36 @@ public final class ServerStatCommandHandler {
         return "Users: " + (allUserCount - botCount) + "\nBots: " + botCount + "\nTotal: " + allUserCount;
     }
 
-    @NotNull
+    @NonNull
     private String getGuildOwner(@NonNull Guild guild) {
         Member owner = guild.getOwner();
 
         return owner == null ? "N/A" : owner.getAsMention();
     }
 
-    @NotNull
+    @NonNull
     private String getGuildCreationDate(@NonNull Guild guild) {
         return "<t:" + guild.getTimeCreated().toEpochSecond() + ":f>";
     }
 
-    @NotNull
+    @NonNull
     private String getGuildVanityUrl(@NonNull Guild guild) {
         return guild.getVanityUrl() == null ? "N/A" : guild.getVanityUrl();
     }
 
-    @NotNull
+    @NonNull
     private String getBoosters(@NonNull Guild guild) {
         StringBuilder boosterString = new StringBuilder();
         guild.getBoosters().forEach(booster -> boosterString.append(booster.getAsMention()).append(" "));
         return boosterString.toString().trim().isEmpty() ? "No Boosters" : boosterString.toString().trim();
     }
 
-    @NotNull
+    @NonNull
     private String getBoosterRole(@NonNull Guild guild) {
         return guild.getBoostRole() != null ? guild.getBoostRole().getAsMention() : "No Boost Role Found";
     }
 
-    @NotNull
+    @NonNull
     private String getDataRequestingMember(@Nullable Member requestingMember) {
         return requestingMember != null ? requestingMember.getEffectiveName() : "N/A";
     }

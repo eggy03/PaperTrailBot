@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -19,7 +18,7 @@ public final class RoleUtils {
     @NonNull
     private static final String FALLBACK_STRING = "N/A";
 
-    @NotNull
+    @NonNull
     public static String resolveRolePermissions(@Nullable Object permissionsValue, @NonNull String emoji) {
         Long permissionLong = NumberParseUtils.parseLong(permissionsValue);
         if (permissionLong == null)
@@ -41,7 +40,7 @@ public final class RoleUtils {
         return permissions.toString().trim();
     }
 
-    @NotNull
+    @NonNull
     public static String formatToHex(@Nullable Object colorValueInteger) {
 
         if (colorValueInteger == null) {
@@ -67,7 +66,7 @@ public final class RoleUtils {
      * gradient is returned as a map in the following structure
      * {"primary_color" = 123456789, "secondary_color" = 123456789, "tertiary_color" = 123456789}
      */
-    @NotNull
+    @NonNull
     public static String formatGradientToHex(@Nullable Object gradientMap) {
 
         if (gradientMap == null) {

@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -71,17 +70,17 @@ public final class DebugCommandHandler {
         event.getHook().editOriginalEmbeds(eb.build()).queue();
     }
 
-    @NotNull
+    @NonNull
     private String getBotPermissions(@NonNull Guild guild) {
         return formatPermissions(guild.getSelfMember().getPermissions());
     }
 
-    @NotNull
+    @NonNull
     private String getBotPermissionsInCurrentChannel(@NonNull Guild guild, @NonNull GuildChannel channel) {
         return formatPermissions(guild.getSelfMember().getPermissions(channel));
     }
 
-    @NotNull
+    @NonNull
     private String formatPermissions(@NonNull EnumSet<Permission> grantedGuildOrChannelPermissions) {
         // gets all the permissions granted to the bot in the server as a whole or a particular channel
         EnumSet<Permission> grantedPermissions = EnumSet.copyOf(grantedGuildOrChannelPermissions);
@@ -114,7 +113,7 @@ public final class DebugCommandHandler {
         return permString.toString().trim();
     }
 
-    @NotNull
+    @NonNull
     private String getServerInfo(@NonNull Guild guild, @NonNull GuildChannel channel) {
         return "Server Name: " + MarkdownUtil.underline(guild.getName()) + "\n" +
                 "Server ID: " + MarkdownUtil.underline(guild.getId()) + "\n" +
@@ -122,21 +121,21 @@ public final class DebugCommandHandler {
                 "Current Channel ID: " + MarkdownUtil.underline(channel.getId());
     }
 
-    @NotNull
+    @NonNull
     private String getCallerInfo(@NonNull Member member) {
         return "User Name: " + MarkdownUtil.underline(member.getUser().getEffectiveName()) + "\n" +
                 "User ID: " + MarkdownUtil.underline(member.getId()) + "\n" +
                 "Is Administrator: " + MarkdownUtil.underline(BooleanUtils.formatToYesOrNo(member.hasPermission(Permission.ADMINISTRATOR)));
     }
 
-    @NotNull
+    @NonNull
     private String getBotInfo(@NonNull SlashCommandInteractionEvent event) {
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
         return "Current Shard ID: " + shardInfo.getShardId() + "\n" +
                 "Total Shards: " + shardInfo.getShardTotal();
     }
 
-    @NotNull
+    @NonNull
     private String getConfigurationInfo(@NonNull Guild guild) {
 
         StringBuilder sb = new StringBuilder();
