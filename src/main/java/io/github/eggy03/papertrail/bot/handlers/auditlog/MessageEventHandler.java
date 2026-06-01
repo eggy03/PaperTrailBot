@@ -49,7 +49,7 @@ public final class MessageEventHandler extends GuildAuditLogEntryCreateEventHand
     }
 
     // for the following four events, audit log does not expose much information
-    // a custom implementation to log edits and deletes of messages is found in MessageLogListener
+    // a custom implementation to log edits and deletes of messages is found in GuildMessageEventListener
     @Override
     public void onMessageCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         // do nothing (these never trigger)
