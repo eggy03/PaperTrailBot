@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 @Slf4j
-public class GuildMessageEventHandler {
+public final class GuildMessageEventHandler {
 
     private final @NonNull MessageLogRegistrationClient registrationClient;
     private final @NonNull MessageLogContentClient contentClient;
