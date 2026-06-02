@@ -1,0 +1,79 @@
+{
+  "reflection": [
+    {
+      "type": "io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient"
+    },
+    {
+      "type": "io.github.eggy03.papertrail.sdk.client.MessageLogContentClient"
+    },
+    {
+      "type": "io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient"
+    },
+    {
+      "type": "io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "io.github.eggy03.papertrail.sdk.entity.MessageLogContentEntity",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "io.github.eggy03.papertrail.sdk.entity.ErrorEntity",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.User[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.Role[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.Guild[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.Member[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.ScheduledEvent[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.ThreadMember[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.channel.Channel[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.channel.forums.ForumTag[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.channel.middleman.GuildChannel[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.emoji.RichCustomEmoji[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.sticker.GuildSticker[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.managers.AudioManager[]"
+    },
+    {
+      "type": "net.dv8tion.jda.internal.entities.GuildVoiceStateImpl[]"
+    },
+    {
+      "type": "net.dv8tion.jda.internal.entities.MemberPresenceImpl[]"
+    }
+  ]
+}
