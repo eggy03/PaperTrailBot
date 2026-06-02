@@ -279,9 +279,9 @@ This will set the discord token to `"my token"` and map the bound port to port `
 
 Add the following environment variable to your bot:
 
-| Variable    | Description                                                                                                                |
-|-------------|----------------------------------------------------------------------------------------------------------------------------|
-| `PROXY_URL` | Base URL for the HTTP proxy that will receive Discord API requests instead of discord.com (Example: http://localhost:3000) |
+| Variable                  | Description                                                                                                                |
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `TWILIGHT_HTTP_PROXY_URL` | Base URL for the HTTP proxy that will receive Discord API requests instead of discord.com (Example: http://localhost:3000) |
 
 When configured, all Discord API requests made by the bot will be routed through the proxy.
 
