@@ -99,10 +99,10 @@ Don't forget to copy the `bot token` as it will be required in the next step
 
 ### Step 2.2: Get Required Secrets
 
-| Variable  | Description                                                        |
-|-----------|--------------------------------------------------------------------|
-| `TOKEN`   | Discord application bot token (from the Developer Portal)          |
-| `API_URL` | Internal URL of the PaperTrail API (e.g., `http://localhost:8080`) |
+| Variable  | Description                                                        | Default Value    | Optional |
+|-----------|--------------------------------------------------------------------|------------------|----------|
+| `TOKEN`   | Discord application bot token (from the Developer Portal)          | No Default Value | No       |
+| `API_URL` | Internal URL of the PaperTrail API (e.g., `http://localhost:8080`) | No Default Value | No       |
 
 Example `.env` file:
 
@@ -174,11 +174,11 @@ Discord allows you to have up to 2500 guilds per shard but the recommended confi
 
 You will need the following additional environment variables for custom shard configuration.
 
-| Variable       | Description                                                                   |
-|----------------|-------------------------------------------------------------------------------|
-| `TOTAL_SHARDS` | Total number of shards used by the bot across all running processes/instances |
-| `MIN_SHARD_ID` | The first shard ID handled by this specific bot instance                      |
-| `MAX_SHARD_ID` | The last shard ID handled by this specific bot instance                       |
+| Variable       | Description                                                                   | Default Value | Optional |
+|----------------|-------------------------------------------------------------------------------|---------------|----------|
+| `TOTAL_SHARDS` | Total number of shards used by the bot across all running processes/instances | 1             | Yes      |
+| `MIN_SHARD_ID` | The first shard ID handled by this specific bot instance                      | 0             | Yes      |
+| `MAX_SHARD_ID` | The last shard ID handled by this specific bot instance                       | 0             | Yes      |
 
 Shard IDs start at 0.
 
@@ -279,9 +279,9 @@ This will set the discord token to `"my token"` and map the bound port to port `
 
 Add the following environment variable to your bot:
 
-| Variable                  | Description                                                                                                                |
-|---------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| `TWILIGHT_HTTP_PROXY_URL` | Base URL for the HTTP proxy that will receive Discord API requests instead of discord.com (Example: http://localhost:3000) |
+| Variable                  | Description                                                                                                                | Default Value | Optional |
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------|---------------|----------|
+| `TWILIGHT_HTTP_PROXY_URL` | Base URL for the HTTP proxy that will receive Discord API requests instead of discord.com (Example: http://localhost:3000) | Blank         | Yes      |
 
 When configured, all Discord API requests made by the bot will be routed through the proxy.
 
@@ -330,8 +330,12 @@ The readiness check reports **UP** only when every shard belonging to this insta
 
 ## Custom Port Configuration
 
-By, default PaperTrail runs on port 8080.
-You can alter this behavior by setting the `PORT` environment variable to a different port.
+By, default PaperTrail runs on port 8080. If port 8080 is occupied by a different service, or you wish to
+run the application on a different port, you can manually set the `PORT` environment variable.
+
+| Variable | Description                                           | Default Value | Optional |
+|----------|-------------------------------------------------------|---------------|----------|
+| `PORT`   | Port Number on which the instance of the bot will run | 8080          | Yes      |
 
 # License
 
