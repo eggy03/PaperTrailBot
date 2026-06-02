@@ -12,7 +12,7 @@ import java.time.format.DateTimeParseException;
 
 @UtilityClass
 @Slf4j
-public class DurationUtils {
+public final class DurationUtils {
 
     @NonNull
     private static final String FALLBACK_STRING = "N/A";

@@ -4,13 +4,13 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ProjectInfo {
+public final class ProjectInfo {
 
     @NonNull
     public static final String APPNAME = "PaperTrail";
 
     @NonNull
-    public static final String VERSION = "v3.7.3";
+    public static final String VERSION = "v4.0.0";
 
     @NonNull
     public static final String PROJECT_ISSUE_LINK = "https://github.com/eggy03/PaperTrailBot/issues";

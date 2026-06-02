@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -13,7 +14,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 /*
  * Registers all the slash commands places throughout the code on startup
  */
-public class SlashCommandRegistrationListener extends ListenerAdapter {
+@ApplicationScoped
+public final class SlashCommandRegistrationListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NonNull ReadyEvent event) {

@@ -13,7 +13,9 @@
 * [Self-Host (Manual Configuration)](#self-host-manual-configuration)
 * [Sharding (Advanced Configuration)](#sharding-advanced-configuration)
 * [Synchronizing Rate Limits (Advanced Configuration)](#synchronizing-rate-limits-advanced-configuration)
+* [Health Checks and Custom Port Configuration](#health-checks-and-custom-port-configuration)
 * [License](#license)
+* [AI Usage Declaration and Policy](#ai-usage-declaration-and-policy)
 * [Help](#help)
 
 # Overview
@@ -97,10 +99,10 @@ Don't forget to copy the `bot token` as it will be required in the next step
 
 ### Step 2.2: Get Required Secrets
 
-| Variable  | Description                                                        |
-|-----------|--------------------------------------------------------------------|
-| `TOKEN`   | Discord application bot token (from the Developer Portal)          |
-| `API_URL` | Internal URL of the PaperTrail API (e.g., `http://localhost:8080`) |
+| Variable  | Description                                                        | Default Value    | Optional |
+|-----------|--------------------------------------------------------------------|------------------|----------|
+| `TOKEN`   | Discord application bot token (from the Developer Portal)          | No Default Value | No       |
+| `API_URL` | Internal URL of the PaperTrail API (e.g., `http://localhost:8080`) | No Default Value | No       |
 
 Example `.env` file:
 
@@ -172,11 +174,11 @@ Discord allows you to have up to 2500 guilds per shard but the recommended confi
 
 You will need the following additional environment variables for custom shard configuration.
 
-| Variable       | Description                                                                   |
-|----------------|-------------------------------------------------------------------------------|
-| `TOTAL_SHARDS` | Total number of shards used by the bot across all running processes/instances |
-| `MIN_SHARD_ID` | The first shard ID handled by this specific bot instance                      |
-| `MAX_SHARD_ID` | The last shard ID handled by this specific bot instance                       |
+| Variable       | Description                                                                   | Default Value | Optional |
+|----------------|-------------------------------------------------------------------------------|---------------|----------|
+| `TOTAL_SHARDS` | Total number of shards used by the bot across all running processes/instances | 1             | Yes      |
+| `MIN_SHARD_ID` | The first shard ID handled by this specific bot instance                      | 0             | Yes      |
+| `MAX_SHARD_ID` | The last shard ID handled by this specific bot instance                       | 0             | Yes      |
 
 Shard IDs start at 0.
 
@@ -277,9 +279,9 @@ This will set the discord token to `"my token"` and map the bound port to port `
 
 Add the following environment variable to your bot:
 
-| Variable    | Description                                                                                                                |
-|-------------|----------------------------------------------------------------------------------------------------------------------------|
-| `PROXY_URL` | Base URL for the HTTP proxy that will receive Discord API requests instead of discord.com (Example: http://localhost:3000) |
+| Variable                  | Description                                                                                                                | Default Value | Optional |
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------|---------------|----------|
+| `TWILIGHT_HTTP_PROXY_URL` | Base URL for the HTTP proxy that will receive Discord API requests instead of discord.com (Example: http://localhost:3000) | Blank         | Yes      |
 
 When configured, all Discord API requests made by the bot will be routed through the proxy.
 
@@ -300,12 +302,58 @@ as the instance-level. While this should not create functional conflicts,
 it may lead to under-utilization of the rate limits provided by Discord and can reduce the overall throughput of your
 bot cluster.
 
+# Health Checks and Custom Port Configuration
+
+## Health Checks
+
+Since v4, it is possible to get health information by probing any of the following health endpoints:
+
+| Endpoint            | Description                                                                                           |
+|---------------------|-------------------------------------------------------------------------------------------------------|
+| `/q/health`         | Aggregated health status containing all registered checks.                                            |
+| `/q/health/live`    | Liveness probe. Verifies that the bot process is healthy and that all shards are operating normally.  |
+| `/q/health/ready`   | Readiness probe. Verifies that all shards are fully connected to Discord and ready to receive events. |
+| `/q/health/started` | Startup probe. Indicates whether the application has completed its startup sequence.                  |
+
+### Liveness Check
+
+The liveness check reports **UP** when all shards belonging to this instance are in one of the following states:
+
+* `CONNECTED`
+* `ATTEMPTING_TO_RECONNECT`
+* `RECONNECT_QUEUED`
+* `WAITING_TO_RECONNECT`
+
+### Readiness Check
+
+The readiness check reports **UP** only when every shard belonging to this instance is fully `CONNECTED` to Discord.
+
+## Custom Port Configuration
+
+By, default PaperTrail runs on port 8080. If port 8080 is occupied by a different service, or you wish to
+run the application on a different port, you can manually set the `PORT` environment variable.
+
+| Variable | Description                                           | Default Value | Optional |
+|----------|-------------------------------------------------------|---------------|----------|
+| `PORT`   | Port Number on which the instance of the bot will run | 8080          | Yes      |
+
 # License
 
 This project is licensed under the [AGPLv3](/LICENSE) license.
-Read this
-easy-to-understand [Medium](https://medium.com/swlh/understanding-the-agpl-the-most-misunderstood-license-86fd1fe91275)
-article about AGPLv3 and it's scope.
+
+# AI Usage Declaration and Policy
+
+No AI or LLM agents have been used to generate any part of the project's source code.
+This policy applies to all existing source code and future code contributions.
+
+After two years of development and manual testing, the application has reached a fairly stable and maintainable state.
+To preserve code quality, maintainability, format, and stability,
+AI-generated source code is **not accepted** for inclusion in this repository and the repositories related to the
+application.
+
+Limited use of AI for non-code tasks, such as commit message generation, spelling correction,
+or documentation proofreading, may be permitted at the maintainer's discretion.
+Such usage does not constitute authorship of the project's source code.
 
 # Help
 
