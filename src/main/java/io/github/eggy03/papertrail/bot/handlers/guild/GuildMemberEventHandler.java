@@ -24,7 +24,7 @@ import java.time.Instant;
 
 @ApplicationScoped
 @Slf4j
-public class GuildMemberEventHandler {
+public final class GuildMemberEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
