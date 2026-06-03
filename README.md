@@ -25,7 +25,7 @@ and deliver them to a configured channel without the need to manually navigate t
 
 With support for detecting more than 72 events, it can log changes made to: AutoMod Settings, Servers, Onboarding,
 Invites, Members, Roles, Channels, Threads, Stages, Events, Polls, Messages, Boosts, Emojis, Stickers, Soundboard,
-Integrations, Webhooks, Moderation Action and Unknown events.
+Integrations, Webhooks, Moderation Action, Unusual DMs, Raids and Unknown events.
 
 > Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
