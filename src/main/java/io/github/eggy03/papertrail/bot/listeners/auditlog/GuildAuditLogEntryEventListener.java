@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
  *
  * <p>
  * Each discovered handler instance will receive the event through
- * {@link GuildAuditLogEntryCreateEventHandler#handleEvent(GuildAuditLogEntryCreateEvent)}.
+ * {@link GuildAuditLogEntryCreateEventHandler#handleActionType(GuildAuditLogEntryCreateEvent)}.
  * This enables a multicast-style event processing pipeline where multiple
  * handler beans may react to the same audit log action independently.
  * </p>
@@ -40,9 +40,15 @@ public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
     @Override
     public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
+        /*
+        Each handler gets its own virtual thread to handle the event
+        or else, the events will be processed sequentially in a single virtual thread.
+        This will be particularly slower if two or more inherited classes have overrides
+        for handling the same ActionType.
+         */
         guildAuditLogEntryCreateEventHandlers.forEach(handler -> Thread.ofVirtual()
                 .name("guild-audit-log-entry-create-event-listener-vthread-", 0)
-                .start(() -> handler.handleEvent(event))
+                .start(() -> handler.handleActionType(event))
         );
     }
 

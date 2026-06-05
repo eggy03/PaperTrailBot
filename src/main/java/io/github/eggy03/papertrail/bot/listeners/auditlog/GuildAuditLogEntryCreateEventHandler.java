@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
  * Abstract base class for routing {@link GuildAuditLogEntryCreateEvent}
  * instances to their appropriate handler methods.
  * Routing is performed by
- * {@link #handleEvent(GuildAuditLogEntryCreateEvent)}.
+ * {@link #handleActionType(GuildAuditLogEntryCreateEvent)}.
  * </p>
  *
  * <p>
@@ -315,16 +315,12 @@ public abstract class GuildAuditLogEntryCreateEventHandler {
      * </p>
      *
      * <p>
-     * Each event handler method can be overridden multiple times
-     * </p>
-     *
-     * <p>
      * This method is marked as {@code final} and cannot be overridden
      * </p>
      *
      * @param event             the audit log event received from JDA
      */
-    public final void handleEvent(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public final void handleActionType(@NonNull GuildAuditLogEntryCreateEvent event) {
         ActionType action = event.getEntry().getType();
 
         switch (action) {
