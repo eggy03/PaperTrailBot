@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,12 +21,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class UnknownEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class UnknownActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public UnknownEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public UnknownActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 
@@ -50,7 +50,7 @@ public final class UnknownEventHandler extends GuildAuditLogEntryCreateEventHand
     }
 
     @Override
-    public void onUnknownEvent(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onUnknownActionType(@NonNull GuildAuditLogEntryCreateEvent event) {
 
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;

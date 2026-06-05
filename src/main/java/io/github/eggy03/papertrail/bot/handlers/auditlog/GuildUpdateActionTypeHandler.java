@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.DurationUtils;
 import io.github.eggy03.papertrail.bot.utils.auditlog.GuildUtils;
@@ -23,12 +23,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class GuildUpdateEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class GuildUpdateActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public GuildUpdateEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public GuildUpdateActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 

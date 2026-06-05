@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
+import io.github.eggy03.papertrail.bot.utils.auditlog.MessageUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,7 +12,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -21,12 +21,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class VoiceChannelStatusEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class MessagePinActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public VoiceChannelStatusEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public MessagePinActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 
@@ -50,31 +50,27 @@ public final class VoiceChannelStatusEventHandler extends GuildAuditLogEntryCrea
     }
 
     @Override
-    public void onVoiceChannelStatusUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onMessagePin(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
 
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Message Pin Event");
+
         User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        GuildChannel targetChannel = ale.getJDA().getGuildChannelById(ale.getTargetId());
-        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
+        User target = ale.getJDA().getUserById(ale.getTargetId());
+        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Voice Channel Status Update");
-
-        eb.setDescription("A voice channel status has been updated");
-        eb.setColor(Color.YELLOW);
+        eb.setDescription(MarkdownUtil.quoteBlock("Message Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
+        eb.setColor(Color.PINK);
 
         eb.addField(
-                MarkdownUtil.underline("Details"),
-                MarkdownUtil.quoteBlock(
-                        "Status Updated By: " + mentionableExecutor + "\n" +
-                                "Target Channel: " + mentionableTargetChannel + "\n" +
-                                "Updated Status: " + ale.getOptionByName("status")
-                ),
+                MarkdownUtil.underline("Pinned Message Jump URL"),
+                MessageUtils.resolveMessageJumpUrlFromId(ale.getOptionByName("channel_id"), ale.getOptionByName("message_id"), event),
                 false
         );
 
@@ -85,28 +81,27 @@ public final class VoiceChannelStatusEventHandler extends GuildAuditLogEntryCrea
     }
 
     @Override
-    public void onVoiceChannelStatusDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onMessageUnpin(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
 
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Message Unpin Event");
+
         User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        GuildChannel targetChannel = ale.getJDA().getGuildChannelById(ale.getTargetId());
-        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
+        User target = ale.getJDA().getUserById(ale.getTargetId());
+        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Voice Channel Status Delete");
+        eb.setDescription(MarkdownUtil.quoteBlock("Message Un-Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
+        eb.setColor(Color.MAGENTA);
 
-        eb.setDescription("A voice channel status has been reset");
-        eb.setColor(Color.ORANGE);
-
-        // status deletes dont contain the deleted status content
         eb.addField(
-                MarkdownUtil.underline("Details"),
-                MarkdownUtil.quoteBlock("Status Reset By: " + mentionableExecutor + "\n" + "Target Channel: " + mentionableTargetChannel),
+                MarkdownUtil.underline("Un-Pinned Message Jump URL"),
+                MessageUtils.resolveMessageJumpUrlFromId(ale.getOptionByName("channel_id"), ale.getOptionByName("message_id"), event),
                 false
         );
 

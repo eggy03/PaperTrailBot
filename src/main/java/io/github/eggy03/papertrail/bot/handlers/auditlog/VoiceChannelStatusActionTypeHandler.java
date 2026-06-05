@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -20,12 +21,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class HomeSettingsEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class VoiceChannelStatusActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public HomeSettingsEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public VoiceChannelStatusActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 
@@ -49,23 +50,31 @@ public final class HomeSettingsEventHandler extends GuildAuditLogEntryCreateEven
     }
 
     @Override
-    public void onHomeSettingsCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onVoiceChannelStatusUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
 
-        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
+        GuildChannel targetChannel = ale.getJDA().getGuildChannelById(ale.getTargetId());
+        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
+
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Server Guide Create Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Server Guide Created By: " + mentionableExecutor));
-        eb.setColor(Color.GREEN);
+        eb.setTitle("Audit Log Entry | Voice Channel Status Update");
+
+        eb.setDescription("A voice channel status has been updated");
+        eb.setColor(Color.YELLOW);
 
         eb.addField(
-                MarkdownUtil.underline("More Info"),
-                MarkdownUtil.codeblock("To view the created guide, either visit the Server Guide section or the Onboarding section of your guild."),
+                MarkdownUtil.underline("Details"),
+                MarkdownUtil.quoteBlock(
+                        "Status Updated By: " + mentionableExecutor + "\n" +
+                                "Target Channel: " + mentionableTargetChannel + "\n" +
+                                "Updated Status: " + ale.getOptionByName("status")
+                ),
                 false
         );
 
@@ -76,31 +85,30 @@ public final class HomeSettingsEventHandler extends GuildAuditLogEntryCreateEven
     }
 
     @Override
-    public void onHomeSettingsUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onVoiceChannelStatusDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
 
-        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        User executor = ale.getJDA().getUserById(ale.getUserId());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Server Guide Update Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Server Guide Updated By: " + mentionableExecutor));
-        eb.setColor(Color.YELLOW);
+        GuildChannel targetChannel = ale.getJDA().getGuildChannelById(ale.getTargetId());
+        String mentionableTargetChannel = (targetChannel != null ? targetChannel.getAsMention() : ale.getTargetId());
 
-        ale.getChanges().keySet().forEach(key -> {
-            switch (key) {
-                case "welcome_message" ->
-                        eb.addField(MarkdownUtil.underline("Welcome Message"), "╰┈➤Welcome Message has been updated", false);
-                case "resource_channels" ->
-                        eb.addField(MarkdownUtil.underline("Resources"), "╰┈➤Resources have been updated", false);
-                case "new_member_actions" ->
-                        eb.addField(MarkdownUtil.underline("New Member Join To-Do"), "╰┈➤Interactive Actions have been updated", false);
-                default -> eb.addField(MarkdownUtil.underline(key), "╰┈➤" + key + " has/have been updated", false);
-            }
-        });
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Voice Channel Status Delete");
+
+        eb.setDescription("A voice channel status has been reset");
+        eb.setColor(Color.ORANGE);
+
+        // status deletes dont contain the deleted status content
+        eb.addField(
+                MarkdownUtil.underline("Details"),
+                MarkdownUtil.quoteBlock("Status Reset By: " + mentionableExecutor + "\n" + "Target Channel: " + mentionableTargetChannel),
+                false
+        );
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
-import io.github.eggy03.papertrail.bot.utils.auditlog.StageUtils;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
+import io.github.eggy03.papertrail.bot.utils.auditlog.SoundboardUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,12 +21,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class SoundboardActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public StageInstanceEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public SoundboardActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 
@@ -50,7 +50,7 @@ public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEve
     }
 
     @Override
-    public void onStageInstanceCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onSoundboardSoundCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
@@ -60,23 +60,32 @@ public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEve
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Stage Instance Create Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Created By: " + mentionableExecutor));
+        eb.setTitle("Audit Log Entry | Soundboard Sound Create Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Sound Item Added By: " + mentionableExecutor));
         eb.setColor(Color.GREEN);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
+
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "topic" -> eb.addField(MarkdownUtil.underline("Stage Topic"), "╰┈➤" + newValue, false);
 
-                case "privacy_level" ->
-                        eb.addField(MarkdownUtil.underline("Stage Privacy"), "╰┈➤" + StageUtils.resolveStagePrivacyLevel(newValue), false);
+                case "user_id", "sound_id", "id", "guild_id", "available" -> {
+                    // skip
+                }
+                case "volume" ->
+                        eb.addField(MarkdownUtil.underline("Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(newValue), false);
+
+                case "emoji_name" -> eb.addField(MarkdownUtil.underline("Related Emoji"), "╰┈➤" + newValue, false);
+
+                case "emoji_id" -> eb.addField(MarkdownUtil.underline("Related Emoji ID"), "╰┈➤" + newValue, false);
+
+                case "name" -> eb.addField(MarkdownUtil.underline("Sound Item Name"), "╰┈➤" + newValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
-                    log.info("Unimplemented Change Key on Stage Instance Create: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                    log.info("Unimplemented Change Key on Soundboard Sound Create: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
         });
@@ -88,7 +97,7 @@ public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEve
     }
 
     @Override
-    public void onStageInstanceUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onSoundboardSoundUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
@@ -98,8 +107,8 @@ public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEve
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Stage Instance Update Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Updated By: " + mentionableExecutor));
+        eb.setTitle("Audit Log Entry | Soundboard Sound Update Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Sound Item Updated By: " + mentionableExecutor));
         eb.setColor(Color.YELLOW);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
@@ -107,20 +116,32 @@ public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEve
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "topic" -> {
-                    eb.addField(MarkdownUtil.underline("Old Stage Topic"), "╰┈➤" + oldValue, true);
-                    eb.addField(MarkdownUtil.underline("New Stage Topic"), "╰┈➤" + newValue, true);
+                case "user_id", "sound_id", "id", "guild_id", "available" -> {
+                    // skip
+                }
+                case "volume" -> {
+                    eb.addField(MarkdownUtil.underline("Old Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(newValue), true);
                     eb.addBlankField(true);
                 }
-                case "privacy_level" -> {
-                    eb.addField(MarkdownUtil.underline("Old Stage Privacy"), "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), true);
-                    eb.addField(MarkdownUtil.underline("New Stage Privacy"), "╰┈➤" + StageUtils.resolveStagePrivacyLevel(newValue), true);
+                case "emoji_name" -> {
+                    eb.addField(MarkdownUtil.underline("Old Related Emoji"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Related Emoji"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
-
+                case "emoji_id" -> {
+                    eb.addField(MarkdownUtil.underline("Old Related Emoji ID"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Related Emoji ID"), "╰┈➤" + newValue, true);
+                    eb.addBlankField(true);
+                }
+                case "name" -> {
+                    eb.addField(MarkdownUtil.underline("Old Sound Item Name"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Sound Item Name"), "╰┈➤" + newValue, true);
+                    eb.addBlankField(true);
+                }
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
-                    log.info("Unimplemented Change Key on Stage Instance Update: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                    log.info("Unimplemented Change Key on Soundboard Sound Update: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
         });
@@ -132,7 +153,7 @@ public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEve
     }
 
     @Override
-    public void onStageInstanceDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onSoundboardSoundDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
@@ -142,26 +163,36 @@ public final class StageInstanceEventHandler extends GuildAuditLogEntryCreateEve
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Stage Instance Delete Event");
-        eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Deleted By: " + mentionableExecutor));
+        eb.setTitle("Audit Log Entry | Soundboard Sound Delete Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Sound Item Deleted By: " + mentionableExecutor));
         eb.setColor(Color.RED);
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
+
             Object oldValue = changeValue.getOldValue();
             Object newValue = changeValue.getNewValue();
 
             switch (changeKey) {
-                case "topic" -> eb.addField(MarkdownUtil.underline("Stage Topic"), "╰┈➤" + oldValue, false);
 
-                case "privacy_level" ->
-                        eb.addField(MarkdownUtil.underline("Stage Privacy"), "╰┈➤" + StageUtils.resolveStagePrivacyLevel(oldValue), false);
+                case "user_id", "sound_id", "id", "guild_id", "available" -> {
+                    // skip
+                }
+                case "volume" ->
+                        eb.addField(MarkdownUtil.underline("Volume"), "╰┈➤" + SoundboardUtils.resolveVolumePercentage(oldValue), false);
+
+                case "emoji_name" -> eb.addField(MarkdownUtil.underline("Related Emoji"), "╰┈➤" + oldValue, false);
+
+                case "emoji_id" -> eb.addField(MarkdownUtil.underline("Related Emoji ID"), "╰┈➤" + oldValue, false);
+
+                case "name" -> eb.addField(MarkdownUtil.underline("Sound Item Name"), "╰┈➤" + oldValue, false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
-                    log.info("Unimplemented Change Key on Stage Instance Delete: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                    log.info("Unimplemented Change Key on Soundboard Sound Delete: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
                 }
             }
         });
+
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
