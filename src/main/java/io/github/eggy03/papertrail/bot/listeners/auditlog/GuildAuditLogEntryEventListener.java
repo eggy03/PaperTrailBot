@@ -40,10 +40,10 @@ public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
     @Override
     public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        Thread.ofVirtual()
+        guildAuditLogEntryCreateEventHandlers.forEach(handler -> Thread.ofVirtual()
                 .name("guild-audit-log-entry-create-event-listener-vthread-", 0)
-                .start(() -> guildAuditLogEntryCreateEventHandlers.forEach(handler -> handler.handleEvent(event))
-                );
+                .start(() -> handler.handleEvent(event))
+        );
     }
 
 }
