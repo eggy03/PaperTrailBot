@@ -20,12 +20,18 @@ public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
 
     @Override
     public void onGuildUpdateSecurityIncidentDetections(@NonNull GuildUpdateSecurityIncidentDetectionsEvent event) {
-        handler.handleGuildUpdateSecurityIncidentDetections(event);
+        Thread.ofVirtual()
+                .name("guild-update-security-incident-detection-event-listener-vthread-", 0)
+                .start(() -> handler.handleGuildUpdateSecurityIncidentDetections(event));
+
     }
 
     @Override
     public void onGuildUpdateSecurityIncidentActions(@NonNull GuildUpdateSecurityIncidentActionsEvent event) {
-        handler.handleGuildUpdateSecurityIncidentActions(event);
+        Thread.ofVirtual()
+                .name("guild-update-security-incident-action-event-listener-vthread-", 0)
+                .start(() -> handler.handleGuildUpdateSecurityIncidentActions(event));
+
     }
 
 }

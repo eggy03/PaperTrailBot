@@ -23,12 +23,16 @@ public final class GuildMemberEventListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@NonNull GuildMemberJoinEvent event) {
-        handler.handleGuildMemberJoin(event);
+        Thread.ofVirtual()
+                .name("guild-member-join-event-listener-vthread-", 0)
+                .start(() -> handler.handleGuildMemberJoin(event));
     }
 
     @Override
     public void onGuildMemberRemove(@NonNull GuildMemberRemoveEvent event) {
-        handler.handleGuildMemberRemove(event);
+        Thread.ofVirtual()
+                .name("guild-member-remove-event-listener-vthread-", 0)
+                .start(() -> handler.handleGuildMemberRemove(event));
     }
 
 }

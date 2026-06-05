@@ -34,7 +34,10 @@ public final class DebugCommandListener extends ListenerAdapter {
             return;
         }
 
-        handler.sendDebugInfo(event, guild, member);
+        Thread.ofVirtual()
+                .name("debug-command-listener-vthread-", 0)
+                .start(() -> handler.sendDebugInfo(event, guild, member));
+
 
     }
 }

@@ -26,14 +26,19 @@ public final class AuditLogSetupCommandListener extends ListenerAdapter {
             return;
         }
 
-        switch (event.getSubcommandName()) {
-            case "set" -> handler.setAuditLogging(event);
-            case "view" -> handler.viewAuditLoggingChannel(event);
-            case "remove" -> handler.unsetAuditLogging(event);
-            default -> {
-                // do nothing
-            }
-        }
+        Thread.ofVirtual()
+                .name("audit-log-setup-command-listener-vthread-", 0)
+                .start(() -> {
+                    switch (event.getSubcommandName()) {
+                        case "set" -> handler.setAuditLogging(event);
+                        case "view" -> handler.viewAuditLoggingChannel(event);
+                        case "remove" -> handler.unsetAuditLogging(event);
+                        default -> {
+                            // do nothing
+                        }
+                    }
+                });
+
     }
 
 }

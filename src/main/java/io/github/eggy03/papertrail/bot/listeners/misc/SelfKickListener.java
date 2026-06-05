@@ -30,7 +30,13 @@ public final class SelfKickListener extends ListenerAdapter {
     @Override
     public void onGuildLeave(@NonNull GuildLeaveEvent event) {
         Guild leftGuild = event.getGuild();
-        auditLogRegistrationClient.deleteRegisteredGuild(leftGuild.getId());
-        messageLogRegistrationClient.deleteRegisteredGuild(leftGuild.getId());
+
+        Thread.ofVirtual()
+                .name("self-guild-leave-event-listener-vthread-", 0)
+                .start(() -> {
+                    auditLogRegistrationClient.deleteRegisteredGuild(leftGuild.getId());
+                    messageLogRegistrationClient.deleteRegisteredGuild(leftGuild.getId());
+                });
+
     }
 }

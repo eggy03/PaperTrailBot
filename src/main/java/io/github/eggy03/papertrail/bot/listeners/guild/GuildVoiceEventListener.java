@@ -21,6 +21,9 @@ public final class GuildVoiceEventListener extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceUpdate(@NonNull GuildVoiceUpdateEvent event) {
-        handler.handleVoiceUpdateEvent(event);
+        Thread.ofVirtual()
+                .name("guild-voice-update-event-listener-vthread-", 0)
+                .start(() -> handler.handleVoiceUpdateEvent(event));
+
     }
 }
