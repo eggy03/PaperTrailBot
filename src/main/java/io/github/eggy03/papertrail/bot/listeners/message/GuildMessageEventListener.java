@@ -31,8 +31,9 @@ public final class GuildMessageEventListener extends ListenerAdapter {
             return;
         }
 
-        handler.handleMessageReceivedEvent(event);
-
+        Thread.ofVirtual()
+                .name("message-received-event-listener-vthread-", 0)
+                .start(() -> handler.handleMessageReceivedEvent(event));
     }
 
     @Override
@@ -42,12 +43,15 @@ public final class GuildMessageEventListener extends ListenerAdapter {
             return;
         }
 
-        handler.handleMessageUpdateEvent(event);
-
+        Thread.ofVirtual()
+                .name("message-update-event-listener-vthread-", 0)
+                .start(() -> handler.handleMessageUpdateEvent(event));
     }
 
     @Override
     public void onMessageDelete(@NonNull MessageDeleteEvent event) {
-        handler.handleMessageDeleteEvent(event);
+        Thread.ofVirtual()
+                .name("message-delete-event-listener-vthread-", 0)
+                .start(() -> handler.handleMessageDeleteEvent(event));
     }
 }

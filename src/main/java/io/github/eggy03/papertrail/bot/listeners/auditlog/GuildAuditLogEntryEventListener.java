@@ -11,35 +11,44 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 /**
  * Listener responsible for receiving {@link GuildAuditLogEntryCreateEvent}
  * events from JDA and delegating them to all registered
- * {@link GuildAuditLogEntryCreateEventHandler} CDI beans.
+ * {@link GuildAuditLogEntryCreateEventActionTypeHandler} CDI beans.
  *
  * <p>
  * Event handlers are resolved dynamically using
- * {@code Instance<GuildAuditLogEntryCreateEventHandler>}, allowing multiple
+ * {@code Instance<GuildAuditLogEntryCreateEventActionTypeHandler>}, allowing multiple
  * independent handler implementations to process the same audit log event.
  * </p>
  *
  * <p>
  * Each discovered handler instance will receive the event through
- * {@link GuildAuditLogEntryCreateEventHandler#handleEvent(GuildAuditLogEntryCreateEvent)}.
- * This enables a multicast-style event processing pipeline where multiple
- * handler beans may react to the same audit log action independently.
+ * {@link GuildAuditLogEntryCreateEventActionTypeHandler#handleActionType(GuildAuditLogEntryCreateEvent)}, where
+ * it will process the event.
  * </p>
  */
 @Slf4j
 @ApplicationScoped
 public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
 
-    private final @NonNull Instance<GuildAuditLogEntryCreateEventHandler> guildAuditLogEntryCreateEventHandlers;
+    private final @NonNull Instance<GuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances;
 
     @Inject
-    public GuildAuditLogEntryEventListener(@NonNull Instance<GuildAuditLogEntryCreateEventHandler> guildAuditLogEntryCreateEventHandlers) {
-        this.guildAuditLogEntryCreateEventHandlers = guildAuditLogEntryCreateEventHandlers;
+    public GuildAuditLogEntryEventListener(@NonNull Instance<GuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances) {
+        this.handlerInstances = handlerInstances;
     }
 
     @Override
     public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        guildAuditLogEntryCreateEventHandlers.forEach(handler -> handler.handleEvent(event));
+
+        /*
+        Each handler instance gets its own virtual thread to handle the event's ActionType
+        or else, they will be processed sequentially in a single virtual thread.
+        This will be particularly slower if two or more inherited classes have overrides
+        for handling the same ActionType.
+         */
+        handlerInstances.forEach(handler -> Thread.ofVirtual()
+                .name("guild-audit-log-entry-create-event-listener-vthread-", 0)
+                .start(() -> handler.handleActionType(event))
+        );
     }
 
 }

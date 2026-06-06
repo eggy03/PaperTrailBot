@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
 import io.github.eggy03.papertrail.bot.utils.auditlog.GuildUtils;
 import io.github.eggy03.papertrail.bot.utils.auditlog.WebhookUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
@@ -22,12 +22,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class WebhookEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class WebhookActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public WebhookEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public WebhookActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 

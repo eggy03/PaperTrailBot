@@ -24,6 +24,8 @@ public final class GuildPollEventListener extends ListenerAdapter {
         if (!event.isFromGuild())
             return;
 
-        handler.handlePollCreationEvent(event);
+        Thread.ofVirtual()
+                .name("guild-poll-creation-event-listener-vthread-", 0)
+                .start(() -> handler.handlePollCreationEvent(event));
     }
 }

@@ -6,10 +6,10 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 /**
  * <p>
- * Abstract base class for routing {@link GuildAuditLogEntryCreateEvent}
- * instances to their appropriate handler methods.
+ * Abstract base class for routing {@link GuildAuditLogEntryCreateEvent} {@link ActionType}
+ * to their appropriate handler methods.
  * Routing is performed by
- * {@link #handleEvent(GuildAuditLogEntryCreateEvent)}.
+ * {@link #handleActionType(GuildAuditLogEntryCreateEvent)}.
  * </p>
  *
  * <p>
@@ -22,19 +22,19 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
  * </p>
  *
  * <p>
- * Subclasses may override only the event handlers they require. The
- * {@code handleEvent(...)} method is responsible for determining which
- * handler method should be invoked for a given audit log action.
+ * Subclasses may override only the action type handlers they require. The
+ * {@code handleActionType(...)} method is responsible for determining which
+ * handler method should be invoked for a given action type.
  * </p>
  *
  * <p>
  * If multiple subclasses are registered as CDI beans and are iterated
- * through {@code Instance<GuildAuditLogEntryCreateEventHandler>}, each handler
+ * through {@code Instance<GuildAuditLogEntryCreateEventActionTypeHandler>}, each handler
  * instance will independently receive and process the event.
  * </p>
  *
  * <p>
- * For example, if two subclasses override {@code onBan()}, both
+ * For example, if two subclasses override {@code onBan()} for processing BAN action types, both
  * implementations will be executed when a BAN audit log event is
  * processed, assuming both handler instances are iterated and invoked.
  * </p>
@@ -52,18 +52,17 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
  *
  * <pre>{@code
  * @ApplicationScoped
- * public class MyHandler extends GuildAuditLogEntryCreateEventHandler {
+ * public class MyHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
  *
  *     @Override
- *     public void onBan(@NonNull GuildAuditLogEntryCreateEvent event,
- *                       @NonNull String channelIdToSendTo) {
+ *     public void onBan(@NonNull GuildAuditLogEntryCreateEvent event) {
  *         // your logic here
  *     }
  * }
  * }</pre>
  *
  * <p>
- * Calling {@code handleEvent(...)} on {@code MyHandler} will
+ * Calling {@code handleActionType(...)} on {@code MyHandler} will
  * automatically route BAN audit log events to the overridden
  * {@code onBan()} method.
  * </p>
@@ -75,10 +74,10 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
  *
  * <pre>{@code
  * @Inject
- * Instance<GuildAuditLogEntryCreateEventHandler> eventHandlerInstance;
+ * Instance<GuildAuditLogEntryCreateEventActionTypeHandler> eventHandlerInstance;
  *
  * eventHandlerInstance.forEach(handler ->
- *     handler.handleEvent(event)
+ *     handler.handleActionType(event)
  * );
  * }</pre>
  *
@@ -87,7 +86,9 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
  * {@link GuildAuditLogEntryEventListener}.
  * </p>
  */
-public abstract class GuildAuditLogEntryCreateEventHandler {
+public abstract class GuildAuditLogEntryCreateEventActionTypeHandler {
+
+    // handler methods for ActionType
 
     public void onAutoModerationFlagToChannel(@NonNull GuildAuditLogEntryCreateEvent event) {
     }
@@ -297,25 +298,21 @@ public abstract class GuildAuditLogEntryCreateEventHandler {
     }
 
     /**
-     * For {@link ActionType} not fully known by JDA yet
+     * For {@link ActionType}s not defined in JDA yet
      */
-    public void onUnknownEvent(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onUnknownActionType(@NonNull GuildAuditLogEntryCreateEvent event) {
     }
 
     /**
-     * For {@link ActionType}s which are defined but not implemented by PaperTrail
+     * For {@link ActionType}s which are defined in JDA but not implemented by PaperTrail
      */
-    public void onUnimplementedEvent(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onUnimplementedActionType(@NonNull GuildAuditLogEntryCreateEvent event) {
     }
 
     /**
      * <p>
      * Routes a {@link GuildAuditLogEntryCreateEvent} to its corresponding
-     * event handler method based on the {@link ActionType} of the audit log entry.
-     * </p>
-     *
-     * <p>
-     * Each event handler method can be overridden multiple times
+     * handler method based on the {@link ActionType} of the audit log entry.
      * </p>
      *
      * <p>
@@ -324,7 +321,7 @@ public abstract class GuildAuditLogEntryCreateEventHandler {
      *
      * @param event             the audit log event received from JDA
      */
-    public final void handleEvent(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public final void handleActionType(@NonNull GuildAuditLogEntryCreateEvent event) {
         ActionType action = event.getEntry().getType();
 
         switch (action) {
@@ -420,9 +417,9 @@ public abstract class GuildAuditLogEntryCreateEventHandler {
             case HOME_SETTINGS_CREATE -> onHomeSettingsCreate(event);
             case HOME_SETTINGS_UPDATE -> onHomeSettingsUpdate(event);
 
-            case UNKNOWN -> onUnknownEvent(event);
+            case UNKNOWN -> onUnknownActionType(event);
 
-            default -> onUnimplementedEvent(event);
+            default -> onUnimplementedActionType(event);
         }
     }
 }

@@ -21,16 +21,22 @@ public final class GuildBoostEventListener extends ListenerAdapter {
 
     @Override
     public void onGuildUpdateBoostTier(@NonNull GuildUpdateBoostTierEvent event) {
-        handler.handleUpdateBoostTier(event);
+        Thread.ofVirtual()
+                .name("guild-update-boost-tier-event-listener-vthread-", 0)
+                .start(() -> handler.handleUpdateBoostTier(event));
     }
 
     @Override
     public void onGuildUpdateBoostCount(@NonNull GuildUpdateBoostCountEvent event) {
-        handler.handleUpdateBoostCount(event);
+        Thread.ofVirtual()
+                .name("guild-update-boost-count-event-listener-vthread-", 0)
+                .start(() -> handler.handleUpdateBoostCount(event));
     }
 
     @Override
     public void onGuildMemberUpdateBoostTime(@NonNull GuildMemberUpdateBoostTimeEvent event) {
-        handler.handleMemberUpdateBoostTime(event);
+        Thread.ofVirtual()
+                .name("guild-member-update-boost-time-event-listener-vthread-", 0)
+                .start(() -> handler.handleMemberUpdateBoostTime(event));
     }
 }

@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,12 +20,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class ModActionEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class ModActionActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public ModActionEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public ModActionActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 

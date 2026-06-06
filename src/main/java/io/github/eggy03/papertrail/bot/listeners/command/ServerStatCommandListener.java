@@ -33,6 +33,9 @@ public final class ServerStatCommandListener extends ListenerAdapter {
             return;
         }
 
-        handler.sendServerStats(event, guild);
+        Thread.ofVirtual()
+                .name("server-stat-command-listener-vthread-", 0)
+                .start(() -> handler.sendServerStats(event, guild));
+
     }
 }

@@ -21,7 +21,9 @@ public final class BotSetupInstructionCommandListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
         if (event.getName().equals("setup")) {
-            handler.sendInstructions(event);
+            Thread.ofVirtual()
+                    .name("bot-setup-instruction-command-listener-vthread-", 0)
+                    .start(() -> handler.sendInstructions(event));
         }
     }
 }

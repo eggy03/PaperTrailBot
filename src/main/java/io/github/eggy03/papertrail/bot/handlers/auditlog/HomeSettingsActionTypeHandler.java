@@ -1,7 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.auditlog;
 
-import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventHandler;
-import io.github.eggy03.papertrail.bot.utils.auditlog.MessageUtils;
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryCreateEventActionTypeHandler;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,12 +20,12 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class MessagePinEventHandler extends GuildAuditLogEntryCreateEventHandler {
+public final class HomeSettingsActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 
     @Inject
-    public MessagePinEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public HomeSettingsActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
         this.client = client;
     }
 
@@ -50,27 +49,23 @@ public final class MessagePinEventHandler extends GuildAuditLogEntryCreateEventH
     }
 
     @Override
-    public void onMessagePin(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onHomeSettingsCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Message Pin Event");
-
-        User executor = ale.getJDA().getUserById(ale.getUserId());
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        User target = ale.getJDA().getUserById(ale.getTargetId());
-        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
-
-        eb.setDescription(MarkdownUtil.quoteBlock("Message Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
-        eb.setColor(Color.PINK);
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Server Guide Create Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Server Guide Created By: " + mentionableExecutor));
+        eb.setColor(Color.GREEN);
 
         eb.addField(
-                MarkdownUtil.underline("Pinned Message Jump URL"),
-                MessageUtils.resolveMessageJumpUrlFromId(ale.getOptionByName("channel_id"), ale.getOptionByName("message_id"), event),
+                MarkdownUtil.underline("More Info"),
+                MarkdownUtil.codeblock("To view the created guide, either visit the Server Guide section or the Onboarding section of your guild."),
                 false
         );
 
@@ -81,29 +76,31 @@ public final class MessagePinEventHandler extends GuildAuditLogEntryCreateEventH
     }
 
     @Override
-    public void onMessageUnpin(@NonNull GuildAuditLogEntryCreateEvent event) {
+    public void onHomeSettingsUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
 
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("Audit Log Entry | Message Unpin Event");
-
-        User executor = ale.getJDA().getUserById(ale.getUserId());
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
-        User target = ale.getJDA().getUserById(ale.getTargetId());
-        String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Server Guide Update Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Server Guide Updated By: " + mentionableExecutor));
+        eb.setColor(Color.YELLOW);
 
-        eb.setDescription(MarkdownUtil.quoteBlock("Message Un-Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
-        eb.setColor(Color.MAGENTA);
-
-        eb.addField(
-                MarkdownUtil.underline("Un-Pinned Message Jump URL"),
-                MessageUtils.resolveMessageJumpUrlFromId(ale.getOptionByName("channel_id"), ale.getOptionByName("message_id"), event),
-                false
-        );
+        ale.getChanges().keySet().forEach(key -> {
+            switch (key) {
+                case "welcome_message" ->
+                        eb.addField(MarkdownUtil.underline("Welcome Message"), "╰┈➤Welcome Message has been updated", false);
+                case "resource_channels" ->
+                        eb.addField(MarkdownUtil.underline("Resources"), "╰┈➤Resources have been updated", false);
+                case "new_member_actions" ->
+                        eb.addField(MarkdownUtil.underline("New Member Join To-Do"), "╰┈➤Interactive Actions have been updated", false);
+                default -> eb.addField(MarkdownUtil.underline(key), "╰┈➤" + key + " has/have been updated", false);
+            }
+        });
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());

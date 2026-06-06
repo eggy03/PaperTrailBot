@@ -26,13 +26,18 @@ public final class MessageLogSetupCommandListener extends ListenerAdapter {
             return;
         }
 
-        switch (event.getSubcommandName()) {
-            case "set" -> handler.setMessageLogging(event);
-            case "view" -> handler.viewMessageLoggingChannel(event);
-            case "remove" -> handler.unsetMessageLogging(event);
-            default -> {
-                // skip
-            }
-        }
+        Thread.ofVirtual().name("message-log-setup-command-listener-vthread-", 0)
+                .start(() -> {
+                    switch (event.getSubcommandName()) {
+                        case "set" -> handler.setMessageLogging(event);
+                        case "view" -> handler.viewMessageLoggingChannel(event);
+                        case "remove" -> handler.unsetMessageLogging(event);
+                        default -> {
+                            // skip
+                        }
+                    }
+                });
+
+
     }
 }
