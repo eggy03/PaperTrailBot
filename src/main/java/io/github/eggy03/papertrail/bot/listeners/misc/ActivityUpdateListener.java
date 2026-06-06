@@ -4,6 +4,7 @@ import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
 @ApplicationScoped
+@Slf4j
 public final class ActivityUpdateListener extends ListenerAdapter {
 
     @NonNull
@@ -29,11 +31,13 @@ public final class ActivityUpdateListener extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(@NonNull GuildJoinEvent event) { // update on guild join
+        log.info("Bot Added To [Guild={}, ID={}]", event.getGuild().getName(), event.getGuild().getId());
         updateActivity();
     }
 
     @Override
     public void onGuildLeave(@NonNull GuildLeaveEvent event) { // update on guild leave
+        log.info("Bot Removed From [Guild={}, ID={}]", event.getGuild().getName(), event.getGuild().getId());
         updateActivity();
     }
 

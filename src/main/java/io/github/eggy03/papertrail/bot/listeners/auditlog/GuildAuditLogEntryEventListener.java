@@ -39,6 +39,10 @@ public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
     @Override
     public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
+        log.info("Received [Event=GuildAuditLogEntryCreate, ActionType={}] for [Guild={}, ID={}]",
+                event.getEntry().getType(), event.getGuild().getName(), event.getGuild().getId()
+        );
+
         /*
         Each handler instance gets its own virtual thread to handle the event's ActionType
         or else, they will be processed sequentially in a single virtual thread.
