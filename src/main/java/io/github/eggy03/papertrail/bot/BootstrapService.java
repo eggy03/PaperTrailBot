@@ -85,7 +85,10 @@ public final class BootstrapService {
         builder.setStatus(OnlineStatus.ONLINE);
 
         // add listeners
-        listeners.forEach(builder::addEventListeners);
+        listeners.forEach(listener -> {
+            log.info("Registering Listener: {}", listener.getClass().getSimpleName());
+            builder.addEventListeners(listener);
+        });
 
         // add shards
         builder.setShardsTotal(totalShards);
