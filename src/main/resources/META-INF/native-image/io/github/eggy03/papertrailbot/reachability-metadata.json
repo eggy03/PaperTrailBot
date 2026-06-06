@@ -74,6 +74,9 @@
     },
     {
       "type": "net.dv8tion.jda.internal.entities.MemberPresenceImpl[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.SoundboardSound[]"
     }
   ]
 }
