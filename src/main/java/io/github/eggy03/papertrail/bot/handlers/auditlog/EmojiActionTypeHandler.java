@@ -30,7 +30,7 @@ public final class EmojiActionTypeHandler extends GuildAuditLogEntryCreateEventA
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -50,7 +50,7 @@ public final class EmojiActionTypeHandler extends GuildAuditLogEntryCreateEventA
 
     @Override
     public void onEmojiCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -85,7 +85,7 @@ public final class EmojiActionTypeHandler extends GuildAuditLogEntryCreateEventA
 
     @Override
     public void onEmojiUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -121,7 +121,7 @@ public final class EmojiActionTypeHandler extends GuildAuditLogEntryCreateEventA
 
     @Override
     public void onEmojiDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();

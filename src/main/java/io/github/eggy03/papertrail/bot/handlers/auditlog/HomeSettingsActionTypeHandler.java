@@ -30,7 +30,7 @@ public final class HomeSettingsActionTypeHandler extends GuildAuditLogEntryCreat
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -50,7 +50,7 @@ public final class HomeSettingsActionTypeHandler extends GuildAuditLogEntryCreat
 
     @Override
     public void onHomeSettingsCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -77,7 +77,7 @@ public final class HomeSettingsActionTypeHandler extends GuildAuditLogEntryCreat
 
     @Override
     public void onHomeSettingsUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();

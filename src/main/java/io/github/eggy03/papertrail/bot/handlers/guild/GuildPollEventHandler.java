@@ -29,7 +29,7 @@ public final class GuildPollEventHandler {
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -53,7 +53,7 @@ public final class GuildPollEventHandler {
         if (messagePoll == null)
             return;
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         EmbedBuilder eb = new EmbedBuilder();

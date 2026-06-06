@@ -35,7 +35,7 @@ public final class ThreadActionTypeHandler extends GuildAuditLogEntryCreateEvent
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -55,7 +55,7 @@ public final class ThreadActionTypeHandler extends GuildAuditLogEntryCreateEvent
 
     @Override
     public void onThreadCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -115,7 +115,7 @@ public final class ThreadActionTypeHandler extends GuildAuditLogEntryCreateEvent
 
     @Override
     public void onThreadUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -190,7 +190,7 @@ public final class ThreadActionTypeHandler extends GuildAuditLogEntryCreateEvent
 
     @Override
     public void onThreadDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();

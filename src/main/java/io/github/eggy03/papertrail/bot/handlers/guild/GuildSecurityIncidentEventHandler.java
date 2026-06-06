@@ -33,7 +33,7 @@ public final class GuildSecurityIncidentEventHandler {
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -57,7 +57,7 @@ public final class GuildSecurityIncidentEventHandler {
     }
 
     public void handleGuildUpdateSecurityIncidentDetections(@NonNull GuildUpdateSecurityIncidentDetectionsEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         SecurityIncidentDetections oldSID = event.getOldSecurityIncidentDetections();
@@ -119,7 +119,7 @@ public final class GuildSecurityIncidentEventHandler {
     }
 
     public void handleGuildUpdateSecurityIncidentActions(@NonNull GuildUpdateSecurityIncidentActionsEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         SecurityIncidentActions oldSIA = event.getOldSecurityIncidentActions();

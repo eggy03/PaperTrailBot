@@ -30,7 +30,7 @@ public final class GuildVoiceEventHandler {
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -50,7 +50,7 @@ public final class GuildVoiceEventHandler {
 
     public void handleVoiceUpdateEvent(@NonNull GuildVoiceUpdateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         Member member = event.getMember();

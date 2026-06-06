@@ -33,7 +33,7 @@ public final class AutoModActionTypeHandler extends GuildAuditLogEntryCreateEven
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -54,7 +54,7 @@ public final class AutoModActionTypeHandler extends GuildAuditLogEntryCreateEven
     @Override
     public void onAutoModerationFlagToChannel(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -84,7 +84,7 @@ public final class AutoModActionTypeHandler extends GuildAuditLogEntryCreateEven
     @Override
     public void onAutoModerationMemberTimeout(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -113,7 +113,7 @@ public final class AutoModActionTypeHandler extends GuildAuditLogEntryCreateEven
     @Override
     public void onAutoModerationRuleBlockMessage(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -143,7 +143,7 @@ public final class AutoModActionTypeHandler extends GuildAuditLogEntryCreateEven
     @Override
     public void onAutoModerationRuleCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -190,7 +190,7 @@ public final class AutoModActionTypeHandler extends GuildAuditLogEntryCreateEven
     @Override
     public void onAutoModerationRuleUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -219,7 +219,7 @@ public final class AutoModActionTypeHandler extends GuildAuditLogEntryCreateEven
     @Override
     public void onAutoModerationRuleDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();

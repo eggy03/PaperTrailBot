@@ -30,7 +30,7 @@ public final class ModActionActionTypeHandler extends GuildAuditLogEntryCreateEv
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -50,7 +50,7 @@ public final class ModActionActionTypeHandler extends GuildAuditLogEntryCreateEv
 
     @Override
     public void onKick(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -82,7 +82,7 @@ public final class ModActionActionTypeHandler extends GuildAuditLogEntryCreateEv
 
     @Override
     public void onBan(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -113,7 +113,7 @@ public final class ModActionActionTypeHandler extends GuildAuditLogEntryCreateEv
 
     @Override
     public void onUnban(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -141,7 +141,7 @@ public final class ModActionActionTypeHandler extends GuildAuditLogEntryCreateEv
 
     @Override
     public void onBotAdd(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -170,7 +170,7 @@ public final class ModActionActionTypeHandler extends GuildAuditLogEntryCreateEv
         // I have never seen a prune event trigger yet
         log.warn("Prune Event Detected\n{}", event.getEntry().getChanges());
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();

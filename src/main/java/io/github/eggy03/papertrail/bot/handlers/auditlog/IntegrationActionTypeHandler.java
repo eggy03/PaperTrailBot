@@ -30,7 +30,7 @@ public final class IntegrationActionTypeHandler extends GuildAuditLogEntryCreate
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -50,7 +50,7 @@ public final class IntegrationActionTypeHandler extends GuildAuditLogEntryCreate
 
     @Override
     public void onIntegrationCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -90,7 +90,7 @@ public final class IntegrationActionTypeHandler extends GuildAuditLogEntryCreate
 
         log.warn("Integration Update Event Detected. Implement this sometime later\n{}", event.getEntry().getChanges());
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -112,7 +112,7 @@ public final class IntegrationActionTypeHandler extends GuildAuditLogEntryCreate
 
     @Override
     public void onIntegrationDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -148,7 +148,7 @@ public final class IntegrationActionTypeHandler extends GuildAuditLogEntryCreate
 
     @Override
     public void onApplicationCommandPrivilegesUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();

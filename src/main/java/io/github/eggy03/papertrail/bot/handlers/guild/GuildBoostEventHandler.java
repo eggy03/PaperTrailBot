@@ -33,7 +33,7 @@ public final class GuildBoostEventHandler {
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -52,7 +52,7 @@ public final class GuildBoostEventHandler {
     }
 
     public void handleUpdateBoostTier(@NonNull GuildUpdateBoostTierEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         Guild guild = event.getGuild();
@@ -86,7 +86,7 @@ public final class GuildBoostEventHandler {
     }
 
     public void handleUpdateBoostCount(@NonNull GuildUpdateBoostCountEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         Guild guild = event.getGuild();
@@ -107,7 +107,7 @@ public final class GuildBoostEventHandler {
     }
 
     public void handleMemberUpdateBoostTime(@NonNull GuildMemberUpdateBoostTimeEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         Member member = event.getMember();

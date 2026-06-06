@@ -33,7 +33,7 @@ public final class MemberUpdateActionTypeHandler extends GuildAuditLogEntryCreat
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -53,7 +53,7 @@ public final class MemberUpdateActionTypeHandler extends GuildAuditLogEntryCreat
 
     @Override
     public void onMemberUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -116,7 +116,7 @@ public final class MemberUpdateActionTypeHandler extends GuildAuditLogEntryCreat
 
     @Override
     public void onMemberRoleUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -164,7 +164,7 @@ public final class MemberUpdateActionTypeHandler extends GuildAuditLogEntryCreat
     @Override
     public void onMemberVoiceKick(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -187,7 +187,7 @@ public final class MemberUpdateActionTypeHandler extends GuildAuditLogEntryCreat
     // therefore GuildVoiceEventListener has been created to know about channels the target has been moved or kicked from
     @Override
     public void onMemberVoiceMove(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();

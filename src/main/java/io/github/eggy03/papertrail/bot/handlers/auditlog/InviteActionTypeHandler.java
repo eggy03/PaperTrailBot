@@ -33,7 +33,7 @@ public final class InviteActionTypeHandler extends GuildAuditLogEntryCreateEvent
     }
 
     @NonNull
-    private String getRegisteredGuildChannel(@NonNull String guildId) {
+    private String getRegisteredChannelId(@NonNull String guildId) {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
@@ -53,7 +53,7 @@ public final class InviteActionTypeHandler extends GuildAuditLogEntryCreateEvent
 
     @Override
     public void onInviteCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -115,7 +115,7 @@ public final class InviteActionTypeHandler extends GuildAuditLogEntryCreateEvent
     public void onInviteUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         log.warn("Invite Update Event Detected. Implement this sometime later\n{}", event.getEntry().getChanges());
 
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
@@ -138,7 +138,7 @@ public final class InviteActionTypeHandler extends GuildAuditLogEntryCreateEvent
 
     @Override
     public void onInviteDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
-        String channelIdToSendTo = getRegisteredGuildChannel(event.getGuild().getId());
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
 
         AuditLogEntry ale = event.getEntry();
