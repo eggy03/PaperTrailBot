@@ -374,8 +374,10 @@ To build without Docker:
 The built application will be found in the `target` folder of the project.
 
 Please note that native builds are experimental and I will try my best to improve support for it in upcoming versions.
-If you run across errors during native building or running phase of the bot, please create an Issue in GitHub along with
-the build or runtime logs.
+
+You may come across errors which require you to initialize classes during build time
+or missing reflection config during runtime.
+If you run across such errors, create an Issue in GitHub along with the build or runtime logs.
 
 > [!IMPORTANT]
 > As of now, I have no plans to provide pre-built Docker images for native build of the bot.
