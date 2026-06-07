@@ -115,7 +115,7 @@ API_URL="http://localhost:8080"
 
 #### Option A : Local Deployment
 
-<ins>Using Pre-Built Images</ins>
+##### Using Pre-Built Docker Images
 
 The [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
 has pre-built docker images for the bot which you can use.
@@ -127,14 +127,16 @@ you're executing the following commands from:
 docker run -d --name papertrail-bot --env-file .env ghcr.io/eggy03/papertrail-bot:latest
 ```
 
-<ins>Building From Source</ins>
-
-Alternatively, you can use the provided Dockerfile to build from source:
+##### Building From Source
 
 ```bash
 git clone https://github.com/eggy03/PaperTrailBot.git
 cd PaperTrailBot
 ```
+
+###### With Docker
+
+You can use the provided Dockerfile to build from source:
 
 ```bash
 docker build -t papertrail-bot .
@@ -146,6 +148,12 @@ docker run -d --name papertrail-bot --env-file .env papertrail-bot
 > While the above sub-options use `--env-file .env` for examples, you can also pass environment variables directly
 > via `docker -e KEY:"VALUE"`
 
+###### Without Docker
+
+```bash
+./mvnw clean package
+java -jar target/quarkus-app/quarkus-run.jar
+```
 #### Option B: Cloud Deployment
 
 Many cloud platforms support Docker-based deployments directly from a repository.
