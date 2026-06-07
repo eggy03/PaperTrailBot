@@ -39,7 +39,7 @@ public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
     @Override
     public void onGuildAuditLogEntryCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
-        log.info("Received [Event=GuildAuditLogEntryCreate, ActionType={}] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildAuditLogEntryCreate, ActionType={}] for [Guild={}, ID={}]",
                 event.getEntry().getType(), event.getGuild().getName(), event.getGuild().getId()
         );
 

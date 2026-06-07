@@ -27,7 +27,7 @@ public final class GuildPollEventListener extends ListenerAdapter {
             return;
         }
 
-        log.info("Received [Event=GuildPollCreate] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildPollCreate] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 

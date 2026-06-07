@@ -31,13 +31,13 @@ public final class ActivityUpdateListener extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(@NonNull GuildJoinEvent event) { // update on guild join
-        log.info("Bot Added To [Guild={}, ID={}]", event.getGuild().getName(), event.getGuild().getId());
+        log.debug("Bot Added To [Guild={}, ID={}]", event.getGuild().getName(), event.getGuild().getId());
         updateActivity();
     }
 
     @Override
     public void onGuildLeave(@NonNull GuildLeaveEvent event) { // update on guild leave
-        log.info("Bot Removed From [Guild={}, ID={}]", event.getGuild().getName(), event.getGuild().getId());
+        log.debug("Bot Removed From [Guild={}, ID={}]", event.getGuild().getName(), event.getGuild().getId());
         updateActivity();
     }
 

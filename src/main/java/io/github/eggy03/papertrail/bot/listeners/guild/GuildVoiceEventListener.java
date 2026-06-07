@@ -24,7 +24,7 @@ public final class GuildVoiceEventListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceUpdate(@NonNull GuildVoiceUpdateEvent event) {
 
-        log.info("Received [Event=GuildVoiceUpdate] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildVoiceUpdate] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
         Thread.ofVirtual()

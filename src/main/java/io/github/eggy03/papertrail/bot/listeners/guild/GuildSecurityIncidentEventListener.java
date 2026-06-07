@@ -22,7 +22,7 @@ public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
 
     @Override
     public void onGuildUpdateSecurityIncidentDetections(@NonNull GuildUpdateSecurityIncidentDetectionsEvent event) {
-        log.info("Received [Event=GuildUpdateSecurityIncidentDetections] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildUpdateSecurityIncidentDetections] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
@@ -34,7 +34,7 @@ public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
 
     @Override
     public void onGuildUpdateSecurityIncidentActions(@NonNull GuildUpdateSecurityIncidentActionsEvent event) {
-        log.info("Received [Event=GuildUpdateSecurityIncidentActions] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildUpdateSecurityIncidentActions] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 

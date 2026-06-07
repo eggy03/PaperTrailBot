@@ -24,7 +24,7 @@ public final class GuildBoostEventListener extends ListenerAdapter {
     @Override
     public void onGuildUpdateBoostTier(@NonNull GuildUpdateBoostTierEvent event) {
 
-        log.info("Received [Event=GuildUpdateBoostTier] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildUpdateBoostTier] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
@@ -36,7 +36,7 @@ public final class GuildBoostEventListener extends ListenerAdapter {
     @Override
     public void onGuildUpdateBoostCount(@NonNull GuildUpdateBoostCountEvent event) {
 
-        log.info("Received [Event=GuildUpdateBoostCount] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildUpdateBoostCount] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
@@ -48,7 +48,7 @@ public final class GuildBoostEventListener extends ListenerAdapter {
     @Override
     public void onGuildMemberUpdateBoostTime(@NonNull GuildMemberUpdateBoostTimeEvent event) {
 
-        log.info("Received [Event=GuildMemberUpdateBoostTime] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildMemberUpdateBoostTime] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 

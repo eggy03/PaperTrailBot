@@ -26,7 +26,7 @@ public final class GuildMemberEventListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(@NonNull GuildMemberJoinEvent event) {
 
-        log.info("Received [Event=GuildMemberJoin] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildMemberJoin] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
@@ -38,7 +38,7 @@ public final class GuildMemberEventListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRemove(@NonNull GuildMemberRemoveEvent event) {
 
-        log.info("Received [Event=GuildMemberRemove] for [Guild={}, ID={}]",
+        log.debug("Received [Event=GuildMemberRemove] for [Guild={}, ID={}]",
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
