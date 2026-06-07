@@ -14,6 +14,7 @@
 * [Sharding (Advanced Configuration)](#sharding-advanced-configuration)
 * [Synchronizing Rate Limits (Advanced Configuration)](#synchronizing-rate-limits-advanced-configuration)
 * [Health Checks and Custom Port Configuration](#health-checks-and-custom-port-configuration)
+* [Native Builds](#native-builds)
 * [License](#license)
 * [AI Usage Declaration and Policy](#ai-usage-declaration-and-policy)
 * [Help](#help)
@@ -154,6 +155,7 @@ docker run -d --name papertrail-bot --env-file .env papertrail-bot
 ./mvnw clean package
 java -jar target/quarkus-app/quarkus-run.jar
 ```
+
 #### Option B: Cloud Deployment
 
 Many cloud platforms support Docker-based deployments directly from a repository.
@@ -344,6 +346,40 @@ run the application on a different port, you can manually set the `PORT` environ
 | Variable | Description                                           | Default Value | Optional |
 |----------|-------------------------------------------------------|---------------|----------|
 | `PORT`   | Port Number on which the instance of the bot will run | 8080          | Yes      |
+
+# Native Builds
+
+> [!CAUTION]
+> Native builds are experimental
+
+Since `v4.1.3` it is possible to create native builds of the bot. Native builds are recommended
+when you are hosting the bot in a very resource constrained environment,
+and you need the bot to have faster startup times and low memory consumption.
+
+Native builds have a larger and resource incentive build time compared to standard JVM builds.
+
+To build using Docker:
+
+```bash
+docker build -f Dockerfile.native -t papertrail-bot .
+docker run -d --name papertrail-bot --env-file .env papertrail-bot
+```
+
+To build without Docker:
+
+```bash
+./mvnw clean package -Dnative
+```
+
+The built application will be found in the `target` folder of the project.
+
+Please note that native builds are experimental and I will try my best to improve support for it in upcoming versions.
+If you run across errors during native building or running phase of the bot, please create an Issue in GitHub along with
+the build or runtime logs.
+
+> [!IMPORTANT]
+> As of now, I have no plans to provide pre-built Docker images for native build of the bot.
+> Pre-built images will run exclusively in JVM mode.
 
 # License
 
