@@ -396,6 +396,8 @@ docker run -d --name papertrail-bot --env-file .env papertrail-bot
 
 To build without Docker:
 
+You will need to have GraalVM or Mandrel (25+) installed in your host machine to make a native build from source
+
 ```bash
 ./mvnw clean package -Dnative
 ```
