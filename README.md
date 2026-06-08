@@ -134,34 +134,54 @@ API_URL="http://localhost:8080"
 
 ### Step 2.3: Deployment Options
 
-#### Option A : Local Deployment
+> [!IMPORTANT]
+> Since v4.1.3, the bot comes in two build forms: `JVM` and `Native`.
+> While this guide covers both the forms, it is recommended to use the JVM form since Native builds are currently
+> unstable.
+>
+> For more info on native builds, see [the native image section](#native-builds)
 
-##### Using Pre-Built Docker Images
+#### Option A : Deploy Using Pre-Built Docker Images
 
-The [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
-has pre-built docker images for the bot which you can use.
+The GitHub Container Registry
+has pre-built docker images for both JVM and Native versions the bot which you can use.
+
+[Container Registry for JVM Edition](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
+
+[Container Registry for Native Edition](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot-native)
+
+You may choose either one.
 
 Make sure you have the `.env` file containing the required secrets in the root of the folder
 you're executing the following commands from:
 
 ```bash
+# JVM
 docker run -d --name papertrail-bot --env-file .env ghcr.io/eggy03/papertrail-bot:latest
 ```
 
-##### Building From Source
+```bash
+# Native
+docker run -d --name papertrail-bot-native --env-file .env ghcr.io/eggy03/papertrail-bot-native:latest
+```
+
+#### Option B : Building From Source With Docker
 
 ```bash
 git clone https://github.com/eggy03/PaperTrailBot.git
 cd PaperTrailBot
 ```
 
-###### With Docker
-
-You can use the provided Dockerfile to build from source:
-
 ```bash
+# JVM
 docker build -t papertrail-bot .
 docker run -d --name papertrail-bot --env-file .env papertrail-bot
+```
+
+```bash
+# Native
+docker build -f Dockerfile.native -t papertrail-bot-native .
+docker run -d --name papertrail-bot-native --env-file .env papertrail-bot-native
 ```
 
 > [!NOTE]
@@ -169,24 +189,33 @@ docker run -d --name papertrail-bot --env-file .env papertrail-bot
 > While the above sub-options use `--env-file .env` for examples, you can also pass environment variables directly
 > via `docker -e KEY:"VALUE"`
 
-###### Without Docker
+##### Option C : Building From Source Without Docker
 
 ```bash
+git clone https://github.com/eggy03/PaperTrailBot.git
+cd PaperTrailBot
+```
+
+```bash
+# JVM
 ./mvnw clean package
 java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-#### Option B: Cloud Deployment
+```bash
+# Native
+./mvnw clean package -Dnative
+```
 
-Many cloud platforms support Docker-based deployments directly from a repository.
+The built application will be found in the `target` folder of the project.
 
-Typically, the process involves:
+#### Option D : Cloud Deployment
 
-- Linking the repository
-- Selecting the `Dockerfile`
-- Supplying the required environment variables
+If your cloud supports building from Dockerfile, point the source towards `Dockerfile` (for JVM Build)
+or `Dockerfile.native` (for Native Build), found in the project's root.
 
-Alternatively, you can deploy using the pre-built container images found in the GitHub Container Registry, if suported.
+If your cloud supports using pre-built docker images, you can find the image links in
+the container registry.
 
 ## Step 3: Testing your deployment
 
@@ -221,7 +250,7 @@ If `TOTAL_SHARDS=5`, the valid shard IDs are:
 Take a look at the following configuration examples to have a clearer picture of what values to put
 for your use-case
 
-**Example 1: Single Process / Small Bot (<2500 Guilds)**
+#### Example 1: Single Process / Small Bot (<2500 Guilds)
 
 If your bot is small or self-hosted for a limited number of servers (<2500), one shard is sufficient.
 This is the default pre-applied configuration when you do not provide any manual shard info.
@@ -232,7 +261,7 @@ MIN_SHARD_ID=0
 MAX_SHARD_ID=0
 ```
 
-**Example 2: Single Process / Medium Bot (2500 - 5000 Guilds)**
+#### Example 2: Single Process / Medium Bot (2500 - 5000 Guilds)
 
 If your bot exceeds the 2500 guild limit for a single shard, you can increase the shard count while still running one
 process:
@@ -245,7 +274,7 @@ MAX_SHARD_ID=1
 
 Remember that each shard can only handle up to 2500 guilds so plan the total number shards accordingly
 
-**Example 3: 2 Bot Processes / 25000 Guilds**
+#### Example 3: 2 Bot Processes / 25000 Guilds
 
 If you run your bot across multiple processes, you need to split the shards between them.
 
@@ -343,7 +372,7 @@ bot cluster.
 > but require manual configuration for
 > [Self Host (Manual Configuration)](#self-host-manual-configuration) mode.
 
-## Health Checks
+### Health Checks
 
 Since v4, it is possible to get health information by probing any of the following health endpoints:
 
@@ -354,7 +383,7 @@ Since v4, it is possible to get health information by probing any of the followi
 | `/q/health/ready`   | Readiness probe. Verifies that all shards are fully connected to Discord and ready to receive events. |
 | `/q/health/started` | Startup probe. Indicates whether the application has completed its startup sequence.                  |
 
-### Liveness Check
+#### Liveness Check
 
 The liveness check reports **UP** when all shards belonging to this instance are in one of the following states:
 
@@ -363,11 +392,11 @@ The liveness check reports **UP** when all shards belonging to this instance are
 * `RECONNECT_QUEUED`
 * `WAITING_TO_RECONNECT`
 
-### Readiness Check
+#### Readiness Check
 
 The readiness check reports **UP** only when every shard belonging to this instance is fully `CONNECTED` to Discord.
 
-## Custom Port Configuration
+### Custom Port Configuration
 
 By, default PaperTrail runs on port 8080. If port 8080 is occupied by a different service, or you wish to
 run the application on a different port, you can manually set the `PORT` environment variable.
@@ -387,34 +416,11 @@ and you need the bot to have faster startup times and low memory consumption.
 
 Native builds have a larger and resource incentive build time compared to standard JVM builds.
 
-To build using Docker:
-
-```bash
-docker build -f Dockerfile.native -t papertrail-bot .
-docker run -d --name papertrail-bot --env-file .env papertrail-bot
-```
-
-To build without Docker:
-
-You will need to have GraalVM or Mandrel (25+) installed in your host machine to make a native build from source
-
-```bash
-./mvnw clean package -Dnative
-```
-
-The built application will be found in the `target` folder of the project.
-
-If your cloud supports building from Dockerfile, point the source towards `Dockerfile.native` in project's root.
-
 Please note that native builds are experimental and I will try my best to improve support for it in upcoming versions.
 
 You may come across errors which require you to initialize classes during build time
 or missing reflection config during runtime.
 If you run across such errors, create an Issue in GitHub along with the build or runtime logs.
-
-> [!IMPORTANT]
-> As of now, I have no plans to provide pre-built Docker images for native build of the bot.
-> Pre-built images will run exclusively in JVM mode.
 
 # License
 
