@@ -34,6 +34,30 @@
       "allDeclaredMethods": true
     },
     {
+      "type": {
+        "proxy": [
+          "io.github.eggy03.papertrail.sdk.service.AuditLogRegistrationService"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "io.github.eggy03.papertrail.sdk.service.MessageLogRegistrationService"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "io.github.eggy03.papertrail.sdk.service.MessageLogContentService"
+        ]
+      }
+    },
+    {
+      "type": "net.dv8tion.jda.api.JDA[]"
+    },
+    {
       "type": "net.dv8tion.jda.api.entities.User[]"
     },
     {
@@ -77,6 +101,21 @@
     },
     {
       "type": "net.dv8tion.jda.api.entities.SoundboardSound[]"
+    },
+    {
+      "type": "net.dv8tion.jda.api.entities.channel.attribute.IGuildChannelContainer"
+    },
+    {
+      "type": "net.dv8tion.jda.api.hooks.EventListener",
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
+    },
+    {
+      "type": "net.dv8tion.jda.api.hooks.ListenerAdapter",
+      "allDeclaredMethods": true,
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true
     }
   ]
 }

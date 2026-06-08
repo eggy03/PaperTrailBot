@@ -9,11 +9,13 @@
 
 * [Overview](#overview)
 * [Repositories](#repositories)
+* [Using The Bot](#using-the-bot)
 * [Self-Host (Auto Configuration)](#self-host-auto-configuration)
 * [Self-Host (Manual Configuration)](#self-host-manual-configuration)
 * [Sharding (Advanced Configuration)](#sharding-advanced-configuration)
 * [Synchronizing Rate Limits (Advanced Configuration)](#synchronizing-rate-limits-advanced-configuration)
 * [Health Checks and Custom Port Configuration](#health-checks-and-custom-port-configuration)
+* [Native Builds](#native-builds)
 * [License](#license)
 * [AI Usage Declaration and Policy](#ai-usage-declaration-and-policy)
 * [Help](#help)
@@ -26,10 +28,6 @@ and deliver them to a configured channel without the need to manually navigate t
 With support for detecting more than 72 events, it can log changes made to: AutoMod Settings, Servers, Onboarding,
 Invites, Members, Roles, Channels, Threads, Stages, Events, Polls, Messages, Boosts, Emojis, Stickers, Soundboard,
 Integrations, Webhooks, Moderation Action, Unusual DMs, Raids and Unknown events.
-
-> Get it from here: https://discord.com/discovery/applications/1381658412550590475
-
-Run the `/setup` slash command to see instructions on how to configure the bot for your server.
 
 # Repositories
 
@@ -45,17 +43,40 @@ Run the `/setup` slash command to see instructions on how to configure the bot f
 > but large new features will likely not be added. However, changes will be made to keep the bot and its services
 > up to date with the latest Discord API changes.
 
+# Using The Bot
+
+### By Inviting It
+
+A pre-configured and deployed instance is the easiest way to use this bot. Just invite it to your server and that's all.
+
+Get it from here: https://discord.com/discovery/applications/1381658412550590475
+
+Run the `/setup` slash command to see instructions on how to configure the bot for your server.
+
+You do not need to continue reading further if you do not want to self-host the bot.
+
+### By Self Hosting It
+
+The following sections will tell you most of the things you need to know about self-hosting the bot by yourself:
+
 # Self-Host (Auto Configuration)
 
-Select this option if you want a hassle-free deployment locally or in a VPS
-and do not intend to scale your bot across more than 2000 servers.
+> [!NOTE]
+> Uses docker compose and automatically sets up all the services for you.
+>
+> Only autoconfigures 1 instance of each service.
 
 Follow the deployment guide in:
 [PaperTrail-Deployment Repository](https://github.com/eggy03/PaperTrail-Deployment?tab=readme-ov-file)
 
 # Self-Host (Manual Configuration)
 
-This option gives you full control over the services you want to deploy
+> [!NOTE]
+> Gives you full control of the services you want to deploy.
+>
+> You set up each service manually but have full control over the process.
+>
+> Guides are provided for building and deploying each service locally or in cloud, with or without docker.
 
 ## Step 1: Setting up the API Service
 
@@ -115,7 +136,7 @@ API_URL="http://localhost:8080"
 
 #### Option A : Local Deployment
 
-<ins>Using Pre-Built Images</ins>
+##### Using Pre-Built Docker Images
 
 The [GitHub Container Registry](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
 has pre-built docker images for the bot which you can use.
@@ -127,14 +148,16 @@ you're executing the following commands from:
 docker run -d --name papertrail-bot --env-file .env ghcr.io/eggy03/papertrail-bot:latest
 ```
 
-<ins>Building From Source</ins>
-
-Alternatively, you can use the provided Dockerfile to build from source:
+##### Building From Source
 
 ```bash
 git clone https://github.com/eggy03/PaperTrailBot.git
 cd PaperTrailBot
 ```
+
+###### With Docker
+
+You can use the provided Dockerfile to build from source:
 
 ```bash
 docker build -t papertrail-bot .
@@ -145,6 +168,13 @@ docker run -d --name papertrail-bot --env-file .env papertrail-bot
 >
 > While the above sub-options use `--env-file .env` for examples, you can also pass environment variables directly
 > via `docker -e KEY:"VALUE"`
+
+###### Without Docker
+
+```bash
+./mvnw clean package
+java -jar target/quarkus-app/quarkus-run.jar
+```
 
 #### Option B: Cloud Deployment
 
@@ -166,7 +196,7 @@ Upon successful deployment of all the required services, including the bot, you 
 # Sharding (Advanced Configuration)
 
 > [!NOTE]
-> This section is required only when your bot has reached over 1000 servers.
+> Sharding is required only when your bot reaches 2500 servers.
 
 Sharding splits your bot connection into multiple independent connections to the Discord gateway.
 Each independent connection is called a shard.
@@ -240,11 +270,14 @@ Each process manages 5 shards, together covering all 10 shards.
 
 > [!IMPORTANT]
 > Shard ID ranges must never overlap between running bot processes/instances.
+>
+> `TOTAL_SHARDS` count must be equal for all instances and must reflect the total shards used across all instances
+> combined.
 
 # Synchronizing Rate Limits (Advanced Configuration)
 
 > [!NOTE]
-> This section is required only if you have multiple bot processes running concurrently, like in Example 3 of Sharding.
+> This section is required only if you have multiple instances of the bot running, like in Example 3 of Sharding.
 
 When you run multiple instances/process, the JDA in each process thinks that it has the sole responsibility
 of handling Discord's API rate limits because the processes aren't aware of each other's existence.
@@ -304,6 +337,12 @@ bot cluster.
 
 # Health Checks and Custom Port Configuration
 
+> [!NOTE]
+> Health Checks and Port are automatically configured in case of
+> [Self Host (Auto Configuration)](#self-host-auto-configuration) mode,
+> but require manual configuration for
+> [Self Host (Manual Configuration)](#self-host-manual-configuration) mode.
+
 ## Health Checks
 
 Since v4, it is possible to get health information by probing any of the following health endpoints:
@@ -336,6 +375,46 @@ run the application on a different port, you can manually set the `PORT` environ
 | Variable | Description                                           | Default Value | Optional |
 |----------|-------------------------------------------------------|---------------|----------|
 | `PORT`   | Port Number on which the instance of the bot will run | 8080          | Yes      |
+
+# Native Builds
+
+> [!CAUTION]
+> Native builds are experimental
+
+Since `v4.1.3` it is possible to create native builds of the bot. Native builds are recommended
+when you are hosting the bot in a very resource constrained environment,
+and you need the bot to have faster startup times and low memory consumption.
+
+Native builds have a larger and resource incentive build time compared to standard JVM builds.
+
+To build using Docker:
+
+```bash
+docker build -f Dockerfile.native -t papertrail-bot .
+docker run -d --name papertrail-bot --env-file .env papertrail-bot
+```
+
+To build without Docker:
+
+You will need to have GraalVM or Mandrel (25+) installed in your host machine to make a native build from source
+
+```bash
+./mvnw clean package -Dnative
+```
+
+The built application will be found in the `target` folder of the project.
+
+If your cloud supports building from Dockerfile, point the source towards `Dockerfile.native` in project's root.
+
+Please note that native builds are experimental and I will try my best to improve support for it in upcoming versions.
+
+You may come across errors which require you to initialize classes during build time
+or missing reflection config during runtime.
+If you run across such errors, create an Issue in GitHub along with the build or runtime logs.
+
+> [!IMPORTANT]
+> As of now, I have no plans to provide pre-built Docker images for native build of the bot.
+> Pre-built images will run exclusively in JVM mode.
 
 # License
 
