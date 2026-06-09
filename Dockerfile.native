@@ -21,9 +21,9 @@ RUN ./mvnw -B -e clean package -DskipTests -Dnative
 # ---------- Stage 2: Minimal Runtime ----------
 FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7
 
-RUN microdnf install -y freetype fontconfig &&  \
-    microdnf clean all && \
-    useradd -r -m papertrailbot \
+RUN microdnf install -y freetype fontconfig \
+&&  microdnf clean all \
+&& useradd -r -m papertrailbot
 
 WORKDIR /app
 
