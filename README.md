@@ -81,9 +81,7 @@ Follow the deployment guide in:
 
 Follow this [guide](https://github.com/eggy03/PaperTrail-API-Quarkus?tab=readme-ov-file)
 
-## Step 2: Setting up the Bot Service
-
-### Step 2.1: Create an application in the Developer Portal
+## Step 2: Setting up the Bot In Discord
 
 Log on to the [Discord Developer Portal](https://discord.com/developers/applications) and create an application.
 
@@ -117,7 +115,9 @@ for it to work properly:
 
 Don't forget to copy the `bot token` as it will be required in the next step
 
-### Step 2.2: Get Required Secrets
+## Step 3: Deploying the Bot
+
+### Step 3.1: Get Required Secrets
 
 | Variable  | Description                                                        | Default Value    | Optional |
 |-----------|--------------------------------------------------------------------|------------------|----------|
@@ -131,7 +131,7 @@ TOKEN="my-token"
 API_URL="http://localhost:8080"
 ```
 
-### Step 2.3: Deployment Options
+### Step 3.2: Deployment Options
 
 > [!IMPORTANT]
 > Since v4.1.3, the bot comes in two build forms: `JVM` and `Native`.
@@ -188,7 +188,7 @@ docker run -d --name papertrail-bot-native --env-file .env papertrail-bot-native
 > While the above sub-options use `--env-file .env` for examples, you can also pass environment variables directly
 > via `docker -e KEY:"VALUE"`
 
-##### Option C : Building From Source Without Docker
+#### Option C : Building From Source Without Docker
 
 ```bash
 git clone https://github.com/eggy03/PaperTrailBot.git
@@ -216,7 +216,7 @@ or `Dockerfile.native` (for Native Build), found in the project's root.
 If your cloud supports using pre-built docker images, you can find the image links in
 the container registry.
 
-## Step 3: Testing your deployment
+## Step 4: Testing your deployment
 
 Upon successful deployment of all the required services, including the bot, you can run the slash command
 `/setup` in a server where the bot has been invited. The command will tell you how to configure your bot.
