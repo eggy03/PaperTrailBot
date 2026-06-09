@@ -60,6 +60,12 @@
             <artifactId>quarkus-jackson</artifactId>
         </dependency>
 
+        <!-- AWT Color-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-awt</artifactId>
+        </dependency>
+
         <!-- Health -->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -181,4 +187,3 @@
         </profile>
     </profiles>
 </project>
-
