@@ -398,11 +398,13 @@ The readiness check reports **UP** only when every shard belonging to this insta
 ### Custom Port Configuration
 
 By, default PaperTrail runs on port 8080. If port 8080 is occupied by a different service, or you wish to
-run the application on a different port, you can manually set the `PORT` environment variable.
+run the application on a different port, you can manually set the `PORT` environment variable. Same goes for
+`MANAGEMENT_PORT` which will expose the health check endpoints.
 
-| Variable | Description                                           | Default Value | Optional |
-|----------|-------------------------------------------------------|---------------|----------|
-| `PORT`   | Port Number on which the instance of the bot will run | 8080          | Yes      |
+| Variable          | Description                                           | Default Value | Optional |
+|-------------------|-------------------------------------------------------|---------------|----------|
+| `PORT`            | Port Number on which the instance of the bot will run | 8080          | Yes      |
+| `MANAGEMENT_PORT` | Port for Health Check Interface                       | 9000          | Yes      |
 
 # Native Builds
 
