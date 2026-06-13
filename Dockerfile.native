@@ -28,7 +28,7 @@ RUN microdnf install -y freetype fontconfig \
 WORKDIR /app
 
 # Copy the compiled binary
-COPY --from=build /native-build/target/*-runner /app/bot
+COPY --from=build /native-build/target /app/bot
 
 USER papertrailbot
-ENTRYPOINT ["./bot"]
+ENTRYPOINT ["./bot/papertrailbot-runner"]
