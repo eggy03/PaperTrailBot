@@ -1,7 +1,6 @@
 package io.github.eggy03.papertrail.bot;
 
 import io.quarkus.runtime.Startup;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -31,8 +30,7 @@ public final class BootstrapService {
     private final @NonNull Integer totalShards;
     private final @NonNull String twilightHttpProxyUrl;
     private final @NonNull Instance<ListenerAdapter> listeners;
-
-    private ShardManager shardManager;
+    private final @NonNull ShardManager shardManager;
 
     @Inject
     public BootstrapService(
@@ -49,10 +47,11 @@ public final class BootstrapService {
         this.totalShards = totalShards;
         this.twilightHttpProxyUrl = twilightHttpProxyUrl;
         this.listeners = listeners;
+        this.shardManager = constructShardManager();
     }
 
-    @PostConstruct
-    void login() {
+    @NonNull
+    ShardManager constructShardManager() {
 
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(discordToken);
 
@@ -103,30 +102,21 @@ public final class BootstrapService {
         }
 
         // build shard manager and login
-        shardManager = builder.build();
-
-    }
-
-    @PreDestroy
-    void shutdown() {
-        if (shardManager == null)
-            return;
-
-        for (int i = minShardId; i <= maxShardId; i++) {
-            log.info("Shutting Down Shard: {}", i);
-            shardManager.shutdown(i);
-        }
-
+        return builder.build();
     }
 
     @Produces
     @ApplicationScoped
-    ShardManager shardManager() {
-
-        if (shardManager == null)
-            throw new IllegalStateException("ShardManager requested before it was available");
-
+    @NonNull
+    ShardManager getShardManager() {
         return shardManager;
     }
 
+    @PreDestroy
+    void shutdown() {
+        for (int i = minShardId; i <= maxShardId; i++) {
+            log.info("Shutting Down Shard: {}", i);
+            shardManager.shutdown(i);
+        }
+    }
 }
