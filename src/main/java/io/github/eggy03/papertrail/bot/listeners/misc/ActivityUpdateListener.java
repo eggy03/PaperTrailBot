@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
-import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
+import io.github.eggy03.papertrail.bot.bean.ApplicationInfo;
 import io.quarkus.runtime.ImageMode;
 import io.quarkus.runtime.LaunchMode;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,16 +19,18 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 public final class ActivityUpdateListener extends ListenerAdapter {
 
     private final @NonNull ShardManager manager;
+    private final @NonNull ApplicationInfo applicationInfo;
 
     @Inject
-    public ActivityUpdateListener(@NonNull ShardManager manager) {
+    public ActivityUpdateListener(@NonNull ShardManager manager, @NonNull ApplicationInfo applicationInfo) {
         this.manager = manager;
+        this.applicationInfo = applicationInfo;
     }
 
     @Override
     public void onReady(@NonNull ReadyEvent event) { // update on cold start
         manager.setActivity(Activity.customStatus(
-                "/setup | " + ProjectInfo.VERSION + " | " + getImageMode() + " | " + getLaunchMode())
+                "/setup | " + applicationInfo.projectVersion() + " | " + getImageMode() + " | " + getLaunchMode())
         );
     }
 

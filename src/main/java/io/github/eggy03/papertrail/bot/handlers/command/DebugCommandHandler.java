@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.command;
 
-import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
+import io.github.eggy03.papertrail.bot.bean.ApplicationInfo;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
@@ -26,6 +26,7 @@ public final class DebugCommandHandler {
 
     private final @NonNull AuditLogRegistrationClient auditLogRegistrationClient;
     private final @NonNull MessageLogRegistrationClient messageLogRegistrationClient;
+    private final @NonNull ApplicationInfo applicationInfo;
 
     // necessary permissions for the bot to function
     @NonNull
@@ -40,9 +41,10 @@ public final class DebugCommandHandler {
     );
 
     @Inject
-    public DebugCommandHandler(@NonNull AuditLogRegistrationClient auditLogRegistrationClient, @NonNull MessageLogRegistrationClient messageLogRegistrationClient) {
+    public DebugCommandHandler(@NonNull AuditLogRegistrationClient auditLogRegistrationClient, @NonNull MessageLogRegistrationClient messageLogRegistrationClient, @NonNull ApplicationInfo applicationInfo) {
         this.auditLogRegistrationClient = auditLogRegistrationClient;
         this.messageLogRegistrationClient = messageLogRegistrationClient;
+        this.applicationInfo = applicationInfo;
     }
 
     public void sendDebugInfo(@NonNull SlashCommandInteractionEvent event, @NonNull Guild guild, @NonNull Member member) {
@@ -64,7 +66,7 @@ public final class DebugCommandHandler {
         eb.addField(MarkdownUtil.underline("Bot Info"), MarkdownUtil.quoteBlock(getBotInfo(event)), true);
         eb.addField(MarkdownUtil.underline("Configuration Info"), MarkdownUtil.quoteBlock(getConfigurationInfo(guild)), true);
 
-        eb.setFooter(ProjectInfo.APPNAME + " " + ProjectInfo.VERSION);
+        eb.setFooter(applicationInfo.projectName() + " " + applicationInfo.projectVersion());
         eb.setTimestamp(Instant.now());
 
         event.getHook().editOriginalEmbeds(eb.build()).queue();

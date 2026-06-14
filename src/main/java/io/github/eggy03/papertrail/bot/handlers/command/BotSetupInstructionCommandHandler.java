@@ -1,7 +1,8 @@
 package io.github.eggy03.papertrail.bot.handlers.command;
 
-import io.github.eggy03.papertrail.bot.constant.ProjectInfo;
+import io.github.eggy03.papertrail.bot.bean.ApplicationInfo;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -13,10 +14,17 @@ import java.time.Instant;
 @ApplicationScoped
 public final class BotSetupInstructionCommandHandler {
 
+    private final @NonNull ApplicationInfo applicationInfo;
+
+    @Inject
+    public BotSetupInstructionCommandHandler(@NonNull ApplicationInfo applicationInfo) {
+        this.applicationInfo = applicationInfo;
+    }
+
     public void sendInstructions(@NonNull SlashCommandInteractionEvent event) {
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("🛠️ Setup Guide for " + ProjectInfo.APPNAME);
+        eb.setTitle("🛠️ Setup Guide for " + applicationInfo.projectName());
         eb.setDescription("Follow the instructions below to set up the bot in your server.");
         eb.setColor(Color.decode("#38e8bc"));
 
@@ -60,8 +68,8 @@ public final class BotSetupInstructionCommandHandler {
                 "Use `/stats` to **view useful server information**, including member count, channel count, and more.",
                 false);
 
-        eb.addField("📬 Need help?", "Create an issue on [GitHub](" + ProjectInfo.PROJECT_ISSUE_LINK + ")", false);
-        eb.setFooter(ProjectInfo.APPNAME + " " + ProjectInfo.VERSION);
+        eb.addField("📬 Need help?", "Create an issue on [GitHub](" + applicationInfo.projectIssueLink() + ")", false);
+        eb.setFooter(applicationInfo.projectName() + " " + applicationInfo.projectVersion());
         eb.setTimestamp(Instant.now());
 
         MessageEmbed mb = eb.build();
