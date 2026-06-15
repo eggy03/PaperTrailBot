@@ -319,7 +319,7 @@ public abstract class GuildAuditLogEntryCreateEventActionTypeHandler {
      * This method is marked as {@code final} and cannot be overridden
      * </p>
      *
-     * @param event             the audit log event received from JDA
+     * @param event the audit log event received from JDA
      */
     public final void handleActionType(@NonNull GuildAuditLogEntryCreateEvent event) {
         ActionType action = event.getEntry().getType();

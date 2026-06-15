@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
  * </p>
  */
 @Slf4j
-@ApplicationScoped
+@Singleton
 public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
 
     private final @NonNull Instance<GuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances;

@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.listeners.command;
 
 import io.github.eggy03.papertrail.bot.handlers.command.DebugCommandHandler;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 @Slf4j
-@ApplicationScoped
+@Singleton
 public final class DebugCommandListener extends ListenerAdapter {
 
     private final @NonNull DebugCommandHandler handler;

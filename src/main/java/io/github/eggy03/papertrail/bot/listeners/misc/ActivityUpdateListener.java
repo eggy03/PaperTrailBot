@@ -3,8 +3,8 @@ package io.github.eggy03.papertrail.bot.listeners.misc;
 import io.github.eggy03.papertrail.bot.bean.ApplicationInfo;
 import io.quarkus.runtime.ImageMode;
 import io.quarkus.runtime.LaunchMode;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Activity;
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
-@ApplicationScoped
+@Singleton
 @Slf4j
 public final class ActivityUpdateListener extends ListenerAdapter {
 

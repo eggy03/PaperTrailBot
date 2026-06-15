@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.listeners.guild;
 
 import io.github.eggy03.papertrail.bot.handlers.guild.GuildBoostEventHandler;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostCountEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostTierEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@ApplicationScoped
+@Singleton
 @Slf4j
 public final class GuildBoostEventListener extends ListenerAdapter {
 

@@ -1,15 +1,15 @@
 package io.github.eggy03.papertrail.bot.listeners.message;
 
 import io.github.eggy03.papertrail.bot.handlers.message.GuildMessageEventHandler;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-@ApplicationScoped
+@Singleton
 public final class GuildMessageEventListener extends ListenerAdapter {
 
     private final @NonNull GuildMessageEventHandler handler;
