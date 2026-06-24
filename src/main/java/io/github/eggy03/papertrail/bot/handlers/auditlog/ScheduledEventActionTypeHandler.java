@@ -76,6 +76,10 @@ public final class ScheduledEventActionTypeHandler extends GuildAuditLogEntryCre
                 case "status" ->
                         eb.addField(MarkdownUtil.underline("Event Status"), "╰┈➤" + ScheduledEventUtils.resolveStatusType(newValue), false);
                 case "location" -> eb.addField(MarkdownUtil.underline("Event Location"), "╰┈➤" + newValue, false);
+                case "scheduled_start_time" ->
+                        eb.addField(MarkdownUtil.underline("Event Start Time"), "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(newValue), false);
+                case "scheduled_end_time" ->
+                        eb.addField("Event End Time", "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(newValue), false);
                 case "privacy_level", "image_hash", "channel_id", "recurrence_rule" -> {
                     // skip
                 }
@@ -134,10 +138,22 @@ public final class ScheduledEventActionTypeHandler extends GuildAuditLogEntryCre
                     eb.addBlankField(true);
                 }
                 case "location" -> {
-                    eb.addField(MarkdownUtil.underline("Event Location"), "╰┈➤" + oldValue, true);
-                    eb.addField(MarkdownUtil.underline("Event Location"), "╰┈➤" + newValue, true);
+                    eb.addField(MarkdownUtil.underline("Old Event Location"), "╰┈➤" + oldValue, true);
+                    eb.addField(MarkdownUtil.underline("New Event Location"), "╰┈➤" + newValue, true);
                     eb.addBlankField(true);
                 }
+
+                case "scheduled_start_time" -> {
+                    eb.addField(MarkdownUtil.underline("Old Event Start Time"), "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(oldValue), true);
+                    eb.addField(MarkdownUtil.underline("New Event Start Time"), "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(newValue), true);
+                    eb.addBlankField(true);
+                }
+                case "scheduled_end_time" -> {
+                    eb.addField("Old Event End Time", "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(oldValue), true);
+                    eb.addField("New Event End Time", "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(newValue), true);
+                    eb.addBlankField(true);
+                }
+
                 case "privacy_level" ->
                         eb.addField(MarkdownUtil.underline("Privacy"), "╰┈➤Event privacy has been updated", false);
                 case "image_hash" ->
@@ -188,6 +204,10 @@ public final class ScheduledEventActionTypeHandler extends GuildAuditLogEntryCre
                 case "status" ->
                         eb.addField(MarkdownUtil.underline("Event Status"), "╰┈➤" + ScheduledEventUtils.resolveStatusType(oldValue), false);
                 case "location" -> eb.addField(MarkdownUtil.underline("Event Location"), "╰┈➤" + oldValue, false);
+                case "scheduled_start_time" ->
+                        eb.addField(MarkdownUtil.underline("Event Start Time"), "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(oldValue), false);
+                case "scheduled_end_time" ->
+                        eb.addField("Event End Time", "╰┈➤" + ScheduledEventUtils.convertISOTimeToDiscordTimeStamp(oldValue), false);
                 case "privacy_level", "image_hash", "channel_id", "recurrence_rule" -> {
                     // skip
                 }
