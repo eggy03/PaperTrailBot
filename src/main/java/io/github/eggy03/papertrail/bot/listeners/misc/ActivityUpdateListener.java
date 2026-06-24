@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
-import io.github.eggy03.papertrail.bot.bean.ApplicationInfo;
+import io.github.eggy03.papertrail.bot.about.ApplicationInfo;
 import io.quarkus.runtime.ImageMode;
 import io.quarkus.runtime.LaunchMode;
 import jakarta.inject.Inject;

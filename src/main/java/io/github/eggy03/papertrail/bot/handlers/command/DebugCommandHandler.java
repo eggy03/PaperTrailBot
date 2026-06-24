@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.command;
 
-import io.github.eggy03.papertrail.bot.bean.ApplicationInfo;
+import io.github.eggy03.papertrail.bot.about.ApplicationInfo;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;

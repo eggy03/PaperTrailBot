@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.bean;
+package io.github.eggy03.papertrail.bot.producers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
@@ -12,13 +12,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jetbrains.annotations.Contract;
 
 @ApplicationScoped
-public final class PaperTrailSdkBeanProvider {
+public final class PaperTrailSdkProducer {
 
     private final @NonNull String apiUrl;
     private final @NonNull ObjectMapper objectMapper;
 
     @Inject
-    public PaperTrailSdkBeanProvider(@ConfigProperty(name = "api.url") @NonNull String apiUrl, @NonNull ObjectMapper objectMapper) {
+    public PaperTrailSdkProducer(@ConfigProperty(name = "api.url") @NonNull String apiUrl, @NonNull ObjectMapper objectMapper) {
         this.apiUrl = apiUrl;
         this.objectMapper = objectMapper;
     }
