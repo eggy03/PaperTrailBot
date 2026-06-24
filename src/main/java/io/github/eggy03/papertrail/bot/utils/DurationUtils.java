@@ -3,12 +3,11 @@ package io.github.eggy03.papertrail.bot.utils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 @UtilityClass
 @Slf4j
@@ -17,7 +16,7 @@ public final class DurationUtils {
     @NonNull
     private static final String FALLBACK_STRING = "N/A";
 
-    public static String formatSeconds(@Nullable Object seconds) {
+    public static @NonNull String formatSeconds(@Nullable Object seconds) {
         if (seconds == null) {
             return FALLBACK_STRING;
         }
@@ -51,7 +50,7 @@ public final class DurationUtils {
 
     }
 
-    public static String formatMinutes(@Nullable Object minutes) {
+    public static @NonNull String formatMinutes(@Nullable Object minutes) {
         if (minutes == null) {
             return FALLBACK_STRING;
         }
@@ -74,25 +73,15 @@ public final class DurationUtils {
 
     }
 
-    public static String isoToLocalTimeCounter(@Nullable Object isoTime) {
+    public static @NonNull String isoToLocalTimeCounter(@Nullable Object isoTime) {
 
-        if (isoTime == null) {
+        if (isoTime == null)
             return FALLBACK_STRING;
-        }
 
-        String isoTimeString = String.valueOf(isoTime);
-        if (isoTimeString.trim().isEmpty()) {
-            return FALLBACK_STRING;
-        }
+        if (isoTime instanceof OffsetDateTime offsetDateTime)
+            return TimeFormat.DATE_TIME_LONG.format(offsetDateTime);
 
-        try {
-            OffsetDateTime odt = OffsetDateTime.parse(isoTimeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            long unixTimestamp = odt.toEpochSecond();
-            return "<t:" + unixTimestamp + ":f>";
-        } catch (DateTimeParseException e) {
-            log.debug("failed to parse ISO_OFFSET_DATE_TIME from value={}", isoTimeString, e);
-            return String.valueOf(isoTime);
-        }
+        return TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.parse(isoTime.toString()));
 
     }
 }

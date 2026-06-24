@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
@@ -91,7 +92,7 @@ public final class GuildPollEventHandler {
     @NonNull
     private String getPollExpiryTime(@NonNull MessagePoll messagePoll) {
         return messagePoll.getTimeExpiresAt() != null ?
-                "<t:" + messagePoll.getTimeExpiresAt().toEpochSecond() + ":f>" :
+                TimeFormat.DATE_TIME_LONG.format(messagePoll.getTimeExpiresAt()) :
                 "Never Expires";
     }
 }
