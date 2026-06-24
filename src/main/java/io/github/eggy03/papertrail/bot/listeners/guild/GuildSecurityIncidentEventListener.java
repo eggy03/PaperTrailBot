@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.guild;
 
 import io.github.eggy03.papertrail.bot.handlers.guild.GuildSecurityIncidentEventHandler;
+import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;
@@ -9,15 +10,20 @@ import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentAction
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentDetectionsEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.util.concurrent.ThreadFactory;
+
 @Singleton
 @Slf4j
 public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
 
     private final @NonNull GuildSecurityIncidentEventHandler handler;
+    private final @NonNull
+    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
 
     @Inject
-    public GuildSecurityIncidentEventListener(@NonNull GuildSecurityIncidentEventHandler handler) {
+    public GuildSecurityIncidentEventListener(@NonNull GuildSecurityIncidentEventHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
         this.handler = handler;
+        this.virtualThreadFactory = virtualThreadFactory;
     }
 
     @Override
@@ -26,10 +32,9 @@ public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
-        Thread.ofVirtual()
-                .name("guild-update-security-incident-detection-event-listener-vthread-", 0)
-                .start(() -> handler.handleGuildUpdateSecurityIncidentDetections(event));
-
+        virtualThreadFactory
+                .newThread(() -> handler.handleGuildUpdateSecurityIncidentDetections(event))
+                .start();
     }
 
     @Override
@@ -38,9 +43,9 @@ public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
-        Thread.ofVirtual()
-                .name("guild-update-security-incident-action-event-listener-vthread-", 0)
-                .start(() -> handler.handleGuildUpdateSecurityIncidentActions(event));
+        virtualThreadFactory
+                .newThread(() -> handler.handleGuildUpdateSecurityIncidentActions(event))
+                .start();
 
     }
 

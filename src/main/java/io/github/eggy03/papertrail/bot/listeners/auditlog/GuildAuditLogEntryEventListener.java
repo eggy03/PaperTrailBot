@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog;
 
+import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -7,6 +8,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Listener responsible for receiving {@link GuildAuditLogEntryCreateEvent}
@@ -30,10 +33,15 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
 
     private final @NonNull Instance<GuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances;
+    private final @NonNull
+    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
 
     @Inject
-    public GuildAuditLogEntryEventListener(@NonNull Instance<GuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances) {
+    public GuildAuditLogEntryEventListener(@NonNull Instance<GuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances,
+                                           @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory
+    ) {
         this.handlerInstances = handlerInstances;
+        this.virtualThreadFactory = virtualThreadFactory;
     }
 
     @Override
@@ -49,9 +57,10 @@ public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
         This will be particularly slower if two or more inherited classes have overrides
         for handling the same ActionType.
          */
-        handlerInstances.forEach(handler -> Thread.ofVirtual()
-                .name("guild-audit-log-entry-create-event-listener-vthread-", 0)
-                .start(() -> handler.handleActionType(event))
+        handlerInstances.forEach(handler ->
+                virtualThreadFactory
+                        .newThread(() -> handler.handleActionType(event))
+                        .start()
         );
     }
 

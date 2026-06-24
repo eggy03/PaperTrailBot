@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.guild;
 
 import io.github.eggy03.papertrail.bot.handlers.guild.GuildBoostEventHandler;
+import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;
@@ -10,15 +11,20 @@ import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostCountEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateBoostTierEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.util.concurrent.ThreadFactory;
+
 @Singleton
 @Slf4j
 public final class GuildBoostEventListener extends ListenerAdapter {
 
     private final @NonNull GuildBoostEventHandler handler;
+    private final @NonNull
+    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
 
     @Inject
-    public GuildBoostEventListener(@NonNull GuildBoostEventHandler handler) {
+    public GuildBoostEventListener(@NonNull GuildBoostEventHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
         this.handler = handler;
+        this.virtualThreadFactory = virtualThreadFactory;
     }
 
     @Override
@@ -28,9 +34,9 @@ public final class GuildBoostEventListener extends ListenerAdapter {
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
-        Thread.ofVirtual()
-                .name("guild-update-boost-tier-event-listener-vthread-", 0)
-                .start(() -> handler.handleUpdateBoostTier(event));
+        virtualThreadFactory
+                .newThread(() -> handler.handleUpdateBoostTier(event))
+                .start();
     }
 
     @Override
@@ -40,9 +46,9 @@ public final class GuildBoostEventListener extends ListenerAdapter {
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
-        Thread.ofVirtual()
-                .name("guild-update-boost-count-event-listener-vthread-", 0)
-                .start(() -> handler.handleUpdateBoostCount(event));
+        virtualThreadFactory
+                .newThread(() -> handler.handleUpdateBoostCount(event))
+                .start();
     }
 
     @Override
@@ -52,8 +58,8 @@ public final class GuildBoostEventListener extends ListenerAdapter {
                 event.getGuild().getName(), event.getGuild().getId()
         );
 
-        Thread.ofVirtual()
-                .name("guild-member-update-boost-time-event-listener-vthread-", 0)
-                .start(() -> handler.handleMemberUpdateBoostTime(event));
+        virtualThreadFactory
+                .newThread(() -> handler.handleMemberUpdateBoostTime(event))
+                .start();
     }
 }

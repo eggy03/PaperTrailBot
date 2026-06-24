@@ -1,22 +1,26 @@
 package io.github.eggy03.papertrail.bot.listeners.command;
 
 import io.github.eggy03.papertrail.bot.handlers.command.AuditLogSetupCommandHandler;
+import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.util.concurrent.ThreadFactory;
+
 @Singleton
-@Slf4j
 public final class AuditLogSetupCommandListener extends ListenerAdapter {
 
     private final @NonNull AuditLogSetupCommandHandler handler;
+    private final @NonNull
+    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
 
     @Inject
-    public AuditLogSetupCommandListener(@NonNull AuditLogSetupCommandHandler handler) {
+    public AuditLogSetupCommandListener(@NonNull AuditLogSetupCommandHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
         this.handler = handler;
+        this.virtualThreadFactory = virtualThreadFactory;
     }
 
     @Override
@@ -26,19 +30,16 @@ public final class AuditLogSetupCommandListener extends ListenerAdapter {
             return;
         }
 
-        Thread.ofVirtual()
-                .name("audit-log-setup-command-listener-vthread-", 0)
-                .start(() -> {
-                    switch (event.getSubcommandName()) {
-                        case "set" -> handler.setAuditLogging(event);
-                        case "view" -> handler.viewAuditLoggingChannel(event);
-                        case "remove" -> handler.unsetAuditLogging(event);
-                        default -> {
-                            // do nothing
-                        }
-                    }
-                });
-
+        virtualThreadFactory.newThread(() -> {
+            switch (event.getSubcommandName()) {
+                case "set" -> handler.setAuditLogging(event);
+                case "view" -> handler.viewAuditLoggingChannel(event);
+                case "remove" -> handler.unsetAuditLogging(event);
+                default -> {
+                    // do nothing
+                }
+            }
+        }).start();
     }
 
 }
