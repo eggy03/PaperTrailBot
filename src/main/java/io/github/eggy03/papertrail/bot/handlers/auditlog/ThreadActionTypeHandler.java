@@ -92,7 +92,7 @@ public final class ThreadActionTypeHandler extends GuildAuditLogEntryCreateEvent
                 case "archived" ->
                         eb.addField(MarkdownUtil.underline("Archived"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
 
-                case "flags" -> {
+                case "flags", "applied_tags" -> {
                     // skip
                 }
                 case "invitable" ->
@@ -163,7 +163,10 @@ public final class ThreadActionTypeHandler extends GuildAuditLogEntryCreateEvent
                     eb.addField(MarkdownUtil.underline("New Archive Status"), "╰┈➤" + BooleanUtils.formatToEnabledOrDisabled(newValue), true);
                     eb.addBlankField(true);
                 }
+
                 case "flags" -> eb.addField(MarkdownUtil.underline("Flags"), "╰┈➤Thread flags were updated", false);
+                case "applied_tags" ->
+                        eb.addField(MarkdownUtil.underline("Applied Tags"), "╰┈➤Applied Tags were updated", false);
 
                 case "invitable" -> {
                     eb.addField(MarkdownUtil.underline("Was Invitable"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), true);
@@ -224,7 +227,7 @@ public final class ThreadActionTypeHandler extends GuildAuditLogEntryCreateEvent
                 case "archived" ->
                         eb.addField(MarkdownUtil.underline("Archived"), "╰┈➤" + BooleanUtils.formatToYesOrNo(oldValue), false);
 
-                case "flags" -> {
+                case "flags", "applied_tags" -> {
                     // skip
                 }
 
