@@ -79,6 +79,7 @@ public final class RoleActionTypeHandler extends GuildAuditLogEntryCreateEventAc
                 case "name" -> eb.addField(MarkdownUtil.underline("Role Name"), "╰┈➤" + newValue, false);
 
                 case "colors", "hoist", "color", "permissions", "mentionable" -> {
+                    // do nothing
                     /* discord for some reason shows the following to be default/null even
                      * when you set them during the creation of the role itself
                      * and delegates them to ROLE_UPDATE event
@@ -157,6 +158,9 @@ public final class RoleActionTypeHandler extends GuildAuditLogEntryCreateEventAc
                     eb.addField(MarkdownUtil.underline("New Gradient Color System"), RoleUtils.formatGradientToHex(newValue), true);
                     eb.addBlankField(true);
                 }
+
+                case "icon_hash" ->
+                        eb.addField(MarkdownUtil.underline("Role Icon Update"), "╰┈➤Role Icon has been updated", false);
 
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
