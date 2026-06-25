@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
@@ -110,13 +111,13 @@ public final class GuildMemberEventHandler {
             return "Member not cached";
 
         if (member.hasTimeJoined())
-            return "<t:" + member.getTimeJoined().toEpochSecond() + ":f>";
+            return TimeFormat.DATE_TIME_LONG.format(member.getTimeJoined());
 
         return "Unavailable";
     }
 
     @NonNull
     private String getMemberLeaveDate() {
-        return "<t:" + Instant.now().getEpochSecond() + ":f>";
+        return TimeFormat.DATE_TIME_LONG.format(Instant.now());
     }
 }

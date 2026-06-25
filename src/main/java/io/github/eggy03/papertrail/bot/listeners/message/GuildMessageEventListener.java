@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.message;
 
 import io.github.eggy03.papertrail.bot.handlers.message.GuildMessageEventHandler;
+import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;
@@ -9,14 +10,19 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.util.concurrent.ThreadFactory;
+
 @Singleton
 public final class GuildMessageEventListener extends ListenerAdapter {
 
     private final @NonNull GuildMessageEventHandler handler;
+    private final @NonNull
+    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
 
     @Inject
-    public GuildMessageEventListener(@NonNull GuildMessageEventHandler handler) {
+    public GuildMessageEventListener(@NonNull GuildMessageEventHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
         this.handler = handler;
+        this.virtualThreadFactory = virtualThreadFactory;
     }
 
     @Override
@@ -31,9 +37,9 @@ public final class GuildMessageEventListener extends ListenerAdapter {
             return;
         }
 
-        Thread.ofVirtual()
-                .name("message-received-event-listener-vthread-", 0)
-                .start(() -> handler.handleMessageReceivedEvent(event));
+        virtualThreadFactory
+                .newThread(() -> handler.handleMessageReceivedEvent(event))
+                .start();
     }
 
     @Override
@@ -43,15 +49,15 @@ public final class GuildMessageEventListener extends ListenerAdapter {
             return;
         }
 
-        Thread.ofVirtual()
-                .name("message-update-event-listener-vthread-", 0)
-                .start(() -> handler.handleMessageUpdateEvent(event));
+        virtualThreadFactory
+                .newThread(() -> handler.handleMessageUpdateEvent(event))
+                .start();
     }
 
     @Override
     public void onMessageDelete(@NonNull MessageDeleteEvent event) {
-        Thread.ofVirtual()
-                .name("message-delete-event-listener-vthread-", 0)
-                .start(() -> handler.handleMessageDeleteEvent(event));
+        virtualThreadFactory
+                .newThread(() -> handler.handleMessageDeleteEvent(event))
+                .start();
     }
 }

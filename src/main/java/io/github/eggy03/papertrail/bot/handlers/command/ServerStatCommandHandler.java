@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.command;
 
+import io.github.eggy03.papertrail.bot.utils.DurationUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -66,7 +67,7 @@ public final class ServerStatCommandHandler {
 
     @NonNull
     private String getGuildCreationDate(@NonNull Guild guild) {
-        return "<t:" + guild.getTimeCreated().toEpochSecond() + ":f>";
+        return DurationUtils.isoToLocalTimeCounter(guild.getTimeCreated());
     }
 
     @NonNull

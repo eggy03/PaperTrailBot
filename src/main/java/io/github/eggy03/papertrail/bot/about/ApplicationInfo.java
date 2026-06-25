@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.bean;
+package io.github.eggy03.papertrail.bot.about;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

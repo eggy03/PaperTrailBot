@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.utils.DurationUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,7 +16,6 @@ import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentAction
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentDetectionsEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -51,11 +51,6 @@ public final class GuildSecurityIncidentEventHandler {
         }
     }
 
-    private @NonNull String formatOffsetDateTime(@Nullable OffsetDateTime offsetDateTime) {
-        if (offsetDateTime == null) return "N/A";
-        return "<t:" + offsetDateTime.toEpochSecond() + ":f>";
-    }
-
     public void handleGuildUpdateSecurityIncidentDetections(@NonNull GuildUpdateSecurityIncidentDetectionsEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
         if (channelIdToSendTo.isBlank()) return;
@@ -74,7 +69,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Incident Resolved");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: DM Spam\nStatus: Resolved"));
             eb.setColor(Color.GREEN);
-            eb.addField(MarkdownUtil.underline("DM Spam Started At"), formatOffsetDateTime(oldDMSpamDetectedAt), false);
+            eb.addField(MarkdownUtil.underline("DM Spam Started At"), DurationUtils.isoToLocalTimeCounter(oldDMSpamDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
@@ -86,7 +81,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Incident Detected");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: DM Spam\nStatus: Detected"));
             eb.setColor(Color.ORANGE);
-            eb.addField(MarkdownUtil.underline("DM Spam Detected At"), formatOffsetDateTime(newDMSpamDetectedAt), false);
+            eb.addField(MarkdownUtil.underline("DM Spam Detected At"), DurationUtils.isoToLocalTimeCounter(newDMSpamDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
@@ -98,7 +93,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Incident Resolved");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: RAID\nStatus: Resolved"));
             eb.setColor(Color.GREEN);
-            eb.addField(MarkdownUtil.underline("Raid Was Detected At"), formatOffsetDateTime(oldRaidDetectedAt), false);
+            eb.addField(MarkdownUtil.underline("Raid Was Detected At"), DurationUtils.isoToLocalTimeCounter(oldRaidDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
@@ -110,7 +105,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Incident Detected");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: RAID\nStatus: Detected"));
             eb.setColor(Color.ORANGE);
-            eb.addField(MarkdownUtil.underline("Raid Detected At"), formatOffsetDateTime(newRaidDetectedAt), false);
+            eb.addField(MarkdownUtil.underline("Raid Detected At"), DurationUtils.isoToLocalTimeCounter(newRaidDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
@@ -136,7 +131,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Action Disabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: DM Pause\nStatus: Disabled"));
             eb.setColor(Color.GREEN);
-            eb.addField(MarkdownUtil.underline("DMs Were Paused Until"), formatOffsetDateTime(oldDMDisabledUntil), false);
+            eb.addField(MarkdownUtil.underline("DMs Were Paused Until"), DurationUtils.isoToLocalTimeCounter(oldDMDisabledUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
@@ -148,7 +143,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Action Enabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: DM Pause\nStatus: Enabled"));
             eb.setColor(Color.ORANGE);
-            eb.addField(MarkdownUtil.underline("DMs Paused Until"), formatOffsetDateTime(newDMDisabledUntil), false);
+            eb.addField(MarkdownUtil.underline("DMs Paused Until"), DurationUtils.isoToLocalTimeCounter(newDMDisabledUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
@@ -160,7 +155,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Action Disabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: Invite Pause\nStatus: Disabled"));
             eb.setColor(Color.GREEN);
-            eb.addField(MarkdownUtil.underline("Invites Were Paused Until"), formatOffsetDateTime(oldInvitesPausedUntil), false);
+            eb.addField(MarkdownUtil.underline("Invites Were Paused Until"), DurationUtils.isoToLocalTimeCounter(oldInvitesPausedUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
@@ -172,7 +167,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setTitle("Audit Log Entry | Security Action Enabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: Invite Pause\nStatus: Enabled"));
             eb.setColor(Color.ORANGE);
-            eb.addField(MarkdownUtil.underline("Invites Paused Until"), formatOffsetDateTime(newInvitesPausedUntil), false);
+            eb.addField(MarkdownUtil.underline("Invites Paused Until"), DurationUtils.isoToLocalTimeCounter(newInvitesPausedUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
