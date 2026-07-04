@@ -1,7 +1,7 @@
-package io.github.eggy03.papertrail.bot.producers;
+package io.github.eggy03.papertrail.bot.configuration;
 
-import io.github.eggy03.papertrail.bot.qualifiers.PlatformThreadFactory;
-import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
+import io.github.eggy03.papertrail.bot.annotations.PlatformThreadFactory;
+import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import org.jspecify.annotations.NonNull;

@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.auditlog;
 
-import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
+import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

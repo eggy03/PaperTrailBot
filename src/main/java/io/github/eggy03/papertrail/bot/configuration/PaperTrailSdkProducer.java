@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.producers;
+package io.github.eggy03.papertrail.bot.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;

@@ -85,7 +85,7 @@ public final class BootstrapService {
 
         // add listeners
         listeners.forEach(listener -> {
-            log.debug("Registering Listener Proxy: {}", listener.getClass().getSimpleName());
+            log.debug("Registering Listener: {}", listener.getClass().getSimpleName());
             builder.addEventListeners(listener);
         });
 
