@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.command;
 
+import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
 import io.github.eggy03.papertrail.bot.handlers.command.ServerStatCommandHandler;
-import io.github.eggy03.papertrail.bot.qualifiers.VirtualThreadFactory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;

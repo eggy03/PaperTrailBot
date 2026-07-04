@@ -1,4 +1,4 @@
-package io.github.eggy03.papertrail.bot.qualifiers;
+package io.github.eggy03.papertrail.bot.annotations;
 
 import jakarta.inject.Qualifier;
 
