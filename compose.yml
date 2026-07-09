@@ -1,0 +1,140 @@
+#file: noinspection SpellCheckingInspection
+
+x-defaults: &defaults
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  mem_limit: 512m
+  restart: unless-stopped
+  networks:
+    - papertrail-network
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+x-readonly: &readonly
+  read_only: true
+  tmpfs:
+    - /tmp
+
+volumes:
+  papertrail_database_data:
+  papertrail_cache_data:
+
+networks:
+  papertrail-network:
+
+services:
+
+  database:
+    <<: *defaults
+    cap_add:
+      - CHOWN
+      - FOWNER
+      - DAC_OVERRIDE
+      - SETUID
+      - SETGID
+    container_name: papertrail-database
+    image: postgres:18.3-alpine3.23
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - papertrail_database_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    <<: *defaults
+    cap_add:
+      - CHOWN
+      - FOWNER
+      - DAC_OVERRIDE
+      - SETUID
+      - SETGID
+    container_name: papertrail-cache
+    image: valkey/valkey:9.0.3-alpine3.23
+    environment:
+      VALKEY_PASSWORD: ${CACHE_PASSWORD}
+    volumes:
+      - papertrail_cache_data:/data
+    command:
+      - valkey-server
+      - --protected-mode
+      - "yes"
+      - --port
+      - "6379"
+      - --dir
+      - /data
+      - --maxmemory
+      - 384mb
+      - --maxmemory-policy
+      - allkeys-lru
+      - --maxmemory-samples
+      - "5"
+      - --maxmemory-eviction-tenacity
+      - "10"
+      - --appendonly
+      - "yes"
+      - --appendfilename
+      - "appendonly.aof"
+      - --appenddirname
+      - "appendonlydir"
+      - --appendfsync
+      - everysec
+      - --save
+      - 20 1
+      - --requirepass
+      - ${CACHE_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "valkey-cli", "-a", "$$CACHE_PASSWORD", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  api:
+    <<: [ *defaults, *readonly ]
+    container_name: papertrail-api
+    image: ghcr.io/eggy03/papertrail-api-native:latest
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://database:5432/${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_URL: redis://default:${CACHE_PASSWORD}@cache:6379
+      PORT: 8080
+      MANAGEMENT_PORT: 9000
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/q/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  bot:
+    <<: [ *defaults, *readonly ]
+    container_name: papertrail-bot
+    image: ghcr.io/eggy03/papertrail-bot-native:latest
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      TOKEN: ${TOKEN}
+      API_URL: http://papertrail-api:8080
+      PORT: 8080
+      MANAGEMENT_PORT: 9000
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/q/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
