@@ -31,7 +31,7 @@ scalability.
 
 The `LITE` edition is designed with greater personalization and easier setup in mind.
 It is designed to be invited to and used on a single server and does not require any form of sharding or scaling.
-This means you do not need to set up anything other than the bot itself.
+Hence, you do not need to set up anything other than the bot and a redis/valkey instance.
 It is also designed to allow for more customization such as routing of individual events to custom channels which the
 user can set.
 
