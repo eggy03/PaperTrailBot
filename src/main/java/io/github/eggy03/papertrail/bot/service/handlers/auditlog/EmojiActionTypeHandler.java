@@ -19,7 +19,7 @@ import java.awt.Color;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class EmojiActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
+public final class EmojiActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
 

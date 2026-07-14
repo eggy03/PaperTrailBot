@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
-public final class UnimplementedActionTypeHandler extends GuildAuditLogEntryCreateEventActionTypeHandler {
+public final class UnimplementedActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     @Override
     public void onUnimplementedActionType(@NonNull GuildAuditLogEntryCreateEvent event) {
