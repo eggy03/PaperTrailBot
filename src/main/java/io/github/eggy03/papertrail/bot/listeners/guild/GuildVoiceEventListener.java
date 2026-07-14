@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.guild;
 
 import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
-import io.github.eggy03.papertrail.bot.handlers.guild.GuildVoiceEventHandler;
+import io.github.eggy03.papertrail.bot.service.handlers.guild.GuildVoiceEventHandler;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;
