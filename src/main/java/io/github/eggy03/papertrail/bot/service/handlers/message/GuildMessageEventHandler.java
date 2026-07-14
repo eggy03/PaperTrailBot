@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.service.handlers.message;
 
 import com.google.common.base.Splitter;
+import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.MessageLogContentEntity;
@@ -11,8 +12,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
@@ -30,11 +29,13 @@ public final class GuildMessageEventHandler {
 
     private final @NonNull MessageLogRegistrationClient registrationClient;
     private final @NonNull MessageLogContentClient contentClient;
+    private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildMessageEventHandler(@NonNull MessageLogRegistrationClient registrationClient, @NonNull MessageLogContentClient contentClient) {
+    public GuildMessageEventHandler(@NonNull MessageLogRegistrationClient registrationClient, @NonNull MessageLogContentClient contentClient, @NonNull EmbedCheckingService embedCheckingService) {
         this.registrationClient = registrationClient;
         this.contentClient = contentClient;
+        this.embedCheckingService = embedCheckingService;
     }
 
     private boolean isGuildRegistered(@NonNull String guildId) {
@@ -46,18 +47,6 @@ public final class GuildMessageEventHandler {
         return registrationClient.getRegisteredGuild(guildId)
                 .map(MessageLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
-    }
-
-    private void performChecksThenBuildAndSendEmbed(@NonNull GenericMessageEvent event, @NonNull EmbedBuilder embedBuilder, @NonNull String channelIdToSendTo) {
-        if (!embedBuilder.isValidLength() || embedBuilder.isEmpty()) {
-            log.warn("Message Embed is empty or too long (current length: {}).", embedBuilder.length());
-            return;
-        }
-
-        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(embedBuilder.build()).queue();
-        }
     }
 
     public void handleMessageReceivedEvent(@NonNull MessageReceivedEvent event) {
@@ -112,7 +101,7 @@ public final class GuildMessageEventHandler {
         // update the database with the new message
         contentClient.updateMessage(event.getMessageId(), updatedMessage, event.getAuthor().getId());
 
-        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
     }
 
     public void handleMessageDeleteEvent(@NonNull MessageDeleteEvent event) {
@@ -149,6 +138,6 @@ public final class GuildMessageEventHandler {
         // delete the message from the database
         contentClient.deleteMessage(event.getMessageId());
 
-        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
     }
 }

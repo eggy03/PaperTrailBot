@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
@@ -8,7 +9,6 @@ import jakarta.inject.Inject;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
@@ -23,10 +23,12 @@ import java.time.Instant;
 public final class GuildPollEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildPollEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public GuildPollEventHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.embedCheckingService = embedCheckingService;
     }
 
     @NonNull
@@ -34,18 +36,6 @@ public final class GuildPollEventHandler {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
-    }
-
-    private void performChecksThenBuildAndSendEmbed(@NonNull MessageReceivedEvent event, @NonNull EmbedBuilder embedBuilder, @NonNull String channelIdToSendTo) {
-        if (!embedBuilder.isValidLength() || embedBuilder.isEmpty()) {
-            log.warn("Embed is empty or too long (current length: {}).", embedBuilder.length());
-            return;
-        }
-
-        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(embedBuilder.build()).queue();
-        }
     }
 
     public void handlePollCreationEvent(@NonNull MessageReceivedEvent event) {
@@ -70,7 +60,7 @@ public final class GuildPollEventHandler {
         eb.setFooter(event.getGuild().getName());
         eb.setTimestamp(Instant.now());
 
-        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
 
     }
 

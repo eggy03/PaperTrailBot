@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.auditlog;
 
+import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.auditlog.ChannelUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
@@ -12,7 +13,6 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
@@ -26,10 +26,12 @@ import java.awt.Color;
 public final class ChannelOverrideActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public ChannelOverrideActionTypeHandler(@NonNull AuditLogRegistrationClient client) {
+    public ChannelOverrideActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.embedCheckingService = embedCheckingService;
     }
 
     @NonNull
@@ -39,17 +41,6 @@ public final class ChannelOverrideActionTypeHandler extends AbstractGuildAuditLo
 
     }
 
-    private void performChecksThenBuildAndSendEmbed(@NonNull GuildAuditLogEntryCreateEvent event, @NonNull EmbedBuilder embedBuilder, @NonNull String channelIdToSendTo) {
-        if (!embedBuilder.isValidLength() || embedBuilder.isEmpty()) {
-            log.warn("Embed is empty or too long (current length: {}).", embedBuilder.length());
-            return;
-        }
-
-        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(embedBuilder.build()).queue();
-        }
-    }
 
     @Override
     public void onChannelOverrideCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
@@ -99,7 +90,7 @@ public final class ChannelOverrideActionTypeHandler extends AbstractGuildAuditLo
         eb.setTimestamp(ale.getTimeCreated());
 
 
-        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
     }
 
     @Override
@@ -146,7 +137,7 @@ public final class ChannelOverrideActionTypeHandler extends AbstractGuildAuditLo
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
-        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
     }
 
     @Override
@@ -197,7 +188,7 @@ public final class ChannelOverrideActionTypeHandler extends AbstractGuildAuditLo
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
 
-        performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
     }
 
     // ALE changes do not expose the id and type keys in case of override updates

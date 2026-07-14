@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.DurationUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
@@ -8,10 +9,8 @@ import jakarta.inject.Inject;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.guild.SecurityIncidentActions;
 import net.dv8tion.jda.api.entities.guild.SecurityIncidentDetections;
-import net.dv8tion.jda.api.events.guild.update.GenericGuildUpdateEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentActionsEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentDetectionsEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
@@ -26,10 +25,12 @@ import java.time.OffsetDateTime;
 public final class GuildSecurityIncidentEventHandler {
 
     private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildSecurityIncidentEventHandler(@NonNull AuditLogRegistrationClient client) {
+    public GuildSecurityIncidentEventHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.embedCheckingService = embedCheckingService;
     }
 
     @NonNull
@@ -37,18 +38,6 @@ public final class GuildSecurityIncidentEventHandler {
         return client.getRegisteredGuild(guildId)
                 .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
 
-    }
-
-    private void performChecksThenBuildAndSendEmbed(@NonNull GenericGuildUpdateEvent<?> event, @NonNull EmbedBuilder embedBuilder, @NonNull String channelIdToSendTo) {
-        if (!embedBuilder.isValidLength() || embedBuilder.isEmpty()) {
-            log.warn("Embed is empty or too long (current length: {}).", embedBuilder.length());
-            return;
-        }
-
-        TextChannel sendingChannel = event.getGuild().getTextChannelById(channelIdToSendTo);
-        if (sendingChannel != null && sendingChannel.canTalk()) {
-            sendingChannel.sendMessageEmbeds(embedBuilder.build()).queue();
-        }
     }
 
     public void handleGuildUpdateSecurityIncidentDetections(@NonNull GuildUpdateSecurityIncidentDetectionsEvent event) {
@@ -73,7 +62,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
 
         if (newDMSpamDetectedAt != null) {
@@ -85,7 +74,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
 
         if (oldRaidDetectedAt != null) {
@@ -97,7 +86,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
 
         if (newRaidDetectedAt != null) {
@@ -109,7 +98,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
     }
 
@@ -135,7 +124,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
 
         if (newDMDisabledUntil != null) {
@@ -147,7 +136,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
 
         if (oldInvitesPausedUntil != null) {
@@ -159,7 +148,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
 
         if (newInvitesPausedUntil != null) {
@@ -171,7 +160,7 @@ public final class GuildSecurityIncidentEventHandler {
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
 
-            performChecksThenBuildAndSendEmbed(event, eb, channelIdToSendTo);
+            embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
         }
     }
 }
