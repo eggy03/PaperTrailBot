@@ -24,5 +24,7 @@ VOLUME /tmp
 
 # Copy the JAR from the build stage
 COPY --from=build --chown=papertrail:papertrail /app/target/quarkus-app bot
+
 USER papertrail
+HEALTHCHECK CMD curl -f http://localhost:9000/q/health || exit 1
 ENTRYPOINT ["java","-jar","bot/quarkus-run.jar"]
