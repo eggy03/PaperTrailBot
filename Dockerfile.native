@@ -31,4 +31,5 @@ WORKDIR /app
 COPY --from=build /native-build/target /app/bot
 
 USER papertrailbot
+HEALTHCHECK CMD curl -f http://localhost:9000/q/health || exit 1
 ENTRYPOINT ["./bot/papertrailbot-runner"]
