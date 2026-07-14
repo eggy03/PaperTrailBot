@@ -1,5 +1,6 @@
-package io.github.eggy03.papertrail.bot.listeners.auditlog;
+package io.github.eggy03.papertrail.bot.service.handlers.auditlog;
 
+import io.github.eggy03.papertrail.bot.listeners.auditlog.GuildAuditLogEntryEventListener;
 import lombok.NonNull;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
