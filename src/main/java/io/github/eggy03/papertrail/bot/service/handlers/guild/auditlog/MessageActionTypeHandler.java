@@ -1,0 +1,94 @@
+package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
+
+import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
+import org.apache.commons.lang3.StringUtils;
+
+import java.awt.Color;
+
+@ApplicationScoped
+@Slf4j
+@SuppressWarnings("java:S1192")
+public final class MessageActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
+
+    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull EmbedCheckingService embedCheckingService;
+
+    @Inject
+    public MessageActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+        this.client = client;
+        this.embedCheckingService = embedCheckingService;
+    }
+
+    @NonNull
+    private String getRegisteredChannelId(@NonNull String guildId) {
+        return client.getRegisteredGuild(guildId)
+                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+
+    }
+
+
+    // for the following four events, audit log does not expose much information
+    // a custom implementation to log edits and deletes of messages is found in GuildMessageEventListener
+    @Override
+    public void onMessageCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
+        // do nothing (these never trigger)
+    }
+
+    @Override
+    public void onMessageUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+        // do nothing (these never trigger)
+    }
+
+    @Override
+    public void onMessageDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
+
+        AuditLogEntry ale = event.getEntry();
+
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = executor != null ? executor.getAsMention() : ale.getUserId();
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Message Delete Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Executor: " + mentionableExecutor));
+        eb.setColor(Color.LIGHT_GRAY);
+
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
+        eb.setTimestamp(ale.getTimeCreated());
+
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
+    }
+
+    @Override
+    public void onMessageBulkDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
+
+        AuditLogEntry ale = event.getEntry();
+
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = executor != null ? executor.getAsMention() : ale.getUserId();
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Bulk Message Delete Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Executor: " + mentionableExecutor));
+        eb.setColor(Color.LIGHT_GRAY);
+
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
+        eb.setTimestamp(ale.getTimeCreated());
+
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
+    }
+}

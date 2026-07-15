@@ -1,0 +1,171 @@
+package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
+
+import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
+import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
+import io.github.eggy03.papertrail.bot.utils.DurationUtils;
+import io.github.eggy03.papertrail.bot.utils.auditlog.GuildUtils;
+import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
+import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
+import org.apache.commons.lang3.StringUtils;
+
+import java.awt.Color;
+
+@ApplicationScoped
+@Slf4j
+@SuppressWarnings("java:S1192")
+public final class GuildUpdateActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
+
+    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull EmbedCheckingService embedCheckingService;
+
+    @Inject
+    public GuildUpdateActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+        this.client = client;
+        this.embedCheckingService = embedCheckingService;
+    }
+
+    @NonNull
+    private String getRegisteredChannelId(@NonNull String guildId) {
+        return client.getRegisteredGuild(guildId)
+                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+
+    }
+
+
+    @Override
+    public void onGuildUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
+
+        AuditLogEntry ale = event.getEntry();
+
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Guild Update Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Guild Settings Updated By: " + mentionableExecutor + "\nTarget Guild: " + event.getGuild().getName()));
+        eb.setColor(Color.MAGENTA);
+
+        ale.getChanges().forEach((changeKey, changeValue) -> {
+
+            Object oldValue = changeValue.getOldValue();
+            Object newValue = changeValue.getNewValue();
+
+            switch (changeKey) {
+                case "description" -> {
+                    eb.addField(MarkdownUtil.underline("Old Description"), "╰┈➤" + oldValue, false);
+                    eb.addField(MarkdownUtil.underline("New Description"), "╰┈➤" + newValue, false);
+                }
+
+                case "icon_hash" ->
+                        eb.addField(MarkdownUtil.underline("Icon Hash Change"), "╰┈➤Guild Icon has been updated", false);
+
+                case "name" -> {
+                    eb.addField(MarkdownUtil.underline("Old Guild Name"), "╰┈➤" + oldValue, false);
+                    eb.addField(MarkdownUtil.underline("New Guild Name"), "╰┈➤" + newValue, false);
+                }
+
+                case "preferred_locale" ->
+                        eb.addField(MarkdownUtil.underline("Preferred Locale Set To"), "╰┈➤" + newValue, false);
+
+                case "afk_channel_id" ->
+                        eb.addField(MarkdownUtil.underline("AFK Channel Changed To"), "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
+
+                case "default_message_notifications" ->
+                        eb.addField(MarkdownUtil.underline("Default Message Notifications Update"), "╰┈➤" + GuildUtils.resolveGuildDefaultMessageNotificationLevel(newValue), false);
+
+                case "afk_timeout" ->
+                        eb.addField(MarkdownUtil.underline("AFK Channel Timeout Change"), "╰┈➤" + DurationUtils.formatSeconds(newValue), false);
+
+                case "system_channel_id" ->
+                        eb.addField(MarkdownUtil.underline("Community Updates Channel Changed To"), "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
+
+                case "widget_enabled" ->
+                        eb.addField(MarkdownUtil.underline("Widget Enabled"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+
+                case "widget_channel_id" ->
+                        eb.addField(MarkdownUtil.underline("Widget Channel Changed To"), "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
+
+                case "premium_progress_bar_enabled" ->
+                        eb.addField(MarkdownUtil.underline("Server Boost Progress Bar Enabled"), "╰┈➤" + BooleanUtils.formatToYesOrNo(newValue), false);
+
+                case "mfa_level" ->
+                        eb.addField(MarkdownUtil.underline("MFA Requirement Set To"), "╰┈➤" + GuildUtils.resolveGuildModActionMFALevel(newValue), false);
+
+                case "verification_level" ->
+                        eb.addField(MarkdownUtil.underline("Verification Level Set To"), "╰┈➤" + GuildUtils.resolveGuildVerificationLevel(newValue), false);
+
+                case "owner_id" -> {
+                    eb.addField(MarkdownUtil.underline("Old Owner"), "╰┈➤" + GuildUtils.resolveOwnerName(oldValue, event), false);
+                    eb.addField(MarkdownUtil.underline("New Owner"), "╰┈➤" + GuildUtils.resolveOwnerName(newValue, event), false);
+                }
+
+                case "public_updates_channel_id" ->
+                        eb.addField(MarkdownUtil.underline("Announcements Channel Changed To"), "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
+
+                case "rules_channel_id" ->
+                        eb.addField(MarkdownUtil.underline("Rules Channel Changed To"), "╰┈➤" + GuildUtils.resolveMentionableChannel(newValue, event), false);
+
+                case "system_channel_flags" ->
+                        eb.addField(MarkdownUtil.underline("System Channel Flags"), "╰┈➤" + GuildUtils.resolveSystemChannelFlags(newValue), false);
+
+                case "explicit_content_filter" ->
+                        eb.addField(MarkdownUtil.underline("Explicit Content Filter"), "╰┈➤" + GuildUtils.resolveExplicitContentFilterLevel(newValue), false);
+
+                default -> {
+                    eb.addField("Unimplemented Change Key", changeKey, false);
+                    log.info("Unimplemented Change Key for Guild Update: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);
+                }
+            }
+        });
+
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
+        eb.setTimestamp(ale.getTimeCreated());
+
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
+    }
+
+    @Override
+    public void onGuildProfileUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
+        String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
+        if (channelIdToSendTo.isBlank()) return;
+
+        AuditLogEntry ale = event.getEntry();
+
+        User executor = ale.getJDA().getUserById(ale.getUserIdLong());
+        String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
+
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Audit Log Entry | Guild Profile Update Event");
+        eb.setDescription(MarkdownUtil.quoteBlock("Guild Profile Updated By: " + mentionableExecutor + "\nTarget Guild: " + event.getGuild().getName()));
+        eb.setColor(Color.PINK);
+
+        ale.getChanges().keySet().forEach(key -> {
+            switch (key) {
+                case "traits" ->
+                        eb.addField(MarkdownUtil.underline("Server Traits"), "╰┈➤Server Traits have been updated", false);
+                case "visibility" ->
+                        eb.addField(MarkdownUtil.underline("Visibility"), "╰┈➤Profile Visibility has been changed", false);
+                case "brand_color_primary" ->
+                        eb.addField(MarkdownUtil.underline("Banner Color"), "╰┈➤Banner Color has been updated", false);
+                case "game_application_ids" ->
+                        eb.addField(MarkdownUtil.underline("Games"), "╰┈➤Games have been updated", false);
+                default -> eb.addField(MarkdownUtil.underline(key), "╰┈➤" + key + " has/have been updated", false);
+            }
+        });
+        eb.setFooter("Audit Log Entry ID: " + ale.getId());
+        eb.setTimestamp(ale.getTimeCreated());
+
+        embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
+    }
+}
