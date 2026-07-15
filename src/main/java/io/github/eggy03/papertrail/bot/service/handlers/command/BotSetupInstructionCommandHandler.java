@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.command;
 
-import io.github.eggy03.papertrail.bot.about.ApplicationInfo;
+import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -14,17 +14,17 @@ import java.time.Instant;
 @ApplicationScoped
 public final class BotSetupInstructionCommandHandler {
 
-    private final @NonNull ApplicationInfo applicationInfo;
+    private final @NonNull PaperTrailConfig paperTrailConfig;
 
     @Inject
-    public BotSetupInstructionCommandHandler(@NonNull ApplicationInfo applicationInfo) {
-        this.applicationInfo = applicationInfo;
+    public BotSetupInstructionCommandHandler(@NonNull PaperTrailConfig paperTrailConfig) {
+        this.paperTrailConfig = paperTrailConfig;
     }
 
     public void sendInstructions(@NonNull SlashCommandInteractionEvent event) {
 
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle("🛠️ Setup Guide for " + applicationInfo.projectName());
+        eb.setTitle("🛠️ Setup Guide for " + paperTrailConfig.general().appName());
         eb.setDescription("Follow the instructions below to set up the bot in your server.");
         eb.setColor(Color.decode("#38e8bc"));
 
@@ -68,8 +68,8 @@ public final class BotSetupInstructionCommandHandler {
                 "Use `/stats` to **view useful server information**, including member count, channel count, and more.",
                 false);
 
-        eb.addField("📬 Need help?", "Create an issue on [GitHub](" + applicationInfo.projectIssueLink() + ")", false);
-        eb.setFooter(applicationInfo.projectName() + " " + applicationInfo.projectVersion());
+        eb.addField("📬 Need help?", "Create an issue on [GitHub](" + paperTrailConfig.general().githubIssueLink() + ")", false);
+        eb.setFooter(paperTrailConfig.general().appName() + " " + paperTrailConfig.general().appVersion());
         eb.setTimestamp(Instant.now());
 
         MessageEmbed mb = eb.build();
