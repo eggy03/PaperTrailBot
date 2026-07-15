@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.command;
 
-import io.github.eggy03.papertrail.bot.about.ApplicationInfo;
+import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
 import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
@@ -26,7 +26,7 @@ public final class DebugCommandHandler {
 
     private final @NonNull AuditLogRegistrationClient auditLogRegistrationClient;
     private final @NonNull MessageLogRegistrationClient messageLogRegistrationClient;
-    private final @NonNull ApplicationInfo applicationInfo;
+    private final @NonNull PaperTrailConfig paperTrailConfig;
 
     // necessary permissions for the bot to function
     @NonNull
@@ -41,10 +41,10 @@ public final class DebugCommandHandler {
     );
 
     @Inject
-    public DebugCommandHandler(@NonNull AuditLogRegistrationClient auditLogRegistrationClient, @NonNull MessageLogRegistrationClient messageLogRegistrationClient, @NonNull ApplicationInfo applicationInfo) {
+    public DebugCommandHandler(@NonNull AuditLogRegistrationClient auditLogRegistrationClient, @NonNull MessageLogRegistrationClient messageLogRegistrationClient, @NonNull PaperTrailConfig paperTrailConfig) {
         this.auditLogRegistrationClient = auditLogRegistrationClient;
         this.messageLogRegistrationClient = messageLogRegistrationClient;
-        this.applicationInfo = applicationInfo;
+        this.paperTrailConfig = paperTrailConfig;
     }
 
     public void sendDebugInfo(@NonNull SlashCommandInteractionEvent event, @NonNull Guild guild, @NonNull Member member) {
@@ -66,7 +66,7 @@ public final class DebugCommandHandler {
         eb.addField(MarkdownUtil.underline("Bot Info"), MarkdownUtil.quoteBlock(getBotInfo(event)), true);
         eb.addField(MarkdownUtil.underline("Configuration Info"), MarkdownUtil.quoteBlock(getConfigurationInfo(guild)), true);
 
-        eb.setFooter(applicationInfo.projectName() + " " + applicationInfo.projectVersion());
+        eb.setFooter(paperTrailConfig.general().appName() + " " + paperTrailConfig.general().appVersion());
         eb.setTimestamp(Instant.now());
 
         event.getHook().editOriginalEmbeds(eb.build()).queue();

@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot;
 
+import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
 import io.quarkus.runtime.Startup;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,35 +18,19 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Slf4j
 @ApplicationScoped
 @Startup
 public final class BootstrapService {
 
-    private final @NonNull String discordToken;
-    private final @NonNull Integer minShardId;
-    private final @NonNull Integer maxShardId;
-    private final @NonNull Integer totalShards;
-    private final @NonNull String twilightHttpProxyUrl;
+    private final @NonNull PaperTrailConfig paperTrailConfig;
     private final @NonNull Instance<ListenerAdapter> listeners;
     private final @NonNull ShardManager shardManager;
 
     @Inject
-    public BootstrapService(
-            @ConfigProperty(name = "discord.token") @NonNull String discordToken,
-            @ConfigProperty(name = "min.shard.id") @NonNull Integer minShardId,
-            @ConfigProperty(name = "max.shard.id") @NonNull Integer maxShardId,
-            @ConfigProperty(name = "total.shards") @NonNull Integer totalShards,
-            @ConfigProperty(name = "twilight.http.proxy.url") @NonNull String twilightHttpProxyUrl,
-            @NonNull Instance<ListenerAdapter> listeners
-    ) {
-        this.discordToken = discordToken;
-        this.minShardId = minShardId;
-        this.maxShardId = maxShardId;
-        this.totalShards = totalShards;
-        this.twilightHttpProxyUrl = twilightHttpProxyUrl;
+    public BootstrapService(@NonNull PaperTrailConfig paperTrailConfig, @NonNull Instance<ListenerAdapter> listeners) {
+        this.paperTrailConfig = paperTrailConfig;
         this.listeners = listeners;
         this.shardManager = constructShardManager();
     }
@@ -53,7 +38,7 @@ public final class BootstrapService {
     @NonNull
     ShardManager constructShardManager() {
 
-        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(discordToken);
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(paperTrailConfig.discord().token());
 
         builder.enableIntents(GatewayIntent.SCHEDULED_EVENTS,
                 GatewayIntent.AUTO_MODERATION_EXECUTION,
@@ -90,15 +75,15 @@ public final class BootstrapService {
         });
 
         // add shards
-        builder.setShardsTotal(totalShards);
-        builder.setShards(minShardId, maxShardId);
+        builder.setShardsTotal(paperTrailConfig.discord().shard().total());
+        builder.setShards(paperTrailConfig.discord().shard().min(), paperTrailConfig.discord().shard().max());
 
         // add custom twilight http proxy url if present
         // note the current implementation only changes the proxy
         // JDA's internal rate limit logic still applies on top of the proxy
         // you need to provide a custom RestRateLimiter config
-        if (!twilightHttpProxyUrl.isBlank()) { // don't use isEmpty cause default value is a whitespace
-            builder.setRestConfig(new RestConfig().setBaseUrl(twilightHttpProxyUrl));
+        if (!paperTrailConfig.discord().twilightProxyUrl().isBlank()) { // don't use isEmpty cause default value is a whitespace
+            builder.setRestConfig(new RestConfig().setBaseUrl(paperTrailConfig.discord().twilightProxyUrl()));
         }
 
         // build shard manager and login
@@ -114,7 +99,7 @@ public final class BootstrapService {
 
     @PreDestroy
     void shutdown() {
-        for (int i = minShardId; i <= maxShardId; i++) {
+        for (int i = paperTrailConfig.discord().shard().min(); i <= paperTrailConfig.discord().shard().max(); i++) {
             log.info("Shutting Down Shard: {}", i);
             shardManager.shutdown(i);
         }

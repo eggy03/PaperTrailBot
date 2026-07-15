@@ -1,11 +1,10 @@
-_Last Updated : July 09, 2026_
+_Last Updated : July 15, 2026_
 
 # Table of Contents
 
 * [Overview](#overview)
 * [LITE vs ORIGINAL](#difference-between-original-and-lite-editions)
-* [Docker Compose Deployment](#docker-compose-deployment)
-* [Manual Deployment](#manual-deployment)
+* [Deployment](#deployment)
 * [Sharding](#sharding)
 * [Synchronizing Rate Limits](#synchronizing-rate-limits)
 * [Health Checks](#health-checks-and-custom-port-configuration)
@@ -44,173 +43,15 @@ Guide to the lite edition is available in this repository's [readme](/README.md)
 You should use the `ORIGINAL` edition only if you need capabilities that are not available in the `LITE` edition,
 such as manual sharding or horizontal scaling.
 
-The `ORIGINAL` edition supports two forms of deployments:
-
-1) [Docker Compose Deployment](#docker-compose-deployment)
-2) [Manual Deployment](#manual-deployment)
-
-# Latest Docker Image Releases
-
-[![Latest API Release](https://img.shields.io/github/v/release/eggy03/PaperTrail-API-Quarkus?sort=date&display_name=tag&style=for-the-badge&label=PaperTrail%20API)](https://github.com/eggy03/PaperTrail-API-Quarkus/pkgs/container/papertrail-api)
-[![Latest Bot Release](https://img.shields.io/github/v/release/eggy03/PaperTrailBot?sort=date&display_name=tag&style=for-the-badge&label=PaperTrail%20Bot)](https://github.com/eggy03/PaperTrailBot/pkgs/container/papertrail-bot)
-
-# Docker Compose Deployment
-
-> [!NOTE]
-> An easier version of the Manual Deployment, uses docker compose with pre-built images.
->
-> Automatically configures every service for you.
->
-> You can configure the compose files to change how you want to deploy them.
->
-> This guide assumes you know how to set up Redis and PGSQL on the cloud.
->
-> Limitations: Only autoconfigures 1 instance of each service; no customizable sharding or horizontal scaling support
-
-## Step 1: Create an application in the Developer Portal
-
-Log on to the [Discord Developer Portal](https://discord.com/developers/applications) and create an application.
-
-The application can have any name, avatar, banner, or description.
-However, the following scopes, permissions, and intents are required:
-
-**Installation Contexts**
-
-1) Guild Install
-
-**Scopes**
-
-1) applications.commands
-2) bot
-
-**Permissions**
-
-1) Manage Server
-2) Read Message History
-3) Send Messages
-4) Send Messages In Threads
-5) View Audit Log
-6) View Channels
-
-**Privileged Gateway Intents**
-
-1) Presence Intent
-2) Server Members Intent
-3) Message Content Intent
-
-Don't forget to copy the bot `TOKEN` as it will be required in the next step.
-
-If you have never created a bot before, follow
-this [visual guide](https://jda.wiki/using-jda/getting-started/#creating-a-discord-bot)
-
-## Step 2: Clone this repository
-
-```shell
-git clone https://github.com/eggy03/PaperTrailBot.git
-cd PaperTrailBot
-```
-
-## Step 3: Create your environment file in the repository root
-
-You will need the following environment variables :
-
-| Variable         | Description                                               |
-|------------------|-----------------------------------------------------------|
-| `TOKEN`          | Discord application bot token (from the Developer Portal) |
-| `DB_NAME`        | A name for your database                                  |
-| `DB_USERNAME`    | A username for your database                              |
-| `DB_PASSWORD`    | A strong password for the database user                   |
-| `CACHE_PASSWORD` | A strong password for your valkey cache                   |
-
-The following is an example `.env` data
-
-```dotenv
-TOKEN=somevalue
-DB_NAME=papertrail
-DB_USERNAME=defaultdb
-DB_PASSWORD=admin
-CACHE_PASSWORD=admin
-```
-
-> [!CAUTION]
-> Never commit your .env file to version control.
-> If your `TOKEN` is ever exposed, immediately regenerate it in the Discord Developer Portal.
-
-## Step 4: Deploy the services
-
-```shell
-docker compose up -d
-```
-
-## Step 5: Verify your deployment
-
-To check if everything is running properly
-
-```bash
-# base deployment
-docker compose ps
-
-# check logs
-docker compose logs -f
-```
-
-If the deployment was successful:
-
-- Invite the bot to a Discord server.
-- Confirm the bot appears online.
-- Run the `/setup` slash command.
-
-This command will guide you through the initial configuration for your server.
-
-## Stopping, Starting and Restarting PaperTrail
-
-```bash
-docker compose stop
-```
-
-```bash
-docker compose start
-```
-
-```bash
-docker compose restart
-```
-
-## Updating PaperTrail
-
-```bash
-# stop containers
-docker compose down
-
-# update images
-docker compose pull
-
-# restart containers
-docker compose up -d
-```
-
-## Uninstalling PaperTrail
-
-```bash
-# Remove containers, networks and volumes, except images
-docker compose down -v
-
-# Removing everything
-docker compose down --rmi all -v
-```
-
-# Manual Deployment
+# Deployment
 
 > [!NOTE]
 > Gives you full control of the services you want to deploy.
 >
 > You set up each service manually but have full control over the process, including customizable sharding and
-> horizontal scaling
+> horizontal scaling.
 >
-> Guides are provided for building and deploying each service (except Redis and PostgreSQL) locally or in cloud, with or
-> without docker.
->
-> This guide assumes you know how to set up Redis and PGSQL on the cloud.
+> This guide assumes you already have a working PostgreSQL and Redis/Valkey instance.
 
 ## Step 1: Setting up the API Service
 

@@ -8,7 +8,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import lombok.NonNull;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jetbrains.annotations.Contract;
 
 @ApplicationScoped
@@ -18,8 +17,8 @@ public final class PaperTrailSdkProducer {
     private final @NonNull ObjectMapper objectMapper;
 
     @Inject
-    public PaperTrailSdkProducer(@ConfigProperty(name = "api.url") @NonNull String apiUrl, @NonNull ObjectMapper objectMapper) {
-        this.apiUrl = apiUrl;
+    public PaperTrailSdkProducer(@NonNull PaperTrailConfig paperTrailConfig, @NonNull ObjectMapper objectMapper) {
+        this.apiUrl = paperTrailConfig.api().url();
         this.objectMapper = objectMapper;
     }
 
