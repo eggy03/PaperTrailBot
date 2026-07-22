@@ -89,6 +89,10 @@ public final class ChannelActionTypeHandler extends AbstractGuildAuditLogEntryCr
                     // the second two are forum only cases which stay empty during creation
                 }
 
+                case "topic" -> eb.addField(MarkdownUtil.underline("Channel Topic"), "╰┈➤" + newValue, false);
+
+                case "rtc_region" -> eb.addField(MarkdownUtil.underline("RTC Region"), "╰┈➤" + newValue, false);
+
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key for Channel Create: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

@@ -122,6 +122,15 @@ public final class GuildUpdateActionTypeHandler extends AbstractGuildAuditLogEnt
                 case "explicit_content_filter" ->
                         eb.addField(MarkdownUtil.underline("Explicit Content Filter"), "╰┈➤" + GuildUtils.resolveExplicitContentFilterLevel(newValue), false);
 
+                case "theme" ->
+                        eb.addField(MarkdownUtil.underline("Server Theme"), "╰┈➤ Server Theme has been updated", false);
+
+                case "splash_hash" ->
+                        eb.addField(MarkdownUtil.underline("Server Splash"), "╰┈➤ Server Splash image has been updated", false);
+
+                case "banner_hash" ->
+                        eb.addField(MarkdownUtil.underline("Server Banner"), "╰┈➤ Server Banner image has been updated", false);
+
                 default -> {
                     eb.addField("Unimplemented Change Key", changeKey, false);
                     log.info("Unimplemented Change Key for Guild Update: {}\nOLD_VALUE: {}\nNEW_VALUE: {}", changeKey, oldValue, newValue);

@@ -3,13 +3,17 @@ package io.github.eggy03.papertrail.bot.utils.auditlog;
 import io.github.eggy03.papertrail.bot.utils.NumberParseUtils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
+@Slf4j
 public final class MessageUtils {
 
     private static final String FALLBACK_STRING = "N/A";
@@ -28,10 +32,14 @@ public final class MessageUtils {
             return FALLBACK_STRING;
 
         // Blocking REST Action
-        Message message = textChannel.retrieveMessageById(messageIdLong).complete();
-        if (message == null)
-            return FALLBACK_STRING;
+        // read retrieveMessageById doc for try catch explanation
+        try {
+            Message message = textChannel.retrieveMessageById(messageIdLong).complete();
+            return message.getJumpUrl();
+        } catch (InsufficientPermissionException | ErrorResponseException e) {
+            log.debug("Error while retrieving message by ID", e);
+            return "Unable to resolve the message jump URL due to insufficient permissions or access.";
+        }
 
-        return message.getJumpUrl();
     }
 }
