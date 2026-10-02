@@ -17,8 +17,7 @@ import java.util.concurrent.ThreadFactory;
 public final class GuildPollEventListener extends ListenerAdapter {
 
     private final @NonNull GuildPollEventHandler handler;
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
     public GuildPollEventListener(@NonNull GuildPollEventHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {

@@ -18,8 +18,7 @@ import java.util.concurrent.ThreadFactory;
 public final class DebugCommandListener extends ListenerAdapter {
 
     private final @NonNull DebugCommandHandler handler;
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
     public DebugCommandListener(@NonNull DebugCommandHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {

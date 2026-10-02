@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -24,29 +25,33 @@ public final class SlashCommandRegistrationListener extends ListenerAdapter {
 
     private void setAuditLogCommands(@NonNull JDA jda) {
 
-        CommandData auditLog = Commands
-                .slash("auditlog", "manage audit log options")
+        // main commands
+        CommandData config = Commands
+                .slash("config", "Configures the bot in your guild")
                 .setContexts(InteractionContextType.GUILD)
                 .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
-                .addSubcommands(new SubcommandData("set", "set audit log channel here"))
-                .addSubcommands(new SubcommandData("view", "view audit log channel"))
-                .addSubcommands(new SubcommandData("remove", "unset audit log channel"));
+                .addSubcommands(
+                        new SubcommandData("save", "Creates a configuration for your guild")
+                                .addOption(OptionType.CHANNEL, "guild_event_channel", "Set channel for guild events", false)
+                                .addOption(OptionType.CHANNEL, "member_event_channel", "Set channel for member events", false)
+                                .addOption(OptionType.CHANNEL, "message_event_channel", "Set channel for message events", false),
 
-        CommandData messageLog = Commands
-                .slash("messagelog", "manage message log options")
-                .setContexts(InteractionContextType.GUILD)
-                .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
-                .addSubcommands(new SubcommandData("set", "set message log channel here"))
-                .addSubcommands(new SubcommandData("view", "view message log channel"))
-                .addSubcommands(new SubcommandData("remove", "unset message log channel"));
+                        new SubcommandData("view", "Shows the current configuration for your guild"),
 
+                        new SubcommandData("update", "Updates the current configuration")
+                                .addOption(OptionType.CHANNEL, "guild_event_channel", "Set channel for guild events", false)
+                                .addOption(OptionType.CHANNEL, "member_event_channel", "Set channel for member events", false)
+                                .addOption(OptionType.CHANNEL, "message_event_channel", "Set channel for message events", false)
+                );
+
+        // general commands
         CommandData serverStats = Commands
                 .slash("stats", "Provides Server Statistics")
                 .setContexts(InteractionContextType.GUILD)
                 .setDefaultPermissions(DefaultMemberPermissions.ENABLED);
 
-        CommandData setup = Commands
-                .slash("setup", "Provides a guide on setting up the bot")
+        CommandData help = Commands
+                .slash("help", "Provides a guide on setting up the bot")
                 .setContexts(InteractionContextType.GUILD)
                 .setDefaultPermissions(DefaultMemberPermissions.ENABLED);
 
@@ -56,7 +61,7 @@ public final class SlashCommandRegistrationListener extends ListenerAdapter {
                 .setDefaultPermissions(DefaultMemberPermissions.ENABLED);
 
         jda.updateCommands()
-                .addCommands(auditLog, messageLog, serverStats, setup, debug)
+                .addCommands(config, serverStats, help, debug)
                 .queue();
     }
 }

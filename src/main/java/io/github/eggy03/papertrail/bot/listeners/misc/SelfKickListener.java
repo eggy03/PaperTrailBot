@@ -1,8 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;
@@ -19,18 +18,13 @@ import java.util.concurrent.ThreadFactory;
 public final class SelfKickListener extends ListenerAdapter {
 
     @NonNull
-    private final AuditLogRegistrationClient auditLogRegistrationClient;
+    private final PaperTrailGuildClient paperTrailGuildClient;
 
-    @NonNull
-    private final MessageLogRegistrationClient messageLogRegistrationClient;
-
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
-    public SelfKickListener(@NonNull AuditLogRegistrationClient auditLogRegistrationClient, @NonNull MessageLogRegistrationClient messageLogRegistrationClient, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
-        this.auditLogRegistrationClient = auditLogRegistrationClient;
-        this.messageLogRegistrationClient = messageLogRegistrationClient;
+    public SelfKickListener(@NonNull PaperTrailGuildClient paperTrailGuildClient, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
+        this.paperTrailGuildClient = paperTrailGuildClient;
         this.virtualThreadFactory = virtualThreadFactory;
     }
 
@@ -39,8 +33,7 @@ public final class SelfKickListener extends ListenerAdapter {
         Guild leftGuild = event.getGuild();
 
         virtualThreadFactory.newThread(() -> {
-            auditLogRegistrationClient.deleteRegisteredGuild(leftGuild.getId());
-            messageLogRegistrationClient.deleteRegisteredGuild(leftGuild.getId());
+            paperTrailGuildClient.deleteGuild(leftGuild.getId());
         }).start();
 
     }

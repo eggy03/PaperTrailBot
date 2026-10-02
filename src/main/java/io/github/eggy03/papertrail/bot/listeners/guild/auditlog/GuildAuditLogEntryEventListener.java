@@ -34,8 +34,7 @@ import java.util.concurrent.ThreadFactory;
 public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
 
     private final @NonNull Instance<AbstractGuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances;
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
     public GuildAuditLogEntryEventListener(@NonNull Instance<AbstractGuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances,

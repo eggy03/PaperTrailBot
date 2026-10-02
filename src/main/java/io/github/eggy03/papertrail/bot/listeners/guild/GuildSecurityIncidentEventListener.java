@@ -17,8 +17,7 @@ import java.util.concurrent.ThreadFactory;
 public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
 
     private final @NonNull GuildSecurityIncidentEventHandler handler;
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
     public GuildSecurityIncidentEventListener(@NonNull GuildSecurityIncidentEventHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {

@@ -1,8 +1,8 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -21,26 +21,26 @@ import java.time.Instant;
 @Slf4j
 public final class GuildVoiceEventHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildVoiceEventHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public GuildVoiceEventHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
-    private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+    private @Nullable String getRegisteredChannelId(@NonNull String guildId) {
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::memberEventChannelId)
+                .orElse(null);
 
     }
-    
+
     public void handleVoiceUpdateEvent(@NonNull GuildVoiceUpdateEvent event) {
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         Member member = event.getMember();
         AudioChannel left = event.getOldValue(); // can be null if user joined for first time

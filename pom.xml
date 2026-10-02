@@ -23,7 +23,7 @@
 
         <!-- Dependency Versions -->
         <jda.version>6.6.0</jda.version>
-        <papertrail.sdk.version>3.0.3</papertrail.sdk.version>
+        <papertrail.http.client.version>1.0.0</papertrail.http.client.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <guava.version>33.7.1-jre</guava.version>
         <jetbrains.annotations.version>26.1.0</jetbrains.annotations.version>
@@ -108,8 +108,8 @@
 
         <dependency>
             <groupId>io.github.eggy03</groupId>
-            <artifactId>papertrail-sdk</artifactId>
-            <version>${papertrail.sdk.version}</version>
+            <artifactId>papertrail-http-client</artifactId>
+            <version>${papertrail.http.client.version}</version>
         </dependency>
 
     </dependencies>

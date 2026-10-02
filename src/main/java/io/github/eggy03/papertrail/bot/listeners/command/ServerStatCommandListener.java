@@ -17,8 +17,7 @@ import java.util.concurrent.ThreadFactory;
 public final class ServerStatCommandListener extends ListenerAdapter {
 
     private final @NonNull ServerStatCommandHandler handler;
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
     public ServerStatCommandListener(@NonNull ServerStatCommandHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {

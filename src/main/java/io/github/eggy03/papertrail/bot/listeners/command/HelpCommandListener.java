@@ -1,7 +1,7 @@
 package io.github.eggy03.papertrail.bot.listeners.command;
 
 import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
-import io.github.eggy03.papertrail.bot.service.handlers.command.BotSetupInstructionCommandHandler;
+import io.github.eggy03.papertrail.bot.service.handlers.command.HelpCommandHandler;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.NonNull;
@@ -11,14 +11,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.concurrent.ThreadFactory;
 
 @Singleton
-public final class BotSetupInstructionCommandListener extends ListenerAdapter {
+public final class HelpCommandListener extends ListenerAdapter {
 
-    private final @NonNull BotSetupInstructionCommandHandler handler;
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull HelpCommandHandler handler;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
-    public BotSetupInstructionCommandListener(@NonNull BotSetupInstructionCommandHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
+    public HelpCommandListener(@NonNull HelpCommandHandler handler, @NonNull @VirtualThreadFactory ThreadFactory virtualThreadFactory) {
         this.handler = handler;
         this.virtualThreadFactory = virtualThreadFactory;
     }
