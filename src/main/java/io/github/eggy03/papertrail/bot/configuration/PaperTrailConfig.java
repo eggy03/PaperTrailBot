@@ -34,24 +34,6 @@ public interface PaperTrailConfig {
         @WithName("token")
         @NonNull
         String token();
-
-        @WithName("twilight.http.proxy.url")
-        @NonNull
-        String twilightProxyUrl();
-
-        Shard shard();
-
-        interface Shard {
-
-            @WithName("min")
-            int min();
-
-            @WithName("max")
-            int max();
-
-            @WithName("total")
-            int total();
-        }
     }
 
     interface API {

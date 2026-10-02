@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.RestConfig;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -74,18 +73,6 @@ public final class BootstrapService {
             builder.addEventListeners(listener);
         });
 
-        // add shards
-        builder.setShardsTotal(paperTrailConfig.discord().shard().total());
-        builder.setShards(paperTrailConfig.discord().shard().min(), paperTrailConfig.discord().shard().max());
-
-        // add custom twilight http proxy url if present
-        // note the current implementation only changes the proxy
-        // JDA's internal rate limit logic still applies on top of the proxy
-        // you need to provide a custom RestRateLimiter config
-        if (!paperTrailConfig.discord().twilightProxyUrl().isBlank()) { // don't use isEmpty cause default value is a whitespace
-            builder.setRestConfig(new RestConfig().setBaseUrl(paperTrailConfig.discord().twilightProxyUrl()));
-        }
-
         // build shard manager and login
         return builder.build();
     }
@@ -99,9 +86,7 @@ public final class BootstrapService {
 
     @PreDestroy
     void shutdown() {
-        for (int i = paperTrailConfig.discord().shard().min(); i <= paperTrailConfig.discord().shard().max(); i++) {
-            log.info("Shutting Down Shard: {}", i);
-            shardManager.shutdown(i);
-        }
+        log.info("Shutting down all shards...");
+        shardManager.shutdown();
     }
 }
