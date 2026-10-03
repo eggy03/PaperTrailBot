@@ -77,7 +77,7 @@ public final class RoleActionTypeHandler extends AbstractGuildAuditLogEntryCreat
                      * and delegates them to ROLE_UPDATE event
                      */
                 }
-                case "icon_hash" -> {
+                case "icon_hash", "unicode_emoji" -> {
                     // ignore
                 }
 
@@ -210,7 +210,7 @@ public final class RoleActionTypeHandler extends AbstractGuildAuditLogEntryCreat
                 case "colors" ->
                         eb.addField(MarkdownUtil.underline("Gradient Color System"), RoleUtils.formatGradientToHex(oldValue), false);
 
-                case "icon_hash" -> {
+                case "icon_hash", "unicode_emoji" -> {
                     // ignore
                 }
 
