@@ -6,11 +6,7 @@ _Last Updated : October 03, 2026_
 >
 > This guide assumes you already have a working PostgreSQL and Redis/Valkey instance or know how to set up one.
 
-## Step 1: Setting up the API Service
-
-Follow this [guide](https://github.com/eggy03/PaperTrail-API-Quarkus?tab=readme-ov-file)
-
-## Step 2: Setting up the Bot In Discord
+## Step 1: Create a bot in the Discord Dev Portal
 
 Log on to the [Discord Developer Portal](https://discord.com/developers/applications) and create an application.
 
@@ -43,24 +39,19 @@ needed for it to work properly:
 
 Note down the `BOT TOKEN` since it will be shown only once and will be required in the later steps.
 
-## Step 3: Deploying the Bot
+## Step 2: Deploying the API and the Bot
 
-### 3.1: Get Required Variables
+### 2.1: Get Required Variables
 
-| Variable         | Description                                               | Default Value    | Optional |
-|------------------|-----------------------------------------------------------|------------------|----------|
-| `DB_HOST`        | PostgreSQL database host/address                          | No Default Value | No       |
-| `DB_PORT`        | PostgreSQL database port                                  | No Default Value | No       |
-| `DB_NAME`        | PostgreSQL database name                                  | No Default Value | No       |
-| `DB_USERNAME`    | PostgreSQL database username                              | No Default Value | No       |
-| `DB_PASSWORD`    | PostgreSQL database password                              | No Default Value | No       |
-| `REDIS_USERNAME` | Redis/Valkey username                                     | No Default Value | No       |
-| `REDIS_PASSWORD` | Redis/Valkey password                                     | No Default Value | No       |
-| `REDIS_HOST`     | Redis/Valkey server host/address                          | No Default Value | No       |
-| `REDIS_PORT`     | Redis/Valkey server port                                  | No Default Value | No       |
-| `TOKEN`          | Discord application bot token (from the Developer Portal) | No Default Value | No       |
+| Variable      | Description/Format                                                   | Default Value    | Optional |
+|---------------|----------------------------------------------------------------------|------------------|----------|
+| `DB_URL`      | jdbc:postgresql://<DATABASE_HOST>:<DATABASE_PORT>/<DATABASE_NAME>    | No Default Value | No       |
+| `DB_USERNAME` | Database Username                                                    | No Default Value | No       |
+| `DB_PASSWORD` | Database Password                                                    | No Default Value | No       |
+| `REDIS_URL`   | rediss://<REDIS_USERNAME>:<REDIS_PASSWORD>@<REDIS_HOST>:<REDIS_PORT> | No Default Value | No       |
+| `TOKEN`       | Get from the dev portal                                              | No Default Value | No       |
 
-### 3.2: Deployment
+### 2.2: Deployment
 
 Use the following docker compose setup to deploy both the bot and the API
 
@@ -73,10 +64,10 @@ services:
     container_name: papertrail-api
     image: ghcr.io/eggy03/papertrail-api-native:latest
     environment:
-      DB_URL: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+      DB_URL: ${DB_URL}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
-      REDIS_URL: rediss://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}
+      REDIS_URL: ${REDIS_URL}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/q/health" ]
       interval: 10s
@@ -109,21 +100,21 @@ The following environment variables have defaults, but you can change them to al
 
 ## Bot
 
-| Environment Variable          | Description                                                | Default Value             |
-|-------------------------------|------------------------------------------------------------|---------------------------|
-| `APP_NAME`                    | Changes the application name used internally.              | `PaperTrailBot`           |
-| `APP_ACTIVITY`                | Changes the activity displayed by the bot in Discord.      | `/help \| latest version` |
-| `APP_LOG_LEVEL`               | Changes the application log level.                         | `INFO`                    |
-| `PORT`                        | Changes the port used by the application.                  | `8080`                    |
-| `MANAGEMENT_PORT`             | Changes the management port used by Quarkus health checks. | `9000`                    |
-| `EMBED_SUCCESS_COLOR_INT`     | Changes the color of embeds for **creation events**.       | `GREEN (712458)`          |
-| `EMBED_WARNING_COLOR_INT`     | Changes the color of embeds for **update events**.         | `YELLOW (16776960)`       |
-| `EMBED_DESTRUCTIVE_COLOR_INT` | Changes the color of embeds for **deletion events**.       | `RED (16711680)`          |
+| Environment Variable          | Description                                                | Default Value       | Optional        |
+|-------------------------------|------------------------------------------------------------|---------------------|-----------------|
+| `APP_NAME`                    | Changes the application name used internally.              | `PaperTrailBot`     | Yes             |
+| `APP_ACTIVITY`                | Changes the activity displayed by the bot in Discord.      | `/help              | latest version` | Yes      |
+| `APP_LOG_LEVEL`               | Changes the application log level.                         | `INFO`              | Yes             |
+| `PORT`                        | Changes the port used by the application.                  | `8080`              | Yes             |
+| `MANAGEMENT_PORT`             | Changes the management port used by Quarkus health checks. | `9000`              | Yes             |
+| `EMBED_SUCCESS_COLOR_INT`     | Changes the color of embeds for **creation events**.       | `GREEN (712458)`    | Yes             |
+| `EMBED_WARNING_COLOR_INT`     | Changes the color of embeds for **update events**.         | `YELLOW (16776960)` | Yes             |
+| `EMBED_DESTRUCTIVE_COLOR_INT` | Changes the color of embeds for **deletion events**.       | `RED (16711680)`    | Yes             |
 
 ## API
 
-| Environment Variable | Description                                                | Default Value |
-|----------------------|------------------------------------------------------------|---------------|
-| `LOG_LEVEL`          | Changes the application log level.                         | `INFO`        |
-| `PORT`               | Changes the port used by the application.                  | `8080`        |
-| `MANAGEMENT_PORT`    | Changes the management port used by Quarkus health checks. | `9000`        |
+| Environment Variable | Description                                                | Default Value | Optional |
+|----------------------|------------------------------------------------------------|---------------|----------|
+| `LOG_LEVEL`          | Changes the application log level.                         | `INFO`        | Yes      |
+| `PORT`               | Changes the port used by the application.                  | `8080`        | Yes      |
+| `MANAGEMENT_PORT`    | Changes the management port used by Quarkus health checks. | `9000`        | Yes      |
