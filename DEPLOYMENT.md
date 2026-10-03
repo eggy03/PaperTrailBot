@@ -68,6 +68,8 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       REDIS_URL: ${REDIS_URL}
+    networks:
+      - papertrail-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/q/health" ]
       interval: 10s
@@ -83,6 +85,8 @@ services:
     environment:
       TOKEN: ${TOKEN}
       API_URL: http://papertrail-api:8080
+    networks:
+      - papertrail-network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/q/health" ]
       interval: 10s
