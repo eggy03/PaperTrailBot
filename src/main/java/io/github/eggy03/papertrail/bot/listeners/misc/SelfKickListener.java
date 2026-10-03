@@ -2,8 +2,8 @@ package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadFactory;
 /*
  * This class will have methods that unregister the log channels from the database after the bot has been kicked
  */
-@Singleton
+@ApplicationScoped
 public final class SelfKickListener extends ListenerAdapter {
 
     @NonNull
@@ -32,9 +32,9 @@ public final class SelfKickListener extends ListenerAdapter {
     public void onGuildLeave(@NonNull GuildLeaveEvent event) {
         Guild leftGuild = event.getGuild();
 
-        virtualThreadFactory.newThread(() -> {
-            paperTrailGuildClient.deleteGuild(leftGuild.getId());
-        }).start();
+        virtualThreadFactory.newThread(() ->
+                paperTrailGuildClient.deleteGuild(leftGuild.getId())
+        ).start();
 
     }
 }

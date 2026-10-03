@@ -2,8 +2,8 @@ package io.github.eggy03.papertrail.bot.listeners.guild;
 
 import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
 import io.github.eggy03.papertrail.bot.service.handlers.guild.GuildSecurityIncidentEventHandler;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentActionsEvent;
@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.concurrent.ThreadFactory;
 
-@Singleton
+@ApplicationScoped
 @Slf4j
 public final class GuildSecurityIncidentEventListener extends ListenerAdapter {
 

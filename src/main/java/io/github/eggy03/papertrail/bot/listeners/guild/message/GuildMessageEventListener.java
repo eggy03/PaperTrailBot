@@ -2,8 +2,8 @@ package io.github.eggy03.papertrail.bot.listeners.guild.message;
 
 import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
 import io.github.eggy03.papertrail.bot.service.handlers.guild.message.GuildMessageEventHandler;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.concurrent.ThreadFactory;
 
-@Singleton
+@ApplicationScoped
 public final class GuildMessageEventListener extends ListenerAdapter {
 
     private final @NonNull GuildMessageEventHandler handler;
