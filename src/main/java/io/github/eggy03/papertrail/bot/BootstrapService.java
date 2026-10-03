@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot;
 
-import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.quarkus.runtime.Startup;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,13 +23,13 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 @Startup
 public final class BootstrapService {
 
-    private final @NonNull PaperTrailConfig paperTrailConfig;
+    private final @NonNull PaperTrailEnvironment paperTrailEnvironment;
     private final @NonNull Instance<ListenerAdapter> listeners;
     private final @NonNull ShardManager shardManager;
 
     @Inject
-    public BootstrapService(@NonNull PaperTrailConfig paperTrailConfig, @NonNull Instance<ListenerAdapter> listeners) {
-        this.paperTrailConfig = paperTrailConfig;
+    public BootstrapService(@NonNull PaperTrailEnvironment paperTrailEnvironment, @NonNull Instance<ListenerAdapter> listeners) {
+        this.paperTrailEnvironment = paperTrailEnvironment;
         this.listeners = listeners;
         this.shardManager = constructShardManager();
     }
@@ -37,7 +37,7 @@ public final class BootstrapService {
     @NonNull
     ShardManager constructShardManager() {
 
-        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(paperTrailConfig.discord().token());
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(paperTrailEnvironment.discord().token());
 
         builder.enableIntents(GatewayIntent.SCHEDULED_EVENTS,
                 GatewayIntent.AUTO_MODERATION_EXECUTION,

@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.command;
 
-import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -14,18 +14,18 @@ import java.time.Instant;
 @ApplicationScoped
 public final class HelpCommandHandler {
 
-    private final @NonNull PaperTrailConfig paperTrailConfig;
+    private final @NonNull PaperTrailEnvironment paperTrailEnvironment;
 
     @Inject
-    public HelpCommandHandler(@NonNull PaperTrailConfig paperTrailConfig) {
-        this.paperTrailConfig = paperTrailConfig;
+    public HelpCommandHandler(@NonNull PaperTrailEnvironment paperTrailEnvironment) {
+        this.paperTrailEnvironment = paperTrailEnvironment;
     }
 
     public void sendInstructions(@NonNull SlashCommandInteractionEvent event) {
 
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setTitle("🛠️ Setup Guide for " + paperTrailConfig.general().appName());
+        eb.setTitle("🛠️ Setup Guide for " + paperTrailEnvironment.general().appName());
         eb.setDescription("Configure PaperTrailBot to receive different types of server events in separate channels.");
         eb.setColor(Color.decode("#38e8bc"));
 
@@ -86,8 +86,8 @@ public final class HelpCommandHandler {
                 "Use `/stats` to **view useful server information**.",
                 false);
 
-        eb.addField("📬 Need help?", "Create an issue on [GitHub](" + paperTrailConfig.general().githubIssueLink() + ")", false);
-        eb.setFooter(paperTrailConfig.general().appName() + " " + paperTrailConfig.general().appVersion());
+        eb.addField("📬 Need help?", "Create an issue on [GitHub](" + paperTrailEnvironment.general().githubIssueLink() + ")", false);
+        eb.setFooter(paperTrailEnvironment.general().appName() + " " + paperTrailEnvironment.general().appVersion());
         eb.setTimestamp(Instant.now());
 
         MessageEmbed mb = eb.build();

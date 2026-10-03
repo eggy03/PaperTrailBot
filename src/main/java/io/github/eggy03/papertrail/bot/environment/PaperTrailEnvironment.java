@@ -1,14 +1,15 @@
-package io.github.eggy03.papertrail.bot.configuration;
+package io.github.eggy03.papertrail.bot.environment;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithName;
 import lombok.NonNull;
 
 @ConfigMapping(prefix = "papertrail")
-public interface PaperTrailConfig {
+public interface PaperTrailEnvironment {
 
     General general();
 
+    EmbedColor embedColor();
     Discord discord();
 
     API api();
@@ -27,6 +28,18 @@ public interface PaperTrailConfig {
         @NonNull
         String githubIssueLink();
 
+    }
+
+    interface EmbedColor {
+
+        @WithName("success.color.integer")
+        int successColor();
+
+        @WithName("warning.color.integer")
+        int warningColor();
+
+        @WithName("destructive.color.integer")
+        int destructiveColor();
     }
 
     interface Discord {

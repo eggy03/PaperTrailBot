@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.command;
 
-import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.PermissionUtils;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,11 +22,11 @@ import java.util.EnumSet;
 @ApplicationScoped
 public final class DebugCommandHandler {
 
-    private final @NonNull PaperTrailConfig paperTrailConfig;
+    private final @NonNull PaperTrailEnvironment paperTrailEnvironment;
 
     @Inject
-    public DebugCommandHandler(@NonNull PaperTrailConfig paperTrailConfig) {
-        this.paperTrailConfig = paperTrailConfig;
+    public DebugCommandHandler(@NonNull PaperTrailEnvironment paperTrailEnvironment) {
+        this.paperTrailEnvironment = paperTrailEnvironment;
     }
 
     public void sendDebugInfo(@NonNull SlashCommandInteractionEvent event, @NonNull Guild guild, @NonNull Member member) {
@@ -48,7 +48,7 @@ public final class DebugCommandHandler {
         eb.addBlankField(true);
         eb.addField(MarkdownUtil.underline("Bot Info"), MarkdownUtil.quoteBlock(getBotInfo(event)), true);
 
-        eb.setFooter(paperTrailConfig.general().appName() + " " + paperTrailConfig.general().appVersion());
+        eb.setFooter(paperTrailEnvironment.general().appName() + " " + paperTrailEnvironment.general().appVersion());
         eb.setTimestamp(Instant.now());
 
         event.getHook().editOriginalEmbeds(eb.build()).queue();

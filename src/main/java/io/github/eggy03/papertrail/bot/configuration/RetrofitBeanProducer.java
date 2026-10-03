@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
@@ -19,8 +20,8 @@ public final class RetrofitBeanProducer {
     private final @NonNull ObjectMapper objectMapper;
 
     @Inject
-    public RetrofitBeanProducer(@NonNull PaperTrailConfig paperTrailConfig, @NonNull ObjectMapper objectMapper) {
-        this.apiUrl = paperTrailConfig.api().url();
+    public RetrofitBeanProducer(@NonNull PaperTrailEnvironment paperTrailEnvironment, @NonNull ObjectMapper objectMapper) {
+        this.apiUrl = paperTrailEnvironment.api().url();
         this.objectMapper = objectMapper;
     }
 
