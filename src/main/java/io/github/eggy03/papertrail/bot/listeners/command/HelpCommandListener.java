@@ -25,7 +25,7 @@ public final class HelpCommandListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
 
-        if (event.getName().equals("setup")) {
+        if (event.getName().equals("help")) {
 
             virtualThreadFactory
                     .newThread(() -> handler.sendInstructions(event))

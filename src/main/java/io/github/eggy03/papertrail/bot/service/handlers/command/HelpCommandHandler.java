@@ -25,7 +25,7 @@ public final class HelpCommandHandler {
 
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setTitle("🛠️ Setup Guide for " + paperTrailEnvironment.general().appName());
+        eb.setTitle("Setup Guide for " + paperTrailEnvironment.general().appName());
         eb.setDescription("Configure PaperTrailBot to receive different types of server events in separate channels.");
         eb.setColor(Color.decode("#38e8bc"));
 
@@ -73,7 +73,7 @@ public final class HelpCommandHandler {
         );
 
         eb.addField(
-                "🔒 Permissions",
+                "Permissions",
                 "Setup configuration commands require the **Administrator** permission.",
                 false
         );
@@ -86,7 +86,7 @@ public final class HelpCommandHandler {
                 "Use `/stats` to **view useful server information**.",
                 false);
 
-        eb.addField("📬 Need help?", "Create an issue on [GitHub](" + paperTrailEnvironment.general().githubIssueLink() + ")", false);
+        eb.addField("Need help?", "Create an issue on [GitHub](" + paperTrailEnvironment.general().githubIssueLink() + ")", false);
         eb.setFooter(paperTrailEnvironment.general().appName() + " " + paperTrailEnvironment.general().appVersion());
         eb.setTimestamp(Instant.now());
 
