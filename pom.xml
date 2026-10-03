@@ -18,12 +18,12 @@
         <!-- Quarkus Properties -->
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.39.2</quarkus.platform.version>
+        <quarkus.platform.version>3.39.5</quarkus.platform.version>
         <skipITs>true</skipITs>
 
         <!-- Dependency Versions -->
-        <jda.version>6.6.0</jda.version>
-        <papertrail.http.client.version>1.0.0</papertrail.http.client.version>
+        <jda.version>6.7.0</jda.version>
+        <papertrail.http.client.version>4.0.0</papertrail.http.client.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <guava.version>33.7.1-jre</guava.version>
         <jetbrains.annotations.version>26.1.0</jetbrains.annotations.version>
