@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.auditlog.RoleUtils;
@@ -17,19 +18,19 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
-
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class RoleActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public RoleActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public RoleActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -58,7 +59,7 @@ public final class RoleActionTypeHandler extends AbstractGuildAuditLogEntryCreat
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Create Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Role Created By: " + mentionableExecutor + "\nTarget Role: " + mentionableTargetRole));
-        eb.setColor(Color.GREEN);
+        eb.setColor(environment.embedColor().successColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -109,7 +110,7 @@ public final class RoleActionTypeHandler extends AbstractGuildAuditLogEntryCreat
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Update Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Role Updated By: " + mentionableExecutor + "\nTarget Role: " + mentionableTargetRole));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -184,7 +185,7 @@ public final class RoleActionTypeHandler extends AbstractGuildAuditLogEntryCreat
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Role Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Role Deleted By: " + mentionableExecutor + "\nTarget Role ID: " + ale.getTargetId()));
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();

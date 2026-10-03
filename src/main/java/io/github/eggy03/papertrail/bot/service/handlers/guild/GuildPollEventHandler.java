@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
@@ -15,7 +16,6 @@ import net.dv8tion.jda.api.utils.MarkdownUtil;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
 import java.time.Instant;
 
 @ApplicationScoped
@@ -23,11 +23,13 @@ import java.time.Instant;
 public final class GuildPollEventHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildPollEventHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public GuildPollEventHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -50,7 +52,7 @@ public final class GuildPollEventHandler {
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Poll Creation Event");
-        eb.setColor(Color.PINK);
+        eb.setColor(environment.embedColor().successColor());
         eb.setDescription(MarkdownUtil.quoteBlock("Poll Created By: " + event.getAuthor().getAsMention() + "\nTarget Channel: " + event.getChannel().getAsMention()));
 
         eb.addField(MarkdownUtil.underline("Question"), messagePoll.getQuestion().getText(), false);

@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.auditlog.StageUtils;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
@@ -15,19 +16,19 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
-
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class StageInstanceActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public StageInstanceActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public StageInstanceActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -53,7 +54,7 @@ public final class StageInstanceActionTypeHandler extends AbstractGuildAuditLogE
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Create Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Created By: " + mentionableExecutor));
-        eb.setColor(Color.GREEN);
+        eb.setColor(environment.embedColor().successColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -91,7 +92,7 @@ public final class StageInstanceActionTypeHandler extends AbstractGuildAuditLogE
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Update Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Updated By: " + mentionableExecutor));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -135,7 +136,7 @@ public final class StageInstanceActionTypeHandler extends AbstractGuildAuditLogE
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Stage Instance Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Stage Instance Deleted By: " + mentionableExecutor));
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();

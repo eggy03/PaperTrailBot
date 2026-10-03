@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
 import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
@@ -14,7 +15,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
 import java.time.Instant;
 
 @ApplicationScoped
@@ -22,11 +22,13 @@ import java.time.Instant;
 public final class GuildVoiceEventHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildVoiceEventHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public GuildVoiceEventHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -52,7 +54,7 @@ public final class GuildVoiceEventHandler {
         if (left == null && joined != null) {
             // User has joined a vc
             eb.setDescription("A Member Has Joined A Voice Channel");
-            eb.setColor(Color.GREEN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(
                     MarkdownUtil.underline("Connection Event Metadata"),
                     MarkdownUtil.quoteBlock("Connected Member: " + member.getAsMention() + "\nJoined Channel: " + joined.getAsMention()),
@@ -63,7 +65,7 @@ public final class GuildVoiceEventHandler {
         if (left != null && joined != null) {
             // Moved from one channel to another
             eb.setDescription("A Member Has Switched Voice Channels");
-            eb.setColor(Color.YELLOW);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(
                     MarkdownUtil.underline("Switch Event Metadata"),
                     MarkdownUtil.quoteBlock("Switched Member: " + member.getAsMention() + "\nLeft Channel: " + left.getAsMention() + "\nJoined Channel: " + joined.getAsMention()),
@@ -73,7 +75,7 @@ public final class GuildVoiceEventHandler {
         if (left != null && joined == null) {
             // User disconnected voluntarily (or was disconnected by a moderator)
             eb.setDescription("A Member Has Left A Voice Channel");
-            eb.setColor(Color.RED);
+            eb.setColor(environment.embedColor().destructiveColor());
             eb.addField(
                     MarkdownUtil.underline("Disconnection Event Metadata"),
                     MarkdownUtil.quoteBlock("Disconnected Member: " + member.getAsMention() + "\nLeft Channel: " + left.getAsMention()),

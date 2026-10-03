@@ -1,6 +1,7 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.message;
 
 import com.google.common.base.Splitter;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
 import io.github.eggy03.papertrail.http.client.PaperTrailMessageClient;
@@ -18,7 +19,6 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -29,12 +29,14 @@ public final class GuildMessageEventHandler {
 
     private final @NonNull PaperTrailGuildClient paperTrailGuildClient;
     private final @NonNull PaperTrailMessageClient paperTrailMessageClient;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildMessageEventHandler(@NonNull PaperTrailGuildClient paperTrailGuildClient, @NonNull PaperTrailMessageClient paperTrailMessageClient, @NonNull EmbedCheckingService embedCheckingService) {
+    public GuildMessageEventHandler(@NonNull PaperTrailGuildClient paperTrailGuildClient, @NonNull PaperTrailMessageClient paperTrailMessageClient, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.paperTrailGuildClient = paperTrailGuildClient;
         this.paperTrailMessageClient = paperTrailMessageClient;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -89,7 +91,7 @@ public final class GuildMessageEventHandler {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Message Edit Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Author: " + updatedMessageAuthor + "\n" + "Channel: " + event.getChannel().getAsMention()));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         oldMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("Old Message"), MarkdownUtil.codeblock(split), false));
         updatedMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("New Message"), MarkdownUtil.codeblock(split), false));
@@ -125,7 +127,7 @@ public final class GuildMessageEventHandler {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Message Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Author: " + mentionableAuthor + "\n" + "Channel: " + event.getChannel().getAsMention()));
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         deletedMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("Deleted Message"), MarkdownUtil.codeblock(split), false));
 

@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
 import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
@@ -15,19 +16,19 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
-
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class VoiceChannelStatusActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public VoiceChannelStatusActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public VoiceChannelStatusActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -57,7 +58,7 @@ public final class VoiceChannelStatusActionTypeHandler extends AbstractGuildAudi
         eb.setTitle("Audit Log Entry | Voice Channel Status Update");
 
         eb.setDescription("A voice channel status has been updated");
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField(
                 MarkdownUtil.underline("Details"),
@@ -92,9 +93,9 @@ public final class VoiceChannelStatusActionTypeHandler extends AbstractGuildAudi
         eb.setTitle("Audit Log Entry | Voice Channel Status Delete");
 
         eb.setDescription("A voice channel status has been reset");
-        eb.setColor(Color.ORANGE);
+        eb.setColor(environment.embedColor().destructiveColor());
 
-        // status deletes dont contain the deleted status content
+        // status deletes don't contain the deleted status content
         eb.addField(
                 MarkdownUtil.underline("Details"),
                 MarkdownUtil.quoteBlock("Status Reset By: " + mentionableExecutor + "\n" + "Target Channel: " + mentionableTargetChannel),

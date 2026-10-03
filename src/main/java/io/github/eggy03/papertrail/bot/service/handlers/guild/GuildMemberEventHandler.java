@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.DurationUtils;
@@ -19,7 +20,6 @@ import net.dv8tion.jda.api.utils.MarkdownUtil;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
 import java.time.Instant;
 
 @ApplicationScoped
@@ -27,11 +27,13 @@ import java.time.Instant;
 public final class GuildMemberEventHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildMemberEventHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public GuildMemberEventHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -54,7 +56,7 @@ public final class GuildMemberEventHandler {
         eb.setTitle("Audit Log Entry | Member Join Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Member Joined: " + user.getName() + "\nGuild: " + guild.getName()));
         eb.setThumbnail(user.getEffectiveAvatarUrl());
-        eb.setColor(Color.GREEN);
+        eb.setColor(environment.embedColor().successColor());
 
         eb.addField(MarkdownUtil.underline("Member Name"), "╰┈➤" + user.getName(), false);
         eb.addField(MarkdownUtil.underline("Member Mention"), "╰┈➤" + user.getAsMention(), false);
@@ -79,7 +81,7 @@ public final class GuildMemberEventHandler {
         eb.setTitle("Audit Log Entry | Member Leave Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Member Left: " + user.getName() + "\nGuild: " + guild.getName()));
         eb.setThumbnail(user.getEffectiveAvatarUrl());
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         eb.addField(MarkdownUtil.underline("Member Name"), "╰┈➤" + user.getName(), false);
         eb.addField(MarkdownUtil.underline("Member ID"), "╰┈➤" + user.getId(), false);

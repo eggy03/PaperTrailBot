@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.command;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
 import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,7 +14,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 
-import java.awt.Color;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -22,10 +22,12 @@ import java.util.Optional;
 public final class ConfigCommandHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
 
     @Inject
-    public ConfigCommandHandler(@NonNull PaperTrailGuildClient client) {
+    public ConfigCommandHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment) {
         this.client = client;
+        this.environment = environment;
     }
 
     public void saveGuild(@NonNull SlashCommandInteractionEvent event) {
@@ -54,10 +56,10 @@ public final class ConfigCommandHandler {
         eb.setTitle("Bot Setup Process");
 
         if (success) {
-            eb.setColor(Color.GREEN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(MarkdownUtil.underline("Setup Success"), MarkdownUtil.codeblock("Events will be logged in your set channels"), false);
         } else {
-            eb.setColor(Color.YELLOW);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(MarkdownUtil.underline("Setup Failure"), MarkdownUtil.codeblock("Channels could not be registered. This could be due to an existing configuration. You must also provide at least one channel during setup."), false);
         }
 
@@ -97,12 +99,12 @@ public final class ConfigCommandHandler {
             String memberEventChannelJumpUrl = memberEventChannel == null ? "Not Available" : memberEventChannel.getJumpUrl();
             String messageEventChannelJumpUrl = messageEventChannel == null ? "Not Available" : messageEventChannel.getJumpUrl();
 
-            eb.setColor(Color.CYAN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(MarkdownUtil.underline("Guild Event Channel"), guildEventChannelJumpUrl, false);
             eb.addField(MarkdownUtil.underline("Member Event Channel"), memberEventChannelJumpUrl, false);
             eb.addField(MarkdownUtil.underline("Message Event Channel"), messageEventChannelJumpUrl, false);
         }, () -> {
-            eb.setColor(Color.YELLOW);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(MarkdownUtil.underline("Warning"), MarkdownUtil.codeblock("No Configuration Found"), false);
         });
 
@@ -132,10 +134,10 @@ public final class ConfigCommandHandler {
             eb.setTitle("Delete Existing Configuration");
 
             if (success) {
-                eb.setColor(Color.GREEN);
+                eb.setColor(environment.embedColor().destructiveColor());
                 eb.addField(MarkdownUtil.underline("Deletion Success"), MarkdownUtil.codeblock("Configuration Deleted"), false);
             } else {
-                eb.setColor(Color.YELLOW);
+                eb.setColor(environment.embedColor().warningColor());
                 eb.addField(MarkdownUtil.underline("Deletion Failure"), MarkdownUtil.codeblock("No Configuration Found."), false);
             }
 
@@ -155,10 +157,10 @@ public final class ConfigCommandHandler {
         eb.setTitle("Update Existing Configuration");
 
         if (success) {
-            eb.setColor(Color.GREEN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(MarkdownUtil.underline("Update Success"), MarkdownUtil.codeblock("Configuration Has Been Updated"), false);
         } else {
-            eb.setColor(Color.YELLOW);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(MarkdownUtil.underline("Update Failure"), MarkdownUtil.codeblock("No Configuration Found."), false);
         }
 

@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.auditlog.MessageUtils;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
@@ -15,19 +16,19 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
-
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class MessagePinActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public MessagePinActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public MessagePinActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -57,7 +58,7 @@ public final class MessagePinActionTypeHandler extends AbstractGuildAuditLogEntr
         String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Message Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
-        eb.setColor(Color.PINK);
+        eb.setColor(environment.embedColor().successColor());
 
         eb.addField(
                 MarkdownUtil.underline("Pinned Message Jump URL"),
@@ -88,7 +89,7 @@ public final class MessagePinActionTypeHandler extends AbstractGuildAuditLogEntr
         String mentionableTarget = (target != null ? target.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Message Un-Pinned By: " + mentionableExecutor + "\nMessage Author: " + mentionableTarget));
-        eb.setColor(Color.MAGENTA);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField(
                 MarkdownUtil.underline("Un-Pinned Message Jump URL"),

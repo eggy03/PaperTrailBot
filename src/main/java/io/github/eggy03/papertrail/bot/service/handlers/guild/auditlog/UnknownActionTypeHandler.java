@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
 import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
@@ -14,8 +15,6 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
-
 // for events not defined by JDA
 @ApplicationScoped
 @Slf4j
@@ -23,11 +22,13 @@ import java.awt.Color;
 public final class UnknownActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public UnknownActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public UnknownActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -54,7 +55,7 @@ public final class UnknownActionTypeHandler extends AbstractGuildAuditLogEntryCr
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Generic Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Executor: " + mentionableExecutor));
-        eb.setColor(Color.LIGHT_GRAY);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField(MarkdownUtil.underline("Action Type"), MarkdownUtil.codeblock(ale.getType().toString()), true);
         eb.addField(MarkdownUtil.underline("Target Type"), MarkdownUtil.codeblock(ale.getTargetType().toString()), true);

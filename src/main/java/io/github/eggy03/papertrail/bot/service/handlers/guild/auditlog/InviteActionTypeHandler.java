@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.DurationUtils;
@@ -17,19 +18,19 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
-
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class InviteActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public InviteActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public InviteActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -56,7 +57,7 @@ public final class InviteActionTypeHandler extends AbstractGuildAuditLogEntryCre
         eb.setTitle("Audit Log Entry | Invite Create Event");
 
         eb.setDescription(MarkdownUtil.quoteBlock("Invite Created By: " + mentionableExecutor));
-        eb.setColor(Color.CYAN);
+        eb.setColor(environment.embedColor().successColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -113,7 +114,7 @@ public final class InviteActionTypeHandler extends AbstractGuildAuditLogEntryCre
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Invite Update Event");
-        eb.setColor(Color.LIGHT_GRAY);
+        eb.setColor(environment.embedColor().warningColor());
 
         String implementationNotice = "We do not have sufficient data to log the changes in an INVITE_UPDATE Event"
                 .concat(" because invites seem to be immutable at the moment, which causes this event to not be fired.")
@@ -141,7 +142,7 @@ public final class InviteActionTypeHandler extends AbstractGuildAuditLogEntryCre
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Invite Deleted By: " + mentionableExecutor));
-        eb.setColor(Color.BLUE);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();

@@ -1,5 +1,6 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
 import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
@@ -14,19 +15,19 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
-
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class MessageActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
     private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public MessageActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public MessageActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
@@ -64,7 +65,7 @@ public final class MessageActionTypeHandler extends AbstractGuildAuditLogEntryCr
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Message Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Executor: " + mentionableExecutor));
-        eb.setColor(Color.LIGHT_GRAY);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
@@ -85,7 +86,7 @@ public final class MessageActionTypeHandler extends AbstractGuildAuditLogEntryCr
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Bulk Message Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Executor: " + mentionableExecutor));
-        eb.setColor(Color.LIGHT_GRAY);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         eb.setFooter("Audit Log Entry ID: " + ale.getId());
         eb.setTimestamp(ale.getTimeCreated());
