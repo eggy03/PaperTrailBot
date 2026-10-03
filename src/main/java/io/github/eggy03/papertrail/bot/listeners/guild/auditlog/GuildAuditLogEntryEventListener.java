@@ -2,9 +2,9 @@ package io.github.eggy03.papertrail.bot.listeners.guild.auditlog;
 
 import io.github.eggy03.papertrail.bot.annotations.VirtualThreadFactory;
 import io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog.AbstractGuildAuditLogEntryCreateEventActionTypeHandler;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -30,12 +30,11 @@ import java.util.concurrent.ThreadFactory;
  * </p>
  */
 @Slf4j
-@Singleton
+@ApplicationScoped
 public final class GuildAuditLogEntryEventListener extends ListenerAdapter {
 
     private final @NonNull Instance<AbstractGuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances;
-    private final @NonNull
-    @VirtualThreadFactory ThreadFactory virtualThreadFactory;
+    private final @NonNull ThreadFactory virtualThreadFactory;
 
     @Inject
     public GuildAuditLogEntryEventListener(@NonNull Instance<AbstractGuildAuditLogEntryCreateEventActionTypeHandler> handlerInstances,

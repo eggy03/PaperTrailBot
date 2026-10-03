@@ -1,9 +1,10 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.DurationUtils;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -14,9 +15,8 @@ import net.dv8tion.jda.api.entities.guild.SecurityIncidentDetections;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentActionsEvent;
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentDetectionsEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 
@@ -24,25 +24,28 @@ import java.time.OffsetDateTime;
 @Slf4j
 public final class GuildSecurityIncidentEventHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildSecurityIncidentEventHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public GuildSecurityIncidentEventHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::guildEventChannelId)
+                .orElse(null);
 
     }
 
     public void handleGuildUpdateSecurityIncidentDetections(@NonNull GuildUpdateSecurityIncidentDetectionsEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         SecurityIncidentDetections oldSID = event.getOldSecurityIncidentDetections();
         SecurityIncidentDetections newSID = event.getNewSecurityIncidentDetections();
@@ -57,7 +60,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Incident Resolved");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: DM Spam\nStatus: Resolved"));
-            eb.setColor(Color.GREEN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(MarkdownUtil.underline("DM Spam Started At"), DurationUtils.isoToLocalTimeCounter(oldDMSpamDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
@@ -69,7 +72,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Incident Detected");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: DM Spam\nStatus: Detected"));
-            eb.setColor(Color.ORANGE);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(MarkdownUtil.underline("DM Spam Detected At"), DurationUtils.isoToLocalTimeCounter(newDMSpamDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
@@ -81,7 +84,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Incident Resolved");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: RAID\nStatus: Resolved"));
-            eb.setColor(Color.GREEN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(MarkdownUtil.underline("Raid Was Detected At"), DurationUtils.isoToLocalTimeCounter(oldRaidDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
@@ -93,7 +96,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Incident Detected");
             eb.setDescription(MarkdownUtil.quoteBlock("Incident Type: RAID\nStatus: Detected"));
-            eb.setColor(Color.ORANGE);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(MarkdownUtil.underline("Raid Detected At"), DurationUtils.isoToLocalTimeCounter(newRaidDetectedAt), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
@@ -104,7 +107,7 @@ public final class GuildSecurityIncidentEventHandler {
 
     public void handleGuildUpdateSecurityIncidentActions(@NonNull GuildUpdateSecurityIncidentActionsEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         SecurityIncidentActions oldSIA = event.getOldSecurityIncidentActions();
         SecurityIncidentActions newSIA = event.getNewSecurityIncidentActions();
@@ -119,7 +122,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Action Disabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: DM Pause\nStatus: Disabled"));
-            eb.setColor(Color.GREEN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(MarkdownUtil.underline("DMs Were Paused Until"), DurationUtils.isoToLocalTimeCounter(oldDMDisabledUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
@@ -131,7 +134,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Action Enabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: DM Pause\nStatus: Enabled"));
-            eb.setColor(Color.ORANGE);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(MarkdownUtil.underline("DMs Paused Until"), DurationUtils.isoToLocalTimeCounter(newDMDisabledUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
@@ -143,7 +146,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Action Disabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: Invite Pause\nStatus: Disabled"));
-            eb.setColor(Color.GREEN);
+            eb.setColor(environment.embedColor().successColor());
             eb.addField(MarkdownUtil.underline("Invites Were Paused Until"), DurationUtils.isoToLocalTimeCounter(oldInvitesPausedUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());
@@ -155,7 +158,7 @@ public final class GuildSecurityIncidentEventHandler {
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Audit Log Entry | Security Action Enabled");
             eb.setDescription(MarkdownUtil.quoteBlock("Action Type: Invite Pause\nStatus: Enabled"));
-            eb.setColor(Color.ORANGE);
+            eb.setColor(environment.embedColor().warningColor());
             eb.addField(MarkdownUtil.underline("Invites Paused Until"), DurationUtils.isoToLocalTimeCounter(newInvitesPausedUntil), false);
             eb.setFooter(event.getGuild().getName());
             eb.setTimestamp(Instant.now());

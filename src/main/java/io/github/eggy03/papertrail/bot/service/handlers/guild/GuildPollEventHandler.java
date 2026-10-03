@@ -1,9 +1,10 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -13,28 +14,30 @@ import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
 import net.dv8tion.jda.api.utils.TimeFormat;
-import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
 import java.time.Instant;
 
 @ApplicationScoped
 @Slf4j
 public final class GuildPollEventHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildPollEventHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public GuildPollEventHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::guildEventChannelId)
+                .orElse(null);
 
     }
 
@@ -45,11 +48,11 @@ public final class GuildPollEventHandler {
             return;
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Poll Creation Event");
-        eb.setColor(Color.PINK);
+        eb.setColor(environment.embedColor().successColor());
         eb.setDescription(MarkdownUtil.quoteBlock("Poll Created By: " + event.getAuthor().getAsMention() + "\nTarget Channel: " + event.getChannel().getAsMention()));
 
         eb.addField(MarkdownUtil.underline("Question"), messagePoll.getQuestion().getText(), false);

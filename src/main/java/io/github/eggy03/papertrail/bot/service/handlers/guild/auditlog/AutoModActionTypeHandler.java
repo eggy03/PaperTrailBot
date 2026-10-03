@@ -1,10 +1,11 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.auditlog.AutoModUtils;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -15,36 +16,37 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.automod.AutoModRule;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.awt.Color;
+import org.jspecify.annotations.Nullable;
 
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public AutoModActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public AutoModActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::guildEventChannelId)
+                .orElse(null);
 
     }
 
     @Override
     public void onAutoModerationFlagToChannel(@NonNull GuildAuditLogEntryCreateEvent event) {
-        
+
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -55,7 +57,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
         String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Flag\nTarget Member: " + targetMention));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField(
                 MarkdownUtil.underline("Additional Info"),
@@ -74,7 +76,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
     public void onAutoModerationMemberTimeout(@NonNull GuildAuditLogEntryCreateEvent event) {
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -85,7 +87,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
         String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Member Timeout\nTarget Member: " + targetMention));
-        eb.setColor(Color.MAGENTA);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField(
                 MarkdownUtil.underline("Additional Info"),
@@ -103,7 +105,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
     public void onAutoModerationRuleBlockMessage(@NonNull GuildAuditLogEntryCreateEvent event) {
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -114,7 +116,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
         String targetMention = (targetUser != null ? targetUser.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Event: AutoMod Message Block\nTarget Member: " + targetMention));
-        eb.setColor(Color.ORANGE);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField(
                 MarkdownUtil.underline("Additional Info"),
@@ -133,7 +135,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
     public void onAutoModerationRuleCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -144,7 +146,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Rule Created By: " + mentionableExecutor + "\nRule Created For: AutoMod"));
-        eb.setColor(Color.GREEN);
+        eb.setColor(environment.embedColor().successColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -180,7 +182,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
     public void onAutoModerationRuleUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -191,7 +193,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Rule Updated By: " + mentionableExecutor + "\nRule Updated For: AutoMod"));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         // add name of the rule which got updated
         AutoModRule rule = ale.getGuild().retrieveAutoModRuleById(ale.getTargetId()).complete();
@@ -209,7 +211,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
     public void onAutoModerationRuleDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -220,7 +222,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getUserId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Rule Deleted By: " + mentionableExecutor + "\nRule Deleted For: AutoMod"));
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -241,7 +243,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
     public void onAutoModerationQuarantineUser(@NonNull GuildAuditLogEntryCreateEvent event) {
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -252,7 +254,7 @@ public final class AutoModActionTypeHandler extends AbstractGuildAuditLogEntryCr
         String mentionableTarget = (targetMember != null ? targetMember.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Quarantined User: " + mentionableTarget));
-        eb.setColor(Color.ORANGE);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField("INFO", "PaperTrail is still learning about this event", false);
 

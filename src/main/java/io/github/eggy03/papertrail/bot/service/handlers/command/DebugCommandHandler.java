@@ -1,10 +1,8 @@
 package io.github.eggy03.papertrail.bot.service.handlers.command;
 
-import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.PermissionUtils;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -24,15 +22,11 @@ import java.util.EnumSet;
 @ApplicationScoped
 public final class DebugCommandHandler {
 
-    private final @NonNull AuditLogRegistrationClient auditLogRegistrationClient;
-    private final @NonNull MessageLogRegistrationClient messageLogRegistrationClient;
-    private final @NonNull PaperTrailConfig paperTrailConfig;
+    private final @NonNull PaperTrailEnvironment paperTrailEnvironment;
 
     @Inject
-    public DebugCommandHandler(@NonNull AuditLogRegistrationClient auditLogRegistrationClient, @NonNull MessageLogRegistrationClient messageLogRegistrationClient, @NonNull PaperTrailConfig paperTrailConfig) {
-        this.auditLogRegistrationClient = auditLogRegistrationClient;
-        this.messageLogRegistrationClient = messageLogRegistrationClient;
-        this.paperTrailConfig = paperTrailConfig;
+    public DebugCommandHandler(@NonNull PaperTrailEnvironment paperTrailEnvironment) {
+        this.paperTrailEnvironment = paperTrailEnvironment;
     }
 
     public void sendDebugInfo(@NonNull SlashCommandInteractionEvent event, @NonNull Guild guild, @NonNull Member member) {
@@ -51,10 +45,10 @@ public final class DebugCommandHandler {
         eb.addField(MarkdownUtil.underline("Server Info"), MarkdownUtil.quoteBlock(getServerInfo(guild, channel)), true);
 
         eb.addField(MarkdownUtil.underline("User Info"), MarkdownUtil.quoteBlock(getCallerInfo(member)), true);
+        eb.addBlankField(true);
         eb.addField(MarkdownUtil.underline("Bot Info"), MarkdownUtil.quoteBlock(getBotInfo(event)), true);
-        eb.addField(MarkdownUtil.underline("Configuration Info"), MarkdownUtil.quoteBlock(getConfigurationInfo(guild)), true);
 
-        eb.setFooter(paperTrailConfig.general().appName() + " " + paperTrailConfig.general().appVersion());
+        eb.setFooter(paperTrailEnvironment.general().appName() + " " + paperTrailEnvironment.general().appVersion());
         eb.setTimestamp(Instant.now());
 
         event.getHook().editOriginalEmbeds(eb.build()).queue();
@@ -123,29 +117,5 @@ public final class DebugCommandHandler {
         JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
         return "Current Shard ID: " + shardInfo.getShardId() + "\n" +
                 "Total Shards: " + shardInfo.getShardTotal();
-    }
-
-    @NonNull
-    private String getConfigurationInfo(@NonNull Guild guild) {
-
-        StringBuilder sb = new StringBuilder();
-
-        auditLogRegistrationClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
-            GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
-            if (channel != null)
-                sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline(channel.getName())).append("\n");
-            else
-                sb.append("Registered Audit Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable")).append("\n");
-        }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Audit Logging")).append("\n"));
-
-        messageLogRegistrationClient.getRegisteredGuild(guild.getId()).ifPresentOrElse(entity -> {
-            GuildChannel channel = guild.getGuildChannelById(entity.getChannelId());
-            if (channel != null)
-                sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline(channel.getName()));
-            else
-                sb.append("Registered Message Log Channel: ").append(MarkdownUtil.underline("Registered Channel Unresolvable"));
-        }, () -> sb.append(MarkdownUtil.underline("No Channel Registered For Message Logging")));
-
-        return sb.toString();
     }
 }

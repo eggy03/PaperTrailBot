@@ -1,6 +1,6 @@
 package io.github.eggy03.papertrail.bot;
 
-import io.github.eggy03.papertrail.bot.configuration.PaperTrailConfig;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.quarkus.runtime.Startup;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.RestConfig;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -24,13 +23,13 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 @Startup
 public final class BootstrapService {
 
-    private final @NonNull PaperTrailConfig paperTrailConfig;
+    private final @NonNull PaperTrailEnvironment paperTrailEnvironment;
     private final @NonNull Instance<ListenerAdapter> listeners;
     private final @NonNull ShardManager shardManager;
 
     @Inject
-    public BootstrapService(@NonNull PaperTrailConfig paperTrailConfig, @NonNull Instance<ListenerAdapter> listeners) {
-        this.paperTrailConfig = paperTrailConfig;
+    public BootstrapService(@NonNull PaperTrailEnvironment paperTrailEnvironment, @NonNull Instance<ListenerAdapter> listeners) {
+        this.paperTrailEnvironment = paperTrailEnvironment;
         this.listeners = listeners;
         this.shardManager = constructShardManager();
     }
@@ -38,7 +37,7 @@ public final class BootstrapService {
     @NonNull
     ShardManager constructShardManager() {
 
-        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(paperTrailConfig.discord().token());
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(paperTrailEnvironment.discord().token());
 
         builder.enableIntents(GatewayIntent.SCHEDULED_EVENTS,
                 GatewayIntent.AUTO_MODERATION_EXECUTION,
@@ -74,18 +73,6 @@ public final class BootstrapService {
             builder.addEventListeners(listener);
         });
 
-        // add shards
-        builder.setShardsTotal(paperTrailConfig.discord().shard().total());
-        builder.setShards(paperTrailConfig.discord().shard().min(), paperTrailConfig.discord().shard().max());
-
-        // add custom twilight http proxy url if present
-        // note the current implementation only changes the proxy
-        // JDA's internal rate limit logic still applies on top of the proxy
-        // you need to provide a custom RestRateLimiter config
-        if (!paperTrailConfig.discord().twilightProxyUrl().isBlank()) { // don't use isEmpty cause default value is a whitespace
-            builder.setRestConfig(new RestConfig().setBaseUrl(paperTrailConfig.discord().twilightProxyUrl()));
-        }
-
         // build shard manager and login
         return builder.build();
     }
@@ -99,9 +86,7 @@ public final class BootstrapService {
 
     @PreDestroy
     void shutdown() {
-        for (int i = paperTrailConfig.discord().shard().min(); i <= paperTrailConfig.discord().shard().max(); i++) {
-            log.info("Shutting Down Shard: {}", i);
-            shardManager.shutdown(i);
-        }
+        log.info("Shutting down all shards...");
+        shardManager.shutdown();
     }
 }

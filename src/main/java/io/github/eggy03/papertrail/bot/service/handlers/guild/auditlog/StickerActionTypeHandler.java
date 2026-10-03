@@ -1,9 +1,10 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.auditlog.StickerUtils;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -14,28 +15,29 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.awt.Color;
+import org.jspecify.annotations.Nullable;
 
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class StickerActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public StickerActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public StickerActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::guildEventChannelId)
+                .orElse(null);
 
     }
 
@@ -43,7 +45,7 @@ public final class StickerActionTypeHandler extends AbstractGuildAuditLogEntryCr
     @Override
     public void onStickerCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -56,7 +58,7 @@ public final class StickerActionTypeHandler extends AbstractGuildAuditLogEntryCr
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Sticker Create Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Sticker Created By: " + mentionableExecutor + "\nCreated Sticker: " + mentionableSticker));
-        eb.setColor(Color.GREEN);
+        eb.setColor(environment.embedColor().successColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -91,7 +93,7 @@ public final class StickerActionTypeHandler extends AbstractGuildAuditLogEntryCr
     @Override
     public void onStickerUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -104,7 +106,7 @@ public final class StickerActionTypeHandler extends AbstractGuildAuditLogEntryCr
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Sticker Update Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Sticker Updated By: " + mentionableExecutor + "\nUpdated Sticker: " + mentionableSticker));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -145,7 +147,7 @@ public final class StickerActionTypeHandler extends AbstractGuildAuditLogEntryCr
     @Override
     public void onStickerDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -158,7 +160,7 @@ public final class StickerActionTypeHandler extends AbstractGuildAuditLogEntryCr
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Sticker Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Sticker Deleted By: " + mentionableExecutor + "\nDeleted Sticker ID: " + mentionableSticker));
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();

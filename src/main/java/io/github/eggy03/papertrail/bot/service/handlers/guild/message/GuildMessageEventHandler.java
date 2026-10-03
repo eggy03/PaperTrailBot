@@ -1,11 +1,12 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.message;
 
 import com.google.common.base.Splitter;
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
-import io.github.eggy03.papertrail.sdk.client.MessageLogContentClient;
-import io.github.eggy03.papertrail.sdk.client.MessageLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.MessageLogContentEntity;
-import io.github.eggy03.papertrail.sdk.entity.MessageLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.client.PaperTrailMessageClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
+import io.github.eggy03.papertrail.http.entity.PaperTrailMessage;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -16,9 +17,8 @@ import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -27,52 +27,53 @@ import java.util.Optional;
 @Slf4j
 public final class GuildMessageEventHandler {
 
-    private final @NonNull MessageLogRegistrationClient registrationClient;
-    private final @NonNull MessageLogContentClient contentClient;
+    private final @NonNull PaperTrailGuildClient paperTrailGuildClient;
+    private final @NonNull PaperTrailMessageClient paperTrailMessageClient;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public GuildMessageEventHandler(@NonNull MessageLogRegistrationClient registrationClient, @NonNull MessageLogContentClient contentClient, @NonNull EmbedCheckingService embedCheckingService) {
-        this.registrationClient = registrationClient;
-        this.contentClient = contentClient;
+    public GuildMessageEventHandler(@NonNull PaperTrailGuildClient paperTrailGuildClient, @NonNull PaperTrailMessageClient paperTrailMessageClient, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
+        this.paperTrailGuildClient = paperTrailGuildClient;
+        this.paperTrailMessageClient = paperTrailMessageClient;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
     private boolean isGuildRegistered(@NonNull String guildId) {
-        return registrationClient.getRegisteredGuild(guildId).isPresent();
+        return paperTrailGuildClient.getGuild(guildId).isPresent();
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return registrationClient.getRegisteredGuild(guildId)
-                .map(MessageLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return paperTrailGuildClient.getGuild(guildId)
+                .map(PaperTrailGuild::messageEventChannelId)
+                .orElse(null);
 
     }
 
     public void handleMessageReceivedEvent(@NonNull MessageReceivedEvent event) {
-        if (!isGuildRegistered(event.getGuild().getId()))
-            return;
+        if (!isGuildRegistered(event.getGuild().getId())) return;
 
         String messageId = event.getMessageId();
         String messageContent = event.getMessage().getContentDisplay();
         String authorId = event.getAuthor().getId();
 
-        contentClient.logMessage(messageId, messageContent, authorId);
+        paperTrailMessageClient.saveMessage(messageId, messageContent, authorId);
     }
 
     public void handleMessageUpdateEvent(@NonNull MessageUpdateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank())
-            return;
+        if (channelIdToSendTo == null) return;
 
         // fetch the old message object from the API
-        Optional<MessageLogContentEntity> oldMessageContentOptional = contentClient.retrieveMessage(event.getMessageId());
+        Optional<PaperTrailMessage> oldMessageContentOptional = paperTrailMessageClient.getMessage(event.getMessageId());
         if (oldMessageContentOptional.isEmpty())
             return;
 
-        MessageLogContentEntity oldMessageContentEntity = oldMessageContentOptional.get();
+        PaperTrailMessage oldMessageContentEntity = oldMessageContentOptional.get();
         // Fetch the old message
-        String oldMessage = oldMessageContentEntity.getMessageContent();
+        String oldMessage = oldMessageContentEntity.messageContent();
         // fetch the updated message and its author from the event
         String updatedMessage = event.getMessage().getContentDisplay();
         String updatedMessageAuthor = event.getAuthor().getAsMention();
@@ -90,7 +91,7 @@ public final class GuildMessageEventHandler {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Message Edit Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Author: " + updatedMessageAuthor + "\n" + "Channel: " + event.getChannel().getAsMention()));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         oldMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("Old Message"), MarkdownUtil.codeblock(split), false));
         updatedMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("New Message"), MarkdownUtil.codeblock(split), false));
@@ -99,25 +100,23 @@ public final class GuildMessageEventHandler {
         eb.setTimestamp(Instant.now());
 
         // update the database with the new message
-        contentClient.updateMessage(event.getMessageId(), updatedMessage, event.getAuthor().getId());
+        paperTrailMessageClient.updateMessage(event.getMessageId(), updatedMessage, event.getAuthor().getId());
 
         embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
     }
 
     public void handleMessageDeleteEvent(@NonNull MessageDeleteEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank())
-            return;
+        if (channelIdToSendTo == null) return;
 
         // fetch the message object from the API which was just deleted
-        Optional<MessageLogContentEntity> deletedMessageContentOptional = contentClient.retrieveMessage(event.getMessageId());
-        if (deletedMessageContentOptional.isEmpty())
-            return;
+        Optional<PaperTrailMessage> deletedMessageContentOptional = paperTrailMessageClient.getMessage(event.getMessageId());
+        if (deletedMessageContentOptional.isEmpty()) return;
 
-        MessageLogContentEntity deletedMessageContentEntity = deletedMessageContentOptional.get();
+        PaperTrailMessage deletedMessageContentEntity = deletedMessageContentOptional.get();
         // Fetch the deleted message and it's author id
-        String deletedMessage = deletedMessageContentEntity.getMessageContent();
-        String deletedMessageAuthorId = deletedMessageContentEntity.getAuthorId();
+        String deletedMessage = deletedMessageContentEntity.messageContent();
+        String deletedMessageAuthorId = deletedMessageContentEntity.authorId();
 
         User author = event.getJDA().getUserById(deletedMessageAuthorId);
         String mentionableAuthor = (author != null ? author.getAsMention() : deletedMessageAuthorId);
@@ -128,7 +127,7 @@ public final class GuildMessageEventHandler {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Message Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Author: " + mentionableAuthor + "\n" + "Channel: " + event.getChannel().getAsMention()));
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         deletedMessageSplits.forEach(split -> eb.addField(MarkdownUtil.underline("Deleted Message"), MarkdownUtil.codeblock(split), false));
 
@@ -136,7 +135,7 @@ public final class GuildMessageEventHandler {
         eb.setTimestamp(Instant.now());
 
         // delete the message from the database
-        contentClient.deleteMessage(event.getMessageId());
+        paperTrailMessageClient.deleteMessage(event.getMessageId());
 
         embedCheckingService.checkAndSend(event, eb, channelIdToSendTo);
     }

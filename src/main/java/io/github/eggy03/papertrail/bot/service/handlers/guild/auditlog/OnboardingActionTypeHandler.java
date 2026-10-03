@@ -1,10 +1,11 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
 import io.github.eggy03.papertrail.bot.utils.auditlog.OnboardingUtils;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -15,28 +16,29 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.awt.Color;
+import org.jspecify.annotations.Nullable;
 
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class OnboardingActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public OnboardingActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public OnboardingActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::guildEventChannelId)
+                .orElse(null);
 
     }
 
@@ -46,13 +48,13 @@ public final class OnboardingActionTypeHandler extends AbstractGuildAuditLogEntr
         log.warn("Onboarding Create Event Detected. Implement this sometime later\n{}", event.getEntry().getChanges());
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Onboarding Create Event");
-        eb.setColor(Color.LIGHT_GRAY);
+        eb.setColor(environment.embedColor().successColor());
 
         String implementationNotice = "We do not have sufficient data to log the changes in an ONBOARDING_CREATE Event."
                 .concat(" That is because, even for Onboarding creations, ONBOARDING_UPDATE is fired instead.")
@@ -69,7 +71,7 @@ public final class OnboardingActionTypeHandler extends AbstractGuildAuditLogEntr
     @Override
     public void onOnboardingUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -82,7 +84,7 @@ public final class OnboardingActionTypeHandler extends AbstractGuildAuditLogEntr
         Guild guild = event.getGuild();
 
         eb.setDescription(MarkdownUtil.quoteBlock("Onboarding Settings Updated By: " + mentionableExecutor));
-        eb.setColor(Color.MAGENTA);
+        eb.setColor(environment.embedColor().warningColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();

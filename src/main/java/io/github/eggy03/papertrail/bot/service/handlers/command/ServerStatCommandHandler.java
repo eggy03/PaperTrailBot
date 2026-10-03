@@ -25,7 +25,7 @@ public final class ServerStatCommandHandler {
         eb.setTitle("Server Statistics");
         eb.setDescription("Statistics For: " + guild.getName());
         eb.setThumbnail(guild.getIconUrl());
-        eb.setColor(Color.PINK);
+        eb.setColor(Color.WHITE);
 
         eb.addField(MarkdownUtil.underline("Guild Owner"), MarkdownUtil.quoteBlock(getGuildOwner(guild)), false);
         eb.addField(MarkdownUtil.underline("Guild Created On"), MarkdownUtil.quoteBlock(getGuildCreationDate(guild)), false);

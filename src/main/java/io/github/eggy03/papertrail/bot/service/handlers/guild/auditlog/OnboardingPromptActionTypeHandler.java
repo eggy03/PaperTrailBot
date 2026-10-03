@@ -1,9 +1,10 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
 import io.github.eggy03.papertrail.bot.utils.BooleanUtils;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -13,28 +14,29 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.awt.Color;
+import org.jspecify.annotations.Nullable;
 
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class OnboardingPromptActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public OnboardingPromptActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public OnboardingPromptActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::guildEventChannelId)
+                .orElse(null);
 
     }
 
@@ -42,7 +44,7 @@ public final class OnboardingPromptActionTypeHandler extends AbstractGuildAuditL
     @Override
     public void onOnboardingPromptCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -53,7 +55,7 @@ public final class OnboardingPromptActionTypeHandler extends AbstractGuildAuditL
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Onboarding Prompt Created By: " + mentionableExecutor));
-        eb.setColor(Color.GREEN);
+        eb.setColor(environment.embedColor().successColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -96,7 +98,7 @@ public final class OnboardingPromptActionTypeHandler extends AbstractGuildAuditL
     @Override
     public void onOnboardingPromptUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -107,7 +109,7 @@ public final class OnboardingPromptActionTypeHandler extends AbstractGuildAuditL
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Onboarding Prompt Updated By: " + mentionableExecutor));
-        eb.setColor(Color.YELLOW);
+        eb.setColor(environment.embedColor().warningColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -158,7 +160,7 @@ public final class OnboardingPromptActionTypeHandler extends AbstractGuildAuditL
     @Override
     public void onOnboardingPromptDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -169,7 +171,7 @@ public final class OnboardingPromptActionTypeHandler extends AbstractGuildAuditL
         String mentionableExecutor = (executor != null ? executor.getAsMention() : ale.getTargetId());
 
         eb.setDescription(MarkdownUtil.quoteBlock("Onboarding Prompt Deleted By: " + mentionableExecutor));
-        eb.setColor(Color.RED);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 

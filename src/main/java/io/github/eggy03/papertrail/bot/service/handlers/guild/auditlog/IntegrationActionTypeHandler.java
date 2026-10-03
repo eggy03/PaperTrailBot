@@ -1,8 +1,9 @@
 package io.github.eggy03.papertrail.bot.service.handlers.guild.auditlog;
 
+import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
 import io.github.eggy03.papertrail.bot.service.EmbedCheckingService;
-import io.github.eggy03.papertrail.sdk.client.AuditLogRegistrationClient;
-import io.github.eggy03.papertrail.sdk.entity.AuditLogRegistrationEntity;
+import io.github.eggy03.papertrail.http.client.PaperTrailGuildClient;
+import io.github.eggy03.papertrail.http.entity.PaperTrailGuild;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -12,28 +13,29 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.utils.MarkdownUtil;
-import org.apache.commons.lang3.StringUtils;
-
-import java.awt.Color;
+import org.jspecify.annotations.Nullable;
 
 @ApplicationScoped
 @Slf4j
 @SuppressWarnings("java:S1192")
 public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEntryCreateEventActionTypeHandler {
 
-    private final @NonNull AuditLogRegistrationClient client;
+    private final @NonNull PaperTrailGuildClient client;
+    private final @NonNull PaperTrailEnvironment environment;
     private final @NonNull EmbedCheckingService embedCheckingService;
 
     @Inject
-    public IntegrationActionTypeHandler(@NonNull AuditLogRegistrationClient client, @NonNull EmbedCheckingService embedCheckingService) {
+    public IntegrationActionTypeHandler(@NonNull PaperTrailGuildClient client, @NonNull PaperTrailEnvironment environment, @NonNull EmbedCheckingService embedCheckingService) {
         this.client = client;
+        this.environment = environment;
         this.embedCheckingService = embedCheckingService;
     }
 
-    @NonNull
+    @Nullable
     private String getRegisteredChannelId(@NonNull String guildId) {
-        return client.getRegisteredGuild(guildId)
-                .map(AuditLogRegistrationEntity::getChannelId).orElse(StringUtils.EMPTY);
+        return client.getGuild(guildId)
+                .map(PaperTrailGuild::guildEventChannelId)
+                .orElse(null);
 
     }
 
@@ -41,7 +43,7 @@ public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEnt
     @Override
     public void onIntegrationCreate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -51,7 +53,7 @@ public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEnt
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Integration Create Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Integration Created By: " + mentionableExecutor));
-        eb.setColor(Color.PINK);
+        eb.setColor(environment.embedColor().successColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
 
@@ -81,13 +83,13 @@ public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEnt
         log.warn("Integration Update Event Detected. Implement this sometime later\n{}", event.getEntry().getChanges());
 
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Integration Update Event");
-        eb.setColor(Color.LIGHT_GRAY);
+        eb.setColor(environment.embedColor().warningColor());
 
         String implementationNotice = "We do not have sufficient data to log the changes in an INTEGRATION_UPDATE Event."
                 .concat(" A proper implementation might happen in future releases if such an event is fired consistently.");
@@ -103,7 +105,7 @@ public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEnt
     @Override
     public void onIntegrationDelete(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -113,7 +115,7 @@ public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEnt
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Integration Delete Event");
         eb.setDescription(MarkdownUtil.quoteBlock("Integration Deleted By: " + mentionableExecutor));
-        eb.setColor(Color.MAGENTA);
+        eb.setColor(environment.embedColor().destructiveColor());
 
         ale.getChanges().forEach((changeKey, changeValue) -> {
             Object oldValue = changeValue.getOldValue();
@@ -139,7 +141,7 @@ public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEnt
     @Override
     public void onApplicationCommandPrivilegesUpdate(@NonNull GuildAuditLogEntryCreateEvent event) {
         String channelIdToSendTo = getRegisteredChannelId(event.getGuild().getId());
-        if (channelIdToSendTo.isBlank()) return;
+        if (channelIdToSendTo == null) return;
 
         AuditLogEntry ale = event.getEntry();
 
@@ -149,7 +151,7 @@ public final class IntegrationActionTypeHandler extends AbstractGuildAuditLogEnt
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Audit Log Entry | Application Command Privilege Update");
         eb.setDescription(MarkdownUtil.quoteBlock("Application Command Privilege Updated By: " + mentionableExecutor));
-        eb.setColor(Color.PINK);
+        eb.setColor(environment.embedColor().warningColor());
 
         eb.addField(MarkdownUtil.underline("More Info"), MarkdownUtil.codeblock("To know more about what changes were made, visit the Integrations section"), false);
 
