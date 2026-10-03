@@ -31,12 +31,11 @@ Integrations, Webhooks, Moderation Action, Unusual DMs, Raids and Unknown events
 
 # Repositories
 
-| Repository                                                         | Description                                                 |
-|--------------------------------------------------------------------|-------------------------------------------------------------|
-| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)           | Core bot application                                        |
-| [PaperTrailBot Lite](https://github.com/eggy03/PaperTrailBot-Lite) | Same bot application but designed for self-hosting          |
-| [PaperTrail SDK](https://github.com/eggy03/papertrail-sdk)         | Java client library for interacting with the API            |
-| [PaperTrail API](https://github.com/eggy03/PaperTrail-API-Quarkus) | API used by the core bot application to store server config |
+| Repository                                                                 | Description                                                  |
+|----------------------------------------------------------------------------|--------------------------------------------------------------|
+| [PaperTrailBot](https://github.com/eggy03/PaperTrailBot)                   | Core bot application                                         |
+| [PaperTrail HTTP Client](https://github.com/eggy03/PaperTrail-HTTP-Client) | Synchronous Java client library for interacting with the API |
+| [PaperTrail API](https://github.com/eggy03/PaperTrail-API-Quarkus)         | API used by the bot to store server config                   |
 
 > [!IMPORTANT]
 > I've considered putting the project in maintenance mode since I believe it's mostly feature complete.
@@ -52,17 +51,11 @@ A deployed instance is the easiest way to use this bot. Just invite it to your s
 
 Get it from here: https://discord.com/discovery/applications/1381658412550590475
 
-Run the `/setup` slash command to see instructions on how to configure the bot for your server.
+Run the `/help` slash command to see instructions on how to configure the bot for your server.
 
 ### By Self Hosting It
 
-For self-hosting, I'd recommend the [LITE](https://github.com/eggy03/PaperTrailBot-Lite) version of the bot. The `LITE`
-version requires lesser services to set up and offers more granular customization. However, you can only use it for a
-single server.
-
-If you do not wish to use the `LITE` version, you can self-host the `ORIGINAL` version by reading the
-guide [here](/DEPLOYMENT.md).
-The guide also mentions the difference between the `LITE` and the `ORIGINAL` versions.
+Read the deployment guide [here](/DEPLOYMENT.md)
 
 # License
 
