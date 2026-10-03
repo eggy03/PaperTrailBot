@@ -24,6 +24,10 @@ public interface PaperTrailEnvironment {
         @NonNull
         String appVersion();
 
+        @WithName("app.activity")
+        @NonNull
+        String appActivity();
+
         @WithName("github.issue.link")
         @NonNull
         String githubIssueLink();

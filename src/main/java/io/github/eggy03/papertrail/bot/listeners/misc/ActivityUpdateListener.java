@@ -1,8 +1,6 @@
 package io.github.eggy03.papertrail.bot.listeners.misc;
 
 import io.github.eggy03.papertrail.bot.environment.PaperTrailEnvironment;
-import io.quarkus.runtime.ImageMode;
-import io.quarkus.runtime.LaunchMode;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -29,9 +27,13 @@ public final class ActivityUpdateListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NonNull ReadyEvent event) { // update on cold start
-        manager.setActivity(Activity.customStatus(
-                "/setup | " + paperTrailEnvironment.general().appVersion() + " | " + getImageMode() + " | " + getLaunchMode())
-        );
+
+        String customActivity = paperTrailEnvironment.general().appActivity();
+        if (customActivity.isBlank()) {
+            manager.setActivity(Activity.customStatus("/help | v" + paperTrailEnvironment.general().appVersion()));
+        } else
+            manager.setActivity(Activity.customStatus(customActivity));
+
     }
 
     @Override
@@ -42,22 +44,5 @@ public final class ActivityUpdateListener extends ListenerAdapter {
     @Override
     public void onGuildLeave(@NonNull GuildLeaveEvent event) { // update on guild leave
         log.info("Bot Removed From [Guild={}, ID={}]", event.getGuild().getName(), event.getGuild().getId());
-    }
-
-    private @NonNull String getLaunchMode() {
-        return switch (LaunchMode.current()) {
-            case DEVELOPMENT -> "Dev";
-            case NORMAL -> "Production";
-            case RUN -> "Production w/ Dev Services";
-            case TEST -> "Test";
-        };
-    }
-
-    private @NonNull String getImageMode() {
-        return switch (ImageMode.current()) {
-            case JVM -> "JVM";
-            case NATIVE_BUILD -> "Native Build Phase";
-            case NATIVE_RUN -> "Native";
-        };
     }
 }
