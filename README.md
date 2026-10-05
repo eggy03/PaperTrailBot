@@ -1,6 +1,6 @@
 <div align="center">
   <img
-    src="https://github.com/user-attachments/assets/c465fe26-5c31-4e75-b8c5-d73b6311979b"
+    src="icon/halloween/logo_diamond_halloween.png"
     alt="logo_diamond"
     width="186"
     height="186"
